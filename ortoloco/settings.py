@@ -1,16 +1,16 @@
 # Django settings for ortoloco project.
 import os
-import dj_database_url
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-WHITELIST_EMAILS = ["oliver.ganz@gmail.com", "omg@doodle.com", "orto@xiala.net", "oliver.ganz+.*@gmail.com"]
+# Overwrite this in settings_local.py!
+WHITELIST_EMAILS = []
 
+# Overwrite this in settings_local.py!
 ADMINS = (
 # ('Your Name', 'your_email@example.com'),
 )
-
 
 # let the users login with their emails
 AUTHENTICATION_BACKENDS = (
@@ -18,23 +18,25 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend'
 )
 
-MANAGERS = ADMINS
-
+# Overwrite this in settings_local.py!
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # 'django.db.backends.postgresql_psycopg2', #'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'ortoloco', # 'db.sqlite',                      # Or path to database file if using sqlite3.
-        'USER': 'ortoloco', # The following settings are not used with sqlite3:
-        'PASSWORD': 'ortoloco',
-        'HOST': 'localhost', # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '', # Set to empty string for default.
+	    # 'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
+        'ENGINE': '', 
+		# 'db.sqlite',                      # Or path to database file if using sqlite3.
+        'NAME': '', 
+		# The following settings are not used with sqlite3:
+        'USER': '', 
+        'PASSWORD': '',
+		# Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'HOST': '', 
+		'PORT': '', # Set to empty string for default.
     }
 }
-#DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['.orto.xiala.net', '.ortoloco.ch']
+ALLOWED_HOSTS = ['.intranet.bioco.ch']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -131,7 +133,8 @@ SECRET_KEY = 'd3w=vyfqpqmcj#&ge1d0$ch#ff7$qt#6z)lzqt=9pg8wg%d^%s'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-    #     'django.template.loaders.eggs.Loader',
+	#mbs + (maybe not required)
+    'django.template.loaders.eggs.Loader',
 )
 
 IMPERSONATE_REDIRECT_URL = "/my/profil"
@@ -150,23 +153,30 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'ortoloco.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
+#mbs - WSGI_APPLICATION = 'ortoloco.wsgi.application'
 WSGI_APPLICATION = 'ortoloco.wsgi.application'
 
-from photologue import PHOTOLOGUE_TEMPLATE_DIR
+#mbs from photologue import PHOTOLOGUE_TEMPLATE_DIR
 
 TEMPLATE_DIRS = (
     'ortoloco/templates',
-    PHOTOLOGUE_TEMPLATE_DIR
+	#mbs+:
+	os.path.join(BASE_DIR, 'ortoloco/templates'),
+    #mbs -- PHOTOLOGUE_TEMPLATE_DIR
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
 INSTALLED_APPS = (
-    'my_ortoloco',
-    'static_ortoloco',
-    'photologue',
-    'south',
+	# Remove this for first syncdb
+	'my_ortoloco',
+	# Remove this for first syncdb
+	'static_ortoloco',
+    # Currently disabled (Remove this for first syncdb)
+	#'photologue',
+	# Remove this for first syncdb, 
+	'south',
     'django_cron',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -177,9 +187,11 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'tinymce',
-    'impersonate'
+    #'django.contrib.admindocs',
+	# Remove this for first syncdb, 
+	'tinymce',
+	# Remove this for first syncdb, 
+	'impersonate'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -194,7 +206,7 @@ LOGGING = {
         'ortoloco.ch_python.log': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), 'logs/ortoloco.ch_python.log'),#'/Users/og/Stuff/ortoloco/orltoloco.log',
+            'filename': os.path.join(os.path.dirname(BASE_DIR), '../logs/ortoloco.ch_python.log'),
         }
     },
     'loggers': {
@@ -209,3 +221,5 @@ LOGGING = {
 GALLERY_SAMPLE_SIZE = 4
 
 from settings_local import *
+
+MANAGERS = ADMINS

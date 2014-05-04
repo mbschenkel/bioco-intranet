@@ -156,9 +156,11 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script>
         function initialize() {
+			// mbs: original zh = 47.3825462, 8.4653627
+			// todo: change in my_debot_change as well or add a parameter
             var mapOptions = {
-                zoom: 11,
-                center: new google.maps.LatLng(47.3825462, 8.4653627)
+                zoom: 12,
+                center: new google.maps.LatLng(47.476781, 8.2632728)
             }
             var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
             var createDepotMap = function (name, addr, zip, city, lat, long) {

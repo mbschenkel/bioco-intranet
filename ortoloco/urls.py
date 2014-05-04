@@ -64,7 +64,7 @@ urlpatterns = patterns('',
     (r'^accounts/login/$',  login),
     (r'^logout/$', 'my_ortoloco.views.logout_view'),
 
-    (r'^photologue/', include('photologue.urls')),
+    #mbs - (r'^photologue/', include('photologue.urls')),
 
     url('^exports/depotlisten/(?P<name>.*)', 'my_ortoloco.views.alldepots_list'),
     #url('^test_filters/$', 'my_ortoloco.views.test_filters'),
