@@ -1,13 +1,49 @@
 # Django settings for ortoloco project.
 import os
+import sys
 
-DEBUG = True
+print('---------- in settings.py ------------')
+# this is custom code to detect differentiate different servers and use 
+# as little stuff in settings_local.py as necessary
+if "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
+    TARGET = 'production'
+    DEBUG = True
+elif "test" == os.environ.get("OPENSHIFT_GEAR_NAME"):
+    TARGET = 'test'
+    DEBUG = True
+else:
+    TARGET = 'local'
+    DEBUG = True
+    
+if 'local' == TARGET:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3', 
+            'NAME': 'bioco.db.sqlite',
+            # The following settings are not used with sqlite3:
+            'USER': '', 
+            'PASSWORD': '',
+            'HOST': '', 
+            'PORT': '', 
+        }
+    }
+else:
+    # on openshift
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql', 
+            'NAME': os.environ.get("OPENSHIFT_GEAR_NAME"), 
+            'USER': os.environ.get("OPENSHIFT_MYSQL_DB_USERNAME"), 
+            'PASSWORD': os.environ.get("OPENSHIFT_MYSQL_DB_PASSWORD"),
+            'HOST': os.environ.get("OPENSHIFT_MYSQL_DB_HOST"), 
+            'PORT': os.environ.get("OPENSHIFT_MYSQL_DB_PORT"), 
+        }
+    }
+    
 TEMPLATE_DEBUG = DEBUG
 
-# Overwrite this in settings_local.py!
+# Overwrite these in settings_local.py to prevent having raw emails in GIT:
 WHITELIST_EMAILS = []
-
-# Overwrite this in settings_local.py!
 ADMINS = (
 # ('Your Name', 'your_email@example.com'),
 )
@@ -18,25 +54,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend'
 )
 
-# Overwrite this in settings_local.py!
-DATABASES = {
-    'default': {
-	    # 'django.db.backends.sqlite3', # Add , 'mysql', 'sqlite3' or 'oracle'.
-        'ENGINE': '', 
-		# 'db.sqlite',                      # Or path to database file if using sqlite3.
-        'NAME': '', 
-		# The following settings are not used with sqlite3:
-        'USER': '', 
-        'PASSWORD': '',
-		# Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'HOST': '', 
-		'PORT': '', # Set to empty string for default.
-    }
-}
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['.intranet.bioco.ch']
+ALLOWED_HOSTS = ['intranet.bioco.ch']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -127,7 +147,8 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'd3w=vyfqpqmcj#&ge1d0$ch#ff7$qt#6z)lzqt=9pg8wg%d^%s'
+# set in settings_local.py
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -219,7 +240,26 @@ LOGGING = {
 }
 
 GALLERY_SAMPLE_SIZE = 4
+ 
+# add persistent data dir where settings_local.py is located
+if 'local' == TARGET:
+    # add path as needed:
+    pass
+else:    
+    #on openshift:
+    sys.path.append(os.environ.get("OPENSHIFT_DATA_DIR"))
+
+""" 
+Note: Currently settings_local.py should have the following content.
+
+WHITELIST_EMAILS = ["...@..."]
+ADMINS = (
+	('xxx', '...@...'),
+)
+SECRET_KEY = 'a long random string. Shhh keep it secret!'
+"""
 
 from settings_local import *
 
+# overwrite from settings_local if set there
 MANAGERS = ADMINS
