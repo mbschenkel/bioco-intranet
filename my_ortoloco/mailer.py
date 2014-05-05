@@ -7,9 +7,13 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 import re
 
+#single point of change 
+#(maybe move to settings and adjust address itself)
+SENDER_EMAIL_ADDRESS = 'test@bioco.ch'
 
 # sends mail only to specified email-addresses if dev mode
 def send_mail(subject, message, from_email, to_emails):
+    print 'send_mail from ' + SENDER_EMAIL_ADDRESS
     okmails = []
     if settings.DEBUG is False:
         okmails = to_emails
@@ -25,13 +29,17 @@ def send_mail(subject, message, from_email, to_emails):
 
     if len(okmails) > 0:
         for amail in okmails:
-            mail.send_mail(subject, message, from_email, [amail], fail_silently=False)
+            res = mail.send_mail(subject, message, from_email, [amail], fail_silently=False)
+            # todo: log errors
+            print 'sending mail from ' + from_email + ' to ' + email 
+            print ' res= ', res
         print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
 
     return None
 
 
 def send_mail_multi(email_multi_message):
+    print 'send_mail_multi from ' + SENDER_EMAIL_ADDRESS
     okmails = []
     if settings.DEBUG is False:
         okmails = email_multi_message.to
@@ -48,18 +56,20 @@ def send_mail_multi(email_multi_message):
     if len(okmails) > 0:
         email_multi_message.to = []
         email_multi_message.bcc = okmails
-        email_multi_message.send()
+        res = email_multi_message.send()
+        # todo: log errors
+        print "res = ", res
         print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
     return None
 
 
 def send_new_loco_in_taetigkeitsbereich_to_bg(area, loco):
     send_mail('Neues Mitglied im Taetigkeitsbereich ' + area.name,
-              'Soeben hat sich ' + loco.first_name + " " + loco.last_name + ' in den Taetigkeitsbereich ' + area.name + ' eingetragen', 'info@ortoloco.ch', [area.coordinator.email])
+              'Soeben hat sich ' + loco.first_name + " " + loco.last_name + ' in den Taetigkeitsbereich ' + area.name + ' eingetragen', SENDER_EMAIL_ADDRESS, [area.coordinator.email])
 
 
 def send_contact_form(subject, message, loco, copy_to_loco):
-    send_mail('Anfrage per my.ortoloco: ' + subject, message, loco.email, ['info@ortoloco.ch'])
+    send_mail('Anfrage per my.ortoloco: ' + subject, message, loco.email, [SENDER_EMAIL_ADDRESS])
     if copy_to_loco:
         send_mail('Anfrage per my.ortoloco: ' + subject, message, loco.email, [loco.email])
 
@@ -79,7 +89,7 @@ def send_welcome_mail(email, password, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, 'info@ortoloco.ch', [email])
+    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, SENDER_EMAIL_ADDRESS, [email])
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -102,7 +112,7 @@ def send_been_added_to_abo(email, password, name, anteilsscheine, hash, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, 'info@ortoloco.ch', [email])
+    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, SENDER_EMAIL_ADDRESS, [email])
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -125,7 +135,7 @@ def send_filtered_mail(subject, message, text_message, emails, server):
     text_content = plaintext.render(textd)
     html_content = htmly.render(htmld)
 
-    msg = EmailMultiAlternatives(subject, text_content, 'info@ortoloco.ch', emails)
+    msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -148,7 +158,7 @@ def send_politoloco_mail(subject, message, text_message, emails, server):
     text_content = plaintext.render(textd)
     html_content = htmly.render(htmld)
 
-    msg = EmailMultiAlternatives(subject, text_content, 'info@ortoloco.ch', emails)
+    msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -174,7 +184,7 @@ def send_mail_password_reset(email, password, server):
     text_content = plaintext.render(textd)
     html_content = htmly.render(htmld)
 
-    msg = EmailMultiAlternatives(subject, text_content, 'info@ortoloco.ch', [email])
+    msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, [email])
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -192,6 +202,6 @@ def send_job_reminder(emails, job, participants, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives("ortoloco - Job-Erinnerung", text_content, 'info@ortoloco.ch', emails)
+    msg = EmailMultiAlternatives("ortoloco - Job-Erinnerung", text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)

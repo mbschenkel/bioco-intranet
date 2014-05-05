@@ -40,6 +40,15 @@ else:
         }
     }
     
+EMAIL_USE_TLS = False
+EMAIL_PORT = 587
+#TLS times out... todo: investigate why
+#EMAIL_USE_TLS = True
+#EMAIL_PORT = 465
+EMAIL_HOST = 'mail.bioco.ch'
+EMAIL_HOST_USER = 'test@bioco.ch'
+EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'  
+    
 TEMPLATE_DEBUG = DEBUG
 
 # Overwrite these in settings_local.py to prevent having raw emails in GIT:
@@ -257,6 +266,7 @@ ADMINS = (
 	('xxx', '...@...'),
 )
 SECRET_KEY = 'a long random string. Shhh keep it secret!'
+EMAIL_HOST_PASSWORD = '...'
 """
 
 from settings_local import *
