@@ -1,4 +1,4 @@
-ortoloco.ch
+bioco.ch (forked from ortoloco.ch)
 ===================
 ###die regionale gartenkooperative
 
