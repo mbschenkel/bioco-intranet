@@ -294,7 +294,6 @@ class LocoAdmin(admin.ModelAdmin):
     readonly_fields = ["user"]
     actions = ["impersonate_job"]
 
-
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
             self.message_user(request, u"Genau 1 Loco auswählen!", level=messages.ERROR)

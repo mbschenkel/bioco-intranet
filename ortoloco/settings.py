@@ -16,6 +16,17 @@ else:
     DEBUG = True
     
 if 'local' == TARGET:
+    # accept all IPs from local network and show admin toolbar    
+    from fnmatch import fnmatch
+    class glob_list(list):
+        def __contains__(self, key):
+            for elt in self:
+                if fnmatch(key, elt): return True
+            return False
+
+    INTERNAL_IPS = glob_list(['127.0.0.1', '192.168.*.*'])
+    DEBUG_TOOLBAR_PATCH_SETTINGS = True
+    # use an SQlite DB 
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3', 
@@ -29,6 +40,7 @@ if 'local' == TARGET:
     }
 else:
     # on openshift
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', 
@@ -40,11 +52,12 @@ else:
         }
     }
     
+#TODO TLS times out on bioco.ch, investigate why and change to True
 EMAIL_USE_TLS = False
-EMAIL_PORT = 587
-#TLS times out... todo: investigate why
-#EMAIL_USE_TLS = True
-#EMAIL_PORT = 465
+if EMAIL_USE_TLS:
+    EMAIL_PORT = 465
+else:
+    EMAIL_PORT = 587
 EMAIL_HOST = 'mail.bioco.ch'
 EMAIL_HOST_USER = 'test@bioco.ch'
 EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'  
@@ -102,31 +115,41 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/medias/')
 MEDIA_URL = '/medias/'
 
 
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
 
-# Additional locations of static files
-STATICFILES_DIRS = (
-#"/static/",
-# Put strings here, like "/home/html/static" or "C:/www/django/static".
-# Always use forward slashes, even on Windows.
-# Don't forget to use absolute paths, not relative paths.
-)
+if 'local' == TARGET:
+    # ./static contains checked in static content
+    STATICFILES_DIRS = ("static/",)
+    # collectstatic will want to move it to a *different folder*, here:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected/')    
+else:
+    # this has worked in production:
+    
+    # Absolute path to the directory static files should be collected to.
+    # Don't put anything in this directory yourself; store your static files
+    # in apps' "static/" subdirectories and in STATICFILES_DIRS.
+    # Example: "/var/www/example.com/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
+    # Additional locations of static files
+    STATICFILES_DIRS = (
+    #"static/",
+    #os.path.join(BASE_DIR, 'ortoloco/static/'),
+    # Put strings here, like "/home/html/static" or "C:/www/django/static".
+    # Always use forward slashes, even on Windows.
+    # Don't forget to use absolute paths, not relative paths.
+    )
 
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #mbs+
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 #tinyMCE
@@ -163,8 +186,8 @@ SECRET_KEY = ''
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-	#mbs + (maybe not required)
-    'django.template.loaders.eggs.Loader',
+	#mbs (maybe not required)?
+    #'django.template.loaders.eggs.Loader',
 )
 
 IMPERSONATE_REDIRECT_URL = "/my/profil"
@@ -183,46 +206,54 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'ortoloco.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-#mbs - WSGI_APPLICATION = 'ortoloco.wsgi.application'
+# this seems to be used only for testing with runserver 
 WSGI_APPLICATION = 'ortoloco.wsgi.application'
 
-#mbs from photologue import PHOTOLOGUE_TEMPLATE_DIR
+#mbs disabled photologue for now:
+#from photologue import PHOTOLOGUE_TEMPLATE_DIR
 
 TEMPLATE_DIRS = (
     'ortoloco/templates',
-	#mbs+:
 	os.path.join(BASE_DIR, 'ortoloco/templates'),
-    #mbs -- PHOTOLOGUE_TEMPLATE_DIR
+    #mbs disabled photologue for now:
+    #PHOTOLOGUE_TEMPLATE_DIR
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
-INSTALLED_APPS = (
-	# Remove this for first syncdb
-	'my_ortoloco',
-	# Remove this for first syncdb
-	'static_ortoloco',
-    # Currently disabled (Remove this for first syncdb)
-	#'photologue',
-	# Remove this for first syncdb, 
-	'south',
+DJANGO_APPS = (
     'django_cron',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.messages',
+    # Serves static files through pyton in dev-mode
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+)
+DEBUG_APPS = (
     # Uncomment the next line to enable admin documentation:
-    #'django.contrib.admindocs',
-	# Remove this for first syncdb, 
+    'django.contrib.admindocs',	
+    'debug_toolbar',
+)
+OUR_OWN_APPS = (
+	'my_ortoloco',
+	'static_ortoloco',
+    # mbs - Currently disabled 
+	#'photologue',
+	'south',
 	'tinymce',
-	# Remove this for first syncdb, 
 	'impersonate'
 )
+if 'local' == TARGET:
+    INSTALLED_APPS = DJANGO_APPS + DEBUG_APPS + OUR_OWN_APPS
+else:
+    INSTALLED_APPS = DJANGO_APPS + OUR_OWN_APPS
+# For the first syncdb, use only
+#INSTALLED_APPS = DJANGO_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

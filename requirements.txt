@@ -1,5 +1,5 @@
 Django==1.6
-MySQL-python==1.2.4
+#MySQL-python==1.2.4
 Pillow==2.0.0
 South==0.7.6
 argparse==1.2.1
@@ -11,7 +11,7 @@ django-tinymce==1.5.1
 django-toolbelt==0.0.1
 gunicorn==17.5
 html5lib==1.0b3
-psycopg2==2.5.1
+#psycopg2==2.5.1
 pyPdf==1.13
 reportlab==2.7
 six==1.4.1

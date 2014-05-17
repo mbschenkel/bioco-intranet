@@ -1,4 +1,4 @@
-ortoloco.ch
+bioco.ch (forked from ortoloco.ch)
 ===================
 ###die regionale gartenkooperative
 
@@ -20,8 +20,8 @@ We implement a "specific" web solution to organize all the work on a farm as a g
     ./manage.py migrate
 
 ###Create new migration:
-    ./manage.py schemamigration loco_app --auto
-    ./manage.py migrate loco_app
+    ./manage.py schemamigration my_ortoloco --auto
+    ./manage.py migrate my_ortoloco
 
 ###Test server:
     - ./manage.py runserver
