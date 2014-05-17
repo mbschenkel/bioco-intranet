@@ -7,7 +7,16 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 import re
 
-#single point of change 
+#todo remove
+#import logging
+#FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
+#logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+#dj only
+#import logging
+#logger = logging.getLogger(__name__)
+
+
+#single point of change, todo check settings.DEFAULT_FROM_EMAIL
 #(maybe move to settings and adjust address itself)
 SENDER_EMAIL_ADDRESS = 'test@bioco.ch'
 
@@ -16,16 +25,12 @@ def send_mail(subject, message, from_email, to_emails):
     print 'send_mail from ' + SENDER_EMAIL_ADDRESS
     okmails = []
     if settings.DEBUG is False:
-        okmails = to_emails
+        pass
+        #todo re-enable when stable.... okmails = to_emails
     else:
-        for email in to_emails:
-            sent = False
-            for entry in settings.WHITELIST_EMAILS:
-                if sent is False and re.match(entry, email):
-                    sent = True
-                    okmails.append(email)
-            if not sent:
-                print "Mail not sent to " + ", " + email + ", not in whitelist"
+        #todo: not tested
+        okmails.append(settings.DEBUG_EMAIL_ADDRESS)
+        message =  ',<br/>'.join(to_emails) + message
 
     if len(okmails) > 0:
         for amail in okmails:
@@ -42,20 +47,19 @@ def send_mail_multi(email_multi_message):
     print 'send_mail_multi from ' + SENDER_EMAIL_ADDRESS
     okmails = []
     if settings.DEBUG is False:
-        okmails = email_multi_message.to
+        pass
+        #todo re-enable when stable.... okmails = email_multi_message.to
+        #     also below!
     else:
-        for email in email_multi_message.to:
-            sent = False
-            for entry in settings.WHITELIST_EMAILS:
-                if sent is False and re.match(entry, email):
-                    sent = True
-                    okmails.append(email)
-            if not sent:
-                print "Mail not sent to " + email + ", not in whitelist"
-
+        #todo improve, dirty hack to modify meassage, by just duplicating it...
+        okmails.append(settings.DEBUG_EMAIL_ADDRESS)
+        modif_message = email_multi_message.alternatives[0][0] + '<br/>Intended for: <br/>'
+        modif_message += u'<br/>-'.join(email_multi_message.to)
+        email_multi_message.attach_alternative(modif_message, "text/html")
+        
     if len(okmails) > 0:
         email_multi_message.to = []
-        email_multi_message.bcc = okmails
+        email_multi_message.bcc = [settings.DEBUG_EMAIL_ADDRESS]
         res = email_multi_message.send()
         # todo: log errors
         print "res = ", res

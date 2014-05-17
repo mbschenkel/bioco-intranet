@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Django settings for ortoloco project.
 import os
 import sys
@@ -289,6 +291,11 @@ else:
     #on openshift:
     sys.path.append(os.environ.get("OPENSHIFT_DATA_DIR"))
 
+# This is a custom variable to replace ortoloco with bioco in templates and co.
+SITE_NAME = u'biocò'
+SITE_URL  = u'bioco.ch'
+    
+
 """ 
 Note: Currently settings_local.py should have the following content.
 
@@ -298,6 +305,7 @@ ADMINS = (
 )
 SECRET_KEY = 'a long random string. Shhh keep it secret!'
 EMAIL_HOST_PASSWORD = '...'
+DEBUG_EMAIL_ADDRESS = '...'
 """
 
 from settings_local import *
