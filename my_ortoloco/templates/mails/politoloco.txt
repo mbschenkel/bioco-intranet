@@ -1,5 +1,6 @@
+{% load from_settings %}
 {% block content %}
 {{ content }}
 {% endblock %}
 ============
-weitere Infos: http://ortoloco.ch
+weitere Infos: http://{% settings_value "SITE_URL" %}

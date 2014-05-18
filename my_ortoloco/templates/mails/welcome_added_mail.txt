@@ -1,13 +1,14 @@
 {% extends "mails/email.txt" %}
+{% load from_settings %}
 {% block content %}
-Wir freuen uns, dich bei ortoloco begrüssen zu dürfen. Soeben hat dich '{{name}}' zu ihrem/seinem Gemüsebo hinzugefügt und für dich {{ anteilsscheine }} Anteilschein(e) erworben. Wenn du damit einverstanden bist, ortoloco-GenossenschafterIn zu werden und die Statuten und das Betriebsreglement gelesen hast, dann klicke bitte auf den Bestätigungslink:
+Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen. Soeben hat dich '{{name}}' zu ihrem/seinem Gemüsebo hinzugefügt und für dich {{ anteilsscheine }} Anteilschein(e) erworben. Wenn du damit einverstanden bist, {% settings_value "SITE_NAME" %}-GenossenschafterIn zu werden und die Statuten und das Betriebsreglement gelesen hast, dann klicke bitte auf den Bestätigungslink:
 Bestätigungslink: {{ serverurl }}/my/bestaetigung/{{ hash }}
 
-Statuten: {{ serverurl }}/static/others/131129_Statuten_ortoloco.pdf
-Betriebsreglement: {{ serverurl }}/static/others/131129_Betriebsreglement_ortoloco.pdf
+Statuten: {{ serverurl }}{% settings_value "LINK_REL_STATUTEN" %}
+Betriebsreglement: {{ serverurl }}{% settings_value "LINK_REL_REGLEMENT" %}
 
 
-Unter my.ortoloco.ch kannst du dich ab sofort für Jobs anmelden und vieles mehr.
+Unter {% settings_value "SITE_my_NAME" %} kannst du dich ab sofort für Jobs anmelden und vieles mehr.
 
 Email: {{ username }}
 Passwort: {{ password }}
@@ -15,8 +16,8 @@ Bitte setze dir hier gleich ein neues Passwort:
 {{serverurl}}/my/passwort
 
 Weitere Infos wirst du bald erhalten. Bei Fragen oder Unklarheiten einfach melden:
-info@ortoloco.ch
+{% settings_value "EMAIL_HOST_USER" %}
 
 Herzlich grüsst,
-die ortoloco-Betriebsgruppe
+Deine {% settings_value "SITE_NAME" %}-Betriebsgruppe
 {% endblock %}

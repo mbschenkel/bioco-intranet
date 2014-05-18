@@ -1,8 +1,9 @@
 {% extends "myhome.html" %}
-
+{% load from_settings %}
 
 {% block message %}
     <div class="alert alert-success">
-        Herzlich willkommen bei ortoloco! Du wirst bald von der Betriebsgruppe weitere Infos erhalten.
+        Herzlich willkommen bei {% settings_value "SITE_NAME" %}! 
+        Du wirst bald von der Betriebsgruppe weitere Infos erhalten.
     </div><br/><br/>
 {% endblock %}

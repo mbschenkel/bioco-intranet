@@ -1,9 +1,10 @@
 {% extends "mybase.html" %}
-
+{% load from_settings %}
+ 
 {% block allcontent %}
     <div class="span2"></div>
     <div class="span8">
-        <h3>Werde ein ortoloco - Personalien</h3>
+        <h3>Werde ein {% settings_value "SITE_NAME" %} Mitglied - Personalien</h3>
         <br/>
 
         <form action="" method="post" class="form-horizontal">
@@ -103,7 +104,7 @@
                     <label class="checkbox">
                         {{ locoform.agb }}
                         <input type="checkbox" name="agb" id="agb" {% if agbchecked %}checked="checked"{% endif %}>
-                        Ich habe <a target="_blank" href="/static/others/131129_Statuten_ortoloco.pdf">die Statuten</a> und <a target="_blank" href="/static/others/131129_Betriebsreglement_ortoloco.pdf">das Betriebsreglement</a> gelesen und erkläre meinen Willen, der "Genossenschaft ortoloco - Die regionale Gartenkooperative"
+                        Ich habe <a target="_blank" href="{% settings_value "LINK_REL_STATUTEN" %}">die Statuten</a> und <a target="_blank" href="{% settings_value "LINK_REL_REGLEMENT" %}">das Betriebsreglement</a> gelesen und erkläre meinen Willen, der "Genossenschaft {% settings_value "SITE_NAME" %}"
                         beizutreten. Hiermit beantrage ich meine Aufnahme.
 
                         {% if agberror %}

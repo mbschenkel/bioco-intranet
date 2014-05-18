@@ -1,15 +1,16 @@
 {% extends "mails/email.html" %}
+{% load from_settings %}
 {% block content %}
-    Wir freuen uns, dich bei ortoloco begrüssen zu dürfen.
+    Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen.
     <br/><br/>
-    Unter <a href="http://my.ortoloco.ch">my.ortoloco.ch</a> kannst du dich ab sofort für Arbeitseinsätze anmelden und vieles mehr.
+    Unter <a href="http://{% settings_value "SITE_MY_URL" %}">{% settings_value "SITE_MY_URL" %}</a> kannst du dich ab sofort für Arbeitseinsätze anmelden und vieles mehr.
     <br/><br/>
     Email: {{ username }}<br/>
     Passwort: {{ password }} (bitte setze dir <a href="{{ serverurl }}/my/passwort">hier</a> gleich ein neues Passwort)
     <br/><br/>
     Weitere Infos wirst du bald erhalten. Bei Fragen oder Unklarheiten einfach melden: <br/>
-    <a href="mailto:info@ortoloco.ch">info@ortoloco.ch</a>
+    <a href="mailto:{% settings_value "EMAIL_HOST_USER" %}">{% settings_value "EMAIL_HOST_USER" %}</a>
     <br/><br/>
     Herzlich grüsst,<br/>
-    die ortoloco-Betriebsgruppe
+    Die {% settings_value "SITE_NAME" %}-Betriebsgruppe
 {% endblock %}

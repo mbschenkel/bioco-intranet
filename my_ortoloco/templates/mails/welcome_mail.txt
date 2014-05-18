@@ -1,8 +1,9 @@
-{% extends "mails/email.txt" %}
+{% extends "mails/email.txt" 
+{% load from_settings %}
 {% block content %}
-Wir freuen uns, dich bei ortoloco begrüssen zu dürfen.
+Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen.
 
-Unter my.ortoloco.ch kannst du dich ab sofort für Jobs anmelden und vieles mehr.
+Unter {% settings_value "SITE_MY_URL" %} kannst du dich ab sofort für Jobs anmelden und vieles mehr.
 
 Email: {{ username }}
 Passwort: {{ password }}
@@ -10,8 +11,8 @@ Bitte setze dir hier gleich ein neues Passwort:
 {{serverurl}}/my/passwort
 
 Weitere Infos wirst du bald erhalten. Bei Fragen oder Unklarheiten einfach melden:
-info@ortoloco.ch
+{% settings_value "EMAIL_HOST_USER" %}
 
 Herzlich grüsst,
-die ortoloco-Betriebsgruppe
+Die {% settings_value "SITE_NAME" %}-Betriebsgruppe
 {% endblock %}

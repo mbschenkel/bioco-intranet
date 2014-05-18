@@ -64,7 +64,7 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 
 .ortoloco {
     margin-top: 80px;
-    background: url(/static/img/ortoloco_full.gif) bottom no-repeat;
+    background: url(/static/img/banner_full.png) bottom no-repeat;
     padding-bottom: 400px;
 }
 
@@ -82,12 +82,25 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 }
 
 .ortoloco.home .ortoloco_gemuese {
-    background: url(/static/img/ortoloco_home_small.gif) right bottom no-repeat;
+    background: url(/static/img/banner_full.png) bottom no-repeat;
+    position: absolute;
+    bottom: 0px;
+    left: -140px;
+    width: 1400px;
+    height: 350px;
+    z-index: 0;
+    padding-bottom: 500px;
+    
+    /*
+    padding-bottom: 400px;
+    margin-top: -280px;;
+    
     position: absolute;
     bottom: -5px;
     right: 70px;
     width: 623px;
     height: 600px;
+    */
 }
 
 .container .erbsetop {
@@ -95,8 +108,8 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
     left: 0;
     top: 20px;
     right: 0;
-    background-image: url(/static/img/erbse_x.png);
-    height: 20px;
+    background-image: url(/static/img/banner_horiz.png);
+    height: 32px;
     opacity: 1.0;
 }
 
@@ -104,9 +117,9 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
     position: absolute;
     left: 0px;
     top: 36px;
-    background-image: url(/static/img/erbse_y.png);
+    background-image: url(/static/img/banner_vert.png);
     bottom: 0px;
-    width: 20px;
+    width: 32px;
     opacity: 1.0;
 }
 
@@ -114,9 +127,9 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
     position: absolute;
     right: -5px;
     top: 36px;
-    background-image: url(/static/img/erbse_y.png);
+    background-image: url(/static/img/banner_vert.png);
     bottom: 0px;
-    width: 20px;
+    width: 32px;
     opacity: 1.0;
 }
 
@@ -174,8 +187,9 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 
 .myortoloco_link {
     position: absolute;
+    z-index: 1;
     right: 25px;
-    bottom: 80px;
+    bottom: 180px;
     width: 19px;
     height: 140px;
     display: inline-block;

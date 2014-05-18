@@ -73,9 +73,9 @@ def send_new_loco_in_taetigkeitsbereich_to_bg(area, loco):
 
 
 def send_contact_form(subject, message, loco, copy_to_loco):
-    send_mail('Anfrage per my.ortoloco: ' + subject, message, loco.email, [SENDER_EMAIL_ADDRESS])
+    send_mail('Anfrage per ' + settings.SITE_MY_URL + ': ' + subject, message, loco.email, [SENDER_EMAIL_ADDRESS])
     if copy_to_loco:
-        send_mail('Anfrage per my.ortoloco: ' + subject, message, loco.email, [loco.email])
+        send_mail('Anfrage per ' + settings.SITE_MY_URL + ': ' + subject, message, loco.email, [loco.email])
 
 
 def send_welcome_mail(email, password, server):
@@ -84,7 +84,7 @@ def send_welcome_mail(email, password, server):
 
     # reset password so we can send it to him
     d = Context({
-        'subject': 'Willkommen bei ortoloco',
+        'subject': 'Willkommen bei ' + settings.SITE_NAME,
         'username': email,
         'password': password,
         'serverurl': "http://" + server
@@ -93,7 +93,7 @@ def send_welcome_mail(email, password, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, SENDER_EMAIL_ADDRESS, [email])
+    msg = EmailMultiAlternatives('Willkommen bei ' + settings.SITE_NAME, text_content, SENDER_EMAIL_ADDRESS, [email])
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -104,7 +104,7 @@ def send_been_added_to_abo(email, password, name, anteilsscheine, hash, server):
 
     # reset password so we can send it to him
     d = Context({
-        'subject': 'Willkommen bei ortoloco',
+        'subject': 'Willkommen bei ' + settings.SITE_NAME,
         'username': email,
         'name': name,
         'password': password,
@@ -116,7 +116,7 @@ def send_been_added_to_abo(email, password, name, anteilsscheine, hash, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives('Willkommen bei ortoloco', text_content, SENDER_EMAIL_ADDRESS, [email])
+    msg = EmailMultiAlternatives('Willkommen bei ' + settings.SITE_NAME, text_content, SENDER_EMAIL_ADDRESS, [email])
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)
 
@@ -170,7 +170,7 @@ def send_politoloco_mail(subject, message, text_message, emails, server):
 def send_mail_password_reset(email, password, server):
     plaintext = get_template('mails/password_reset_mail.txt')
     htmly = get_template('mails/password_reset_mail.html')
-    subject = 'Dein neues ortoloco Passwort'
+    subject = 'Dein neues ' + settings.SITE_NAME + ' Passwort'
 
     htmld = Context({
         'subject': subject,
@@ -206,6 +206,6 @@ def send_job_reminder(emails, job, participants, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives("ortoloco - Job-Erinnerung", text_content, SENDER_EMAIL_ADDRESS, emails)
+    msg = EmailMultiAlternatives(settings.SITE_NAME + " - Job-Erinnerung", text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)

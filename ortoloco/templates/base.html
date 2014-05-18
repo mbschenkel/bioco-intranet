@@ -21,7 +21,7 @@
     <div class="ortoloco {% if menu.home == 'active' %} home {% endif %}">
         <div class="row">
             <div class="span4">
-                <a href="/aktuelles"><span class="logo"></span></a>
+                <p><a href="/aktuelles"><h1>{% settings_value "SITE_NAME" %}</h1></a></p>
                 <ul class="nav nav-pills nav-stacked main-menu">
                     <li class="{{ menu.about }}">
                         <a href="/idee">Das ist {% settings_value "SITE_NAME" %}</a>
