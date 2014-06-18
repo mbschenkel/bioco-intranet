@@ -6,6 +6,7 @@
         <div class="alert">Du hast noch kein Abo<br/>Du möchtest eines? Melde dich hier an: <a href="/my/aboerstellen">Abo erstellen</a></div>
     {% else %}
         <dl class="dl-horizontal">
+            <div class="alert alert-danger"><b>Achtung:</b> Wir haben noch nicht alle Daten hier nachgetragen und bitten um etwas Geduld.</div>
             <dt>Abogrösse</dt>
             <dd>
                 {% if loco.abo.groesse == 1 %}
@@ -13,9 +14,6 @@
                 {% endif %}
                 {% if loco.abo.groesse == 2 %}
                     Grosses Abo
-                {% endif %}
-                {% if loco.abo.groesse == 10 %}
-                    Haus Abo
                 {% endif %}
             </dd>
             <dt>&nbsp;</dt>

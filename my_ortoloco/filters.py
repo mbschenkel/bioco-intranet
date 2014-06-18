@@ -76,7 +76,6 @@ Filter("Nicht Anteilscheinbesitzer",
 
 Filter("kleines Abo", lambda loco: loco.abo.kleine_abos())
 Filter("grosses Abo", lambda loco: loco.abo.grosse_abos())
-Filter("Hausabo", lambda loco: loco.abo.haus_abos())
 
 
 FilterGen(lambda za: u"Zusatzabo {0}".format(za.name),

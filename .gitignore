@@ -9,3 +9,6 @@ static/admin/*
 static/medias/photologue/temp
 settings_local.py
 *.bak
+*~
+*.sqlite
+static_collected

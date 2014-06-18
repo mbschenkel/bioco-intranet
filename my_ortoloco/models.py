@@ -8,6 +8,7 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 import time
 from django.db.models import Q
+from datetime import date 
 
 import model_audit
 import helpers
@@ -294,6 +295,7 @@ class JobTyp(models.Model):
     bereich = models.ForeignKey(Taetigkeitsbereich, on_delete=models.PROTECT)
     duration = models.PositiveIntegerField("Dauer in Stunden")
     location = models.CharField("Ort", max_length=100, default="")
+    car_needed = models.BooleanField("Auto benötigt", default=False)
 
     def __unicode__(self):
         return u'%s - %s' % (self.bereich, self.get_name())
@@ -317,7 +319,6 @@ class Job(models.Model):
     def __unicode__(self):
         return u'Job #%s' % (self.id)
 
-
     def wochentag(self):
         weekday = helpers.weekdays[self.time.isoweekday()]
         return weekday[:2]
@@ -333,7 +334,64 @@ class Job(models.Model):
 
     def besetzte_plaetze(self):
         return self.boehnli_set.count()
-
+    
+    def needs_car(self):
+        return self.typ.car_needed
+    
+    def status_class(self):
+        boehnlis = Boehnli.objects.filter(job_id=self.id)
+        participants = boehnlis.count()
+        if participants >= self.slots:
+            return 'full'
+        to_be_filled = self.slots - participants
+        time_left = self.time - date.today()
+        days_left = time_left.days
+        if days_left <= to_be_filled:
+            return 'urgent'
+        return ''
+        
+    def get_car_status(self):
+        text = self.get_car_status_text()
+        needed = self.typ.car_needed
+        if needed:
+            available = Boehnli.objects.filter(job_id=self.id,with_car=True)
+            if available.count():
+                return '<img src="/static/img/auto_green.png" width="32" title="%s" />' % text
+            else:
+                return '<img src="/static/img/auto_red.png" width="32" title="%s" />' % text
+        else:
+            return '<img src="/static/img/auto_grey.png" width="32" title="%s" />' % text
+        
+    def get_car_status_text(self):
+        needed = self.typ.car_needed
+        if needed:
+            available = Boehnli.objects.filter(job_id=self.id,with_car=True)
+            if available.count():
+                return 'Ein Auto ist bereits verfügbar'
+            else:
+                return 'Ein Auto wird noch benötigt'
+        else:
+            return 'Kein Auto benötigt'
+        
+    def get_status_bohne_bar(self):
+        boehnlis = Boehnli.objects.filter(job_id=self.id)
+        participants = boehnlis.count()
+        pctfull = participants * 100 / self.slots
+        status = self.get_status_bohne_text()
+        
+        result = ''
+        for i in range(self.slots):
+            if participants > i:
+                result += '<img title="{status}" src="/static/img/erbse_voll.png"/>'.format(status=status)
+            else:
+                result += '<img title="{status}" src="/static/img/erbse_leer.png"/>'.format(status=status)
+        return result
+    
+    def get_status_bohne_text(self):
+        boehnlis = Boehnli.objects.filter(job_id=self.id)
+        participants = boehnlis.count()
+        return "%d von %d gebucht" % (participants, self.slots)
+        
     def get_status_bohne(self):
         boehnlis = Boehnli.objects.filter(job_id=self.id)
         participants = boehnlis.count()
@@ -358,6 +416,7 @@ class Boehnli(models.Model):
     """
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
     loco = models.ForeignKey(Loco, on_delete=models.PROTECT)
+    with_car = models.BooleanField("Auto verfügbar", default=False)
 
     def __unicode__(self):
         return u'Boehnli #%s' % self.id

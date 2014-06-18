@@ -3,7 +3,11 @@
 {% block content %}
     <h3>Deine vergangenen Einsätze</h3>
 
-    <div>Achtung, es werden nur Einsätze von diesem Kalenderjahr angezeigt.</div><br/>
+    <div class="alert alert-danger"><b>Achtung:</b> Einsätze, die vor der Einführung der neuen Intranet-Seite geleistet wurden, gingen nicht vergessen. Wir haben sie aber hier noch nicht erfasst.</div>
+    <!--
+    <div>Achtung, es werden nur Einsätze von diesem Kalenderjahr angezeigt.</div>
+    -->
+    <br/>
     <ul class="unstyled">
         {% for bohne in bohnen %}
             <li><a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a><br/>

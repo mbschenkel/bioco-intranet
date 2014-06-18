@@ -13,7 +13,9 @@ django_cron.autodiscover()
 
 
 urlpatterns = patterns('',
-	url('^$', 'static_ortoloco.views.home'),
+	#with a start page:
+    #url('^$', 'static_ortoloco.views.home'),
+	url('^$', 'my_ortoloco.views.my_home'),
 	url('^aktuelles$', 'static_ortoloco.views.home'),
 	url('^idee$', 'static_ortoloco.views.about'),
 	url('^portrait$', 'static_ortoloco.views.portrait'),

@@ -314,6 +314,9 @@ class LocoAdmin(admin.ModelAdmin):
 
     impersonate_job.short_description = "Loco imitieren (impersonate)..."
 
+class JobTypAdmin(admin.ModelAdmin):
+    list_display = ["name", "displayed_name", "bereich", "location", "duration", "car_needed" ]
+
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(ExtraAboType)
@@ -329,5 +332,5 @@ admin.site.register(Anteilschein, AnteilscheinAdmin)
 # Not adding this because it can and should be edited from Job, 
 # where integrity constraints are checked
 #admin.site.register(Boehnli, BoehnliAdmin)
-admin.site.register(JobTyp)
+admin.site.register(JobTyp, JobTypAdmin)
 admin.site.register(Job, JobAdmin)

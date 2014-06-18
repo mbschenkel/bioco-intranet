@@ -1,3 +1,4 @@
+<!-- Will use PISA to generate PDF, refer to http://xhtml2pdf.appspot.com/static/pisa-en.html -->
 <html>
 <head>
     <title>Depotlisten</title>
@@ -5,22 +6,22 @@
     <style>
         @page {
             size: a4 portrait;
-                @frame content_frame {
-        left: 50pt;
-            width: 512pt;
-            top: 90pt;
-            height: 632pt;
-        }
-                @frame header_frame {
-        -pdf-frame-content:header_content;
-            left: 50pt;
-            width: 512pt;
-            top: 50pt;
-            height: 40pt;
-            text-align: center;
-        }
-
+            @frame content_frame {
+                left: 50pt;
+                width: 512pt;
+                top: 90pt;
+                height: 632pt;
             }
+            
+            @frame header_frame {
+                -pdf-frame-content:header_content;
+                left: 50pt;
+                width: 512pt;
+                top: 50pt;
+                height: 40pt;
+                text-align: center;
+            }
+        }
 
         .page-break {
             page-break-after: always;
@@ -63,7 +64,6 @@
 </head>
 
 <body>
-
 <div id="header_content">
     Gedruckt am {{ datum |date:"d.m.Y" }}
 </div>
@@ -78,35 +78,45 @@
         </tr>
         <tr>
             <td></td>
-            <td class="small left-border bottom-border">klein</td>
-            <td class="small bottom-border right-border">gross</td>
-            <td class="small bottom-border right-border">Einheiten</td>
+            <td class="small left-border bottom-border" style="text-align: right;">klein</td>
+            <td class="small bottom-border right-border" style="text-align: right;">gross</td>
+            <td class="small bottom-border right-border" style="text-align: right;">Einheiten</td>
         </tr>
         <tr>
             <td>Dienstag</td>
-            <td style="text-align:right">{{ overview.Dienstag.small_abo }}</td>
-            <td style="text-align:right">{{ overview.Dienstag.big_abo }}</td>
-            <td style="text-align:right">{{ overview.Dienstag.entities }}</td>
+            <td style="text-align: right;">{{ overview.Dienstag.small_abo }}</td>
+            <td style="text-align: right;">{{ overview.Dienstag.big_abo }}</td>
+            <td style="text-align: right;">{{ overview.Dienstag.entities }}</td>
         </tr>
         <tr>
             <td>Freitag</td>
-            <td style="text-align:right">{{ overview.Freitag.small_abo }}</td>
-            <td style="text-align:right">{{ overview.Freitag.big_abo }}</td>
-            <td style="text-align:right">{{ overview.Freitag.entities }}</td>
+            <td style="text-align: right;">{{ overview.Freitag.small_abo }}</td>
+            <td style="text-align: right;">{{ overview.Freitag.big_abo }}</td>
+            <td style="text-align: right;">{{ overview.Freitag.entities }}</td>
         </tr>
         <tr>
             <td><b>Di + Fr</b></td>
-            <td style="text-align:right"><b>{{ overview.all.small_abo }}</b></td>
-            <td style="text-align:right"><b>{{ overview.all.big_abo }}</b></td>
-            <td style="text-align:right"><b>{{ overview.all.entities }}</b></td>
+            <td style="text-align: right;"><b>{{ overview.all.small_abo }}</b></td>
+            <td style="text-align: right;"><b>{{ overview.all.big_abo }}</b></td>
+            <td style="text-align: right;"><b>{{ overview.all.entities }}</b></td>
         </tr>
     </table>
+    <img src="http://bioco.ch/wp-content/uploads/2014/01/cropped-banner-v1b3.png" style="width: 512pt;">
     <div class="page-break"></div>
 </div>
 {% endfor %}
 {% for depot in depots %}
     <h2 style="font-size: 18px;">{{ depot.wochentag }} - {{ depot.name }}</h2>
-    <h3 style="font-size: 16px;">{{ depot.addr_street }}, {{ depot.addr_zipcode }} {{ depot.addr_location }}</h3>
+    <h3 style="font-size: 14px;">{{ depot.addr_street }}, {{ depot.addr_zipcode }} {{ depot.addr_location }}</h3>
+    
+    <div>
+        <!-- TODO parametrize map-key and geisshof coordinates -->
+        <!-- For documentation see https://developers.google.com/maps/documentation/staticmaps/ -->
+        <img src="http://maps.googleapis.com/maps/api/staticmap?center={{ depot.latitude }},{{ depot.longitude }}&zoom=11&size=350x200&maptype=roadmap&markers=color:red%7Clabel:D%7C{{ depot.latitude }},{{ depot.longitude }}&markers=color:green%7Clabel:G%7C47.4741684,8.2456318&sensor=false&scale=2&key=AIzaSyA5FRtvWSc9O0u8VjKuWOUNF3XvKU3-H4U" style="width: 250pt;">
+        <span style="width:1.99pt">&nbsp;&nbsp;</span>
+        <img src="http://maps.googleapis.com/maps/api/staticmap?center={{ depot.latitude }},{{ depot.longitude }}&zoom=14&size=350x200&maptype=roadmap&markers=color:red%7Clabel:D%7C{{ depot.latitude }},{{ depot.longitude }}&markers=color:green%7Clabel:G%7C47.4741684,8.2456318&sensor=false&scale=2&key=AIzaSyA5FRtvWSc9O0u8VjKuWOUNF3XvKU3-H4U" style="width: 250pt; text-align: right;">
+    </div>
+    <br/>
 
     <table cellpadding="5" cellspacing="0" style="width:100%; margin-bottom:5px;" class="bottom-border">
         <tr>
@@ -124,8 +134,8 @@
             <td class="small bottom-border right-border"></td>
         </tr>
         <tr>
-            <td style="width:180px;"></td>
-            <td style="width:180px; text-align:right;">TOTAL</td>
+            <td style="width:220px;"></td>
+            <td style="width:220px; text-align:right;">TOTAL</td>
             <td style="width:40px; text-align:right;">{{ depot.small_abos }}</td>
             <td style="width:40px; text-align:right;">{{ depot.big_abos }}</td>
             <td style="width:60px;"></td>

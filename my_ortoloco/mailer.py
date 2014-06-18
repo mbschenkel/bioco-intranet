@@ -36,7 +36,7 @@ def send_mail(subject, message, from_email, to_emails):
         for amail in okmails:
             res = mail.send_mail(subject, message, from_email, [amail], fail_silently=False)
             # todo: log errors
-            print 'sending mail from ' + from_email + ' to ' + email 
+            print 'sending mail from ' + from_email + ' to ' + amail 
             print ' res= ', res
         print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
 

@@ -49,6 +49,7 @@
 }
 
 #jobs th, #filter-locos th {
+    text-align: left;
     background-color: #4c9434;
     color: white;
 }

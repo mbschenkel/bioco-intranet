@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from my_ortoloco.models import *
 
-
 jobtyps = [ 
 {
 'name':            u'Ernten',
 'displayed_name':  None,
 'duration':        4,
-'bereich':         u'ernten',
+'bereich':         u'Ernten und Verteilen',
 'location':        u'Acker',
 'description':     u'''Wir ernten unser Gemüse und erledigen sonstige Arbeiten. Von 13-17h. Gute Schuhe und wetterfeste Kleidung anziehen.''',
 },
+]
 
-
-
+"""
+TODO Adjust for bioco
 {
 'name':            u'Abpackkoordination',
 'displayed_name':  None,
@@ -121,11 +121,16 @@ jobtyps = [
 'location':        u'Fondli-Hof',
 'description':     u'Reife Himbeeren ablesen und einfrieren. Zeit am vereinbarten Tag frei wählbar, dauert ca. 1 Stunde. Bei Fragen melde dich frühzeitig bei François: 079 723 02 61',
 },
-]
+"""
 
 
 def create_jobtyps():
+    print '***************************************************************'
+    print 'Creating JobTypes'
+    print '***************************************************************'
+        
     for d in jobtyps:
+        print 'adding bereich:', d["bereich"]
         d["bereich"] = Taetigkeitsbereich.objects.get(name=d["bereich"])
         obj = JobTyp(**d)
         obj.save()

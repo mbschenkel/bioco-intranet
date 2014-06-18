@@ -12,3 +12,13 @@ def settings_value(name):
         return getattr(settings, name, "")
     return '[not permitted]'
  
+@register.simple_tag
+def boehnli_progress(participants, slots):
+    title = "%d von %d gebucht" % (len(participants), len(slots))
+    text = ""
+    for i in slots:
+        if i < len(participants):
+            text += '<img class="jobstatus" src="/static/img/erbse_voll.png" title="%s"/> ' % title
+        else:
+            text += '<img class="jobstatus" src="/static/img/erbse_leer.png" title="%s"/> ' % title
+    return text + '&nbsp;' + title

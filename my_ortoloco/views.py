@@ -83,6 +83,8 @@ def my_job(request, job_id):
     job = get_object_or_404(Job, id=int(job_id))
 
     def check_int(s):
+        if not s:
+            return False
         if s[0] in ('-', '+'):
             return s[1:].isdigit()
         return s.isdigit()
@@ -90,14 +92,20 @@ def my_job(request, job_id):
     error = None
     if request.method == 'POST':
         num = request.POST.get("jobs")
+        with_car = request.POST.get("with_car", False)
         my_bohnen = job.boehnli_set.all().filter(loco=loco)
-        if check_int(num) and 0 < int(num) <= job.freie_plaetze():
+        if not check_int(num):
+            # assume the user wanted to subscribe anyway
+            num = 1
+        if 0 >= int(num):
+            error = "Ungueltige Anzahl Einschreibungen %s (mindestens 1)" % num
+        elif int(num) > job.freie_plaetze():
+            error = "Zu hohe Anzahl Anmeldungen oder der Einsatz ist bereits ausgebucht"
+        else:
             # adding participants
             add = int(num)
             for i in range(add):
-                bohne = Boehnli.objects.create(loco=loco, job=job)
-        else:
-            error = "Ungueltige Anzahl Einschreibungen"
+                bohne = Boehnli.objects.create(loco=loco, job=job, with_car=with_car)
 
     participants = []
     for bohne in Boehnli.objects.filter(job_id=job.id):
@@ -444,6 +452,7 @@ def my_add_loco(request, abo_id):
     scheine = 1
     userexists = False
     if request.method == 'POST':
+        adding_loco = request.user.loco
         locoform = ProfileLocoForm(request.POST)
         if User.objects.filter(email=request.POST.get('email')).__len__() > 0:
             userexists = True
@@ -479,7 +488,7 @@ def my_add_loco(request, abo_id):
                 anteilschein = Anteilschein(loco=loco, paid=False)
                 anteilschein.save()
 
-            send_been_added_to_abo(loco.email, pw, loco.get_name(), scheine, hashlib.sha1(locoform.cleaned_data['email'] + str(abo_id)).hexdigest(), request.META["HTTP_HOST"])
+            send_been_added_to_abo(loco.email, pw, adding_loco.get_name(), scheine, hashlib.sha1(locoform.cleaned_data['email'] + str(abo_id)).hexdigest(), request.META["HTTP_HOST"])
 
             loco.save()
             if request.GET.get("return"):
@@ -628,7 +637,7 @@ def my_contact(request):
 
     renderdict = getBohnenDict(request)
     renderdict.update({
-        'usernameAndEmail': loco.first_name + " " + loco.last_name + "<" + loco.email + ">"
+        'usernameAndEmail': loco.first_name + " " + loco.last_name + " <" + loco.email + ">"
     })
     return render(request, "my_contact.html", renderdict)
 
@@ -743,7 +752,8 @@ def my_depotlisten(request):
 def logout_view(request):
     auth.logout(request)
     # Redirect to a success page.
-    return HttpResponseRedirect("/aktuelles")
+    return HttpResponseRedirect("/my/home")
+    # return HttpResponseRedirect("/aktuelles")
 
 
 def alldepots_list(request, name):
@@ -812,10 +822,11 @@ def my_createlocoforsuperuserifnotexist(request):
 
 @staff_member_required
 def my_startmigration(request):
+    #TODO remove
     f = StringIO()
     with Swapstd(f):
-        call_command('clean_db')
-        call_command('import_old_db', request.GET.get("username"), request.GET.get("password"))
+        #call_command('clean_db')
+        #call_command('import_old_db', request.GET.get("username"), request.GET.get("password"))
     return HttpResponse(f.getvalue(), content_type="text/plain")
 
 

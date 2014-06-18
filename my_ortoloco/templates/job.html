@@ -1,7 +1,8 @@
 {% extends "mybase.html" %}
+{% load from_settings %}
 
 {% block content %}
-    <h3>{{ job.typ.name }}</h3>
+    <h3>Job {{ job.typ.name }}</h3>
     <div class="row">
         <div class="span3">Zeitpunkt:</div>
         <div class="span5">{{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}</div>
@@ -10,14 +11,13 @@
     <div class="row">
         <div class="span3">Status:</div>
         <div class="span5">
-            {% for i in slotrange %}
-                {% if i < participants|length %}
-                    <img class="jobstatus" src="/static/img/erbse_voll.png" title="{{ participants|length }} von {{ job.slots }} gebucht"/>
-                {% else %}
-                    <img class="jobstatus" src="/static/img/erbse_leer.png" title="{{ participants|length }} von {{ job.slots }} gebucht"/>
-                {% endif %}
-            {% endfor %}
-            </div>
+            {% boehnli_progress participants slotrange %}
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="span3">Auto:</div>
+        <div class="span5">{{ job.get_car_status|safe }} {{ job.get_car_status_text }}</div>
     </div>
     <br/>
     <div class="row">
@@ -49,7 +49,12 @@
         <div class="span5">
             <form action="" method="POST" class="form-inline">
                 {% csrf_token %}
-                 <input type="text" class="span1" name="jobs"/> <button type="submit" class="btn btn-success">Ich schreib mich ein</button>
+                <input type="text" class="span1" name="jobs"/> 
+                {% if job.needs_car %}
+                    <input type="checkbox" class="span1" name="with_car" id="with_car"/> 
+                    <label for="with_car">Mit Auto</label>
+                {% endif %}
+                <button type="submit" class="btn btn-success">Ich schreib mich ein</button>
             </form>
             <div class="help-block">Anzahl Personen eintragen, die zum Einsatz kommen, z.B: 1, 2 oder 3</div>
         </div>
