@@ -1,4 +1,4 @@
-{% extends "mails/email.txt" 
+{% extends "mails/email.txt" %}
 {% load from_settings %}
 {% block content %}
 Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen.
