@@ -825,6 +825,7 @@ def my_startmigration(request):
     #TODO remove
     f = StringIO()
     with Swapstd(f):
+        pass
         #call_command('clean_db')
         #call_command('import_old_db', request.GET.get("username"), request.GET.get("password"))
     return HttpResponse(f.getvalue(), content_type="text/plain")
