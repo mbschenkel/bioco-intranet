@@ -27,7 +27,7 @@
     <br/>
     <div class="row">
         <div class="span3">Beschreibung:</div>
-        <div class="span5">{{ job.typ.description }}</div>
+        <div class="span5">{{ job.typ.description|safe }}</div>
     </div>
     <br/>
     <div class="row">
@@ -35,7 +35,13 @@
         <div class="span5">
             <ul>
                 {% for participant in participants %}
-                    <li>{{ participant.first_name }} {{ participant.last_name }}</li>
+                    <li>
+                    {% if participant.pk == loco_pk %}
+                        <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
+                    {% else %}
+                        {{ participant.first_name }} {{ participant.last_name }}
+                    {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         </div>

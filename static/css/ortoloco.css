@@ -64,7 +64,7 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 
 .ortoloco {
     margin-top: 80px;
-    background: url(/static/img/banner_full.png) bottom no-repeat;
+    /* background: url(/static/img/banner_full.png) bottom no-repeat; */
     padding-bottom: 400px;
 }
 
@@ -82,7 +82,7 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 }
 
 .ortoloco.home .ortoloco_gemuese {
-    background: url(/static/img/banner_full.png) bottom no-repeat;
+    /* background: url(/static/img/banner_full.png) bottom no-repeat; */
     position: absolute;
     bottom: 0px;
     left: -140px;

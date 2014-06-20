@@ -13,11 +13,12 @@
 </head>
 <body>
 <div class="container">
+    <!--
     <div class="erbsetop"></div>
     <div class="erbseleft"></div>
     <div class="erbseright"></div>
     <div class="erbsebottom"></div>
-
+    -->
     {% if user.is_impersonate %}
         <div class="row impersonate">
             <div class="span12">
@@ -54,6 +55,9 @@
                     {% if staff_user %}
                         <li>
                             <hr>
+                            <strong>Admin:</strong>
+                        </li>
+                        <li>
                             <a href="/my/mails">Mails verschicken</a>
                         </li>
                         <li>
@@ -68,7 +72,8 @@
                             {% if not staff_user %}
                                 <hr>
                             {% endif %}
-                            <a href="/my/politoloco">Newsletter versenden</a>
+                            <!-- <a href="/my/politoloco">Newsletter versenden</a> -->
+                            <a href="#" style="color: grey;" title="Noch nicht verfügbar">Newsletter versenden</a>
                         </li>
                     {% endif %}
                     <li class="{{ menu.personalInfo }}">
@@ -95,7 +100,7 @@
                 <hr>
                 <div class="jobs">
                     {% block next_jobs %}
-                        <h5>Nächste Einsätze</h5>
+                        <h5>Deine nächsten Einsätze</h5>
                         {% if next_jobs|length > 0 %}
                             <ul class="unstyled next-jobs">
                                 {% for job in next_jobs %}

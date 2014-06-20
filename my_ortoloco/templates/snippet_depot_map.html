@@ -18,9 +18,6 @@
             google.maps.event.addListener(depot, 'click', function () {
                 infoWin.setContent("<strong>" + name + "</strong><br/>" + addr + "<br/>" + zip + " " + city);
                 infoWin.open(map, depot);
-                /*new google.maps.InfoWindow({
-                    content: "<strong>" + name + "</strong><br/>" + addr + "<br/>" + zip + " " + city
-                }).open(map, depot);*/
             });
         };
 

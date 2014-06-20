@@ -33,6 +33,7 @@ def getBohnenDict(request):
     if loco.abo is not None:
         allebohnen = Boehnli.objects.filter(loco=loco)
         userbohnen = []
+        loco_pk = loco.pk
 
         for bohne in allebohnen:
             if bohne.job.time.year == date.today().year and bohne.job.time < datetime.datetime.now():
@@ -46,8 +47,10 @@ def getBohnenDict(request):
         bohnenrange = None
         userbohnen = []
         next_jobs = set()
+        loco_pk = 0
 
     return {
+        'loco_pk': loco_pk,
         'user': request.user,
         'bohnenrange': bohnenrange,
         'userbohnen': len(userbohnen),
