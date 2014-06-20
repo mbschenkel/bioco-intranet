@@ -420,14 +420,14 @@ class Boehnli(models.Model):
     with_car = models.BooleanField("Auto verfügbar", default=False)
 
     def __unicode__(self):
-        return u'Rüebli #%s' % self.id
+        return u'Einsatz #%s' % self.id
 
     def zeit(self):
         return self.job.time
 
     class Meta:
-        verbose_name = 'Rüebli'
-        verbose_name_plural = 'Rüebli'
+        verbose_name = 'Einsatz'
+        verbose_name_plural = 'Einsätze'
 
 
 #model_audit.m2m(Abo.users)
