@@ -312,6 +312,12 @@ EMAIL_HOST_PASSWORD = '...'
 DEBUG_EMAIL_ADDRESS = '...'
 """
 
+# google maps center
+MAP_CENTER_LAT  = u'47.476781'
+MAP_CENTER_LONG = u'8.2632728'
+MAP_CENTER_ZOOM = u'12'
+
+
 from settings_local import *
 
 # overwrite from settings_local if set there
