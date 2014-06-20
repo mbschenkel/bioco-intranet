@@ -20,6 +20,7 @@ from my_ortoloco.mailer import *
 
 import hashlib
 from static_ortoloco.models import Politoloco
+from static_ortoloco.models import StaticContent
 
 from decorators import primary_loco_of_abo
 
@@ -66,9 +67,15 @@ def my_home(request):
     Overview on myortoloco
     """
 
+    if StaticContent.objects.all().filter(name='IntranetHome').__len__() > 0:
+        info_text = StaticContent.objects.all().filter(name='IntranetHome')[0].content
+    else:
+        info_text = ''
+    
     jobs = get_current_jobs()
     renderdict = getBohnenDict(request)
     renderdict.update({
+        'info_text': info_text,
         'jobs': jobs[:7],
         'teams': Taetigkeitsbereich.objects.filter(hidden=False),
         'no_abo': request.user.loco.abo is None

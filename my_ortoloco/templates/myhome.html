@@ -6,6 +6,14 @@
         <div class="alert">Du hast kein Abo</div>
         <br/><br/>
     {% endif %}
+    
+    {% if info_text %}
+        <div class="panel panel-success">
+            {{ info_text|safe }}
+        </div>
+        <br/>
+    {% endif %}
+    
     <h3>Aktuelle Arbeitseinsätze</h3>
     {% include "snippet_job_list.html" %}
     <br/>

@@ -13,6 +13,7 @@ from datetime import date
 import model_audit
 import helpers
 
+from tinymce import models as tinymce_models
 
 class Depot(models.Model):
     """
@@ -291,7 +292,7 @@ class JobTyp(models.Model):
     """
     name = models.CharField("Name", max_length=100, unique=True)
     displayed_name = models.CharField("Angezeigter Name", max_length=100, blank=True, null=True)
-    description = models.TextField("Beschreibung", max_length=1000, default="")
+    description = tinymce_models.HTMLField("Beschreibung", max_length=1000, default="")
     bereich = models.ForeignKey(Taetigkeitsbereich, on_delete=models.PROTECT)
     duration = models.PositiveIntegerField("Dauer in Stunden")
     location = models.CharField("Ort", max_length=100, default="")

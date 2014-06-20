@@ -7,9 +7,14 @@ from tinymce import models as tinymce_models
 class StaticContent(models.Model):
     """
     All the static contents for the normal webpage
+    
+    TODO add constants for different types, e.g.
+    - HomeUnterMenu
+    - Willkommen
+    - IntranetHome
     """
     name = models.CharField("Name", max_length=100)
-    content = tinymce_models.HTMLField("Html-Inhalt", max_length=10000, default="")
+    content = tinymce_models.HTMLField("Html-Inhalt", max_length=10000, default="", blank=True)
 
 
     def __unicode__(self):
