@@ -740,7 +740,8 @@ def my_mails(request):
             sent = len(emails)
     renderdict = getBohnenDict(request)
     renderdict.update({
-        'sent': sent
+        'sent': sent,
+        'mail_is_live': settings.DEBUG
     })
     return render(request, 'mail_sender.html', renderdict)
 

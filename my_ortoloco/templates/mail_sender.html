@@ -3,6 +3,14 @@
 
 {% block content %}
     <h3>Mails verschicken</h3>
+    <div class="alert alert-danger">
+        <b>Achtung:</b>
+        {% if mail_is_live %}
+            Diese Seite ist im Test-Modus, es werden keine E-Mails versendet!
+        {% else %}
+            Diese Seite ist live. E-Mails werden versendet!
+        {% endif %}
+        </div>
     <br/>
     {% if sent > 0 %}
         <div class="alert alert-success">Email wurde an {{ sent }} Empfänger verschickt.</div>
