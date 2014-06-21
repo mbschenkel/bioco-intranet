@@ -50,7 +50,7 @@
                         <a href="/my/kontakt">Kontakt</a>
                     </li>
                     <li class="{{ menu.ortoloco }}">
-                        <a href="http://{% settings_value "SITE_URL" %}">{% settings_value "SITE_URL" %}</a>
+                        <a href="http://{% settings_value "SITE_URL" %}">{% settings_value "SITE_URL" %} Hauptseite</a>
                     </li>
                     {% if staff_user %}
                         <li>
@@ -76,7 +76,7 @@
                                 <hr>
                             {% endif %}
                             <!-- <a href="/my/politoloco">Newsletter versenden</a> -->
-                            <a href="#" style="color: grey;" title="Noch nicht verfügbar">Newsletter versenden</a>
+                            <a href="#" style="color: #bbb;" title="Noch nicht verfügbar">Newsletter versenden</a>
                         </li>
                     {% endif %}
                     <li class="{{ menu.personalInfo }}">
