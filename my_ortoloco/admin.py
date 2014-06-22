@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib import admin, messages
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, F, Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf.urls import patterns
 from django.utils import timezone
@@ -165,6 +165,56 @@ class BoehnliInline(admin.TabularInline):
         return obj.slots
 
 
+class JobFullFilter(admin.SimpleListFilter):
+    title = 'Anmeldungen'
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'booking_status'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('empty', u'Keine (<25%)'),
+            ('half_empty', u'Wenige (<50%)'),
+            ('half_full', u'Einige (>50%)'),
+            ('full', u'Voll (>75%)'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'empty':
+            return queryset.annotate(b_count=Count('boehnli')).filter(b_count__lte=F('slots')*0.25)
+        if self.value() == 'half_empty':
+            return queryset.annotate(b_count=Count('boehnli')).filter(b_count__lte=F('slots')*0.5)
+        if self.value() == 'half_full':
+            return queryset.annotate(b_count=Count('boehnli')).filter(b_count__gte=F('slots')*0.5)
+        if self.value() == 'full':
+            return queryset.annotate(b_count=Count('boehnli')).filter(b_count__gte=F('slots')*0.75)
+                 
+
+class JobDateFilter(admin.SimpleListFilter):
+    title = 'Zeitpunkt'
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'job_date'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('past', u'Vergangene Einsätze'),
+            ('last_week', u'Letzte 7 Tage'),
+            ('next_week', u'Nächste 7 Tage'),
+            ('future', u'Zukünftige Einsätze'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'past':
+            return queryset.filter(time__lte=date.today())
+        if self.value() == 'future':
+            return queryset.filter(time__gte=date.today())
+        if self.value() == 'last_week':
+            return queryset.filter(time__lte=date.today(), 
+                                   time__gte=date.today() - timedelta(days=7))
+        if self.value() == 'next_week':
+            return queryset.filter(time__gte=date.today(), 
+                                   time__lte=date.today() + timedelta(days=7))
+                                   
+        
 class JobAdmin(admin.ModelAdmin):
     list_display = ["__unicode__", "typ", "time", "slots", "freie_plaetze"]
     actions = ["copy_job", "mass_copy_job"]
@@ -173,6 +223,8 @@ class JobAdmin(admin.ModelAdmin):
     inlines = [BoehnliInline]
     readonly_fields = ["freie_plaetze"]
 
+    list_filter = [JobFullFilter, JobDateFilter]
+    
 
     def mass_copy_job(self, request, queryset):
         if queryset.count() != 1:
@@ -253,7 +305,7 @@ class AuditAdmin(admin.ModelAdmin):
 
 
 class AnteilscheinAdmin(admin.ModelAdmin):
-    list_display = ["__unicode__", "loco"]
+    list_display = ["__unicode__", "loco", "paid", "canceled"]
     search_fields = ["id", "loco__username", "loco__first_name", "loco__last_name"]
     raw_id_fields = ["loco"]
 
@@ -267,8 +319,8 @@ class BereichAdmin(admin.ModelAdmin):
     filter_horizontal = ["locos"]
     raw_id_fields = ["coordinator"]
     list_display = ["name", "core", "hidden", "coordinator"]
-
-
+    
+    
 class BoehnliDateFilter(admin.SimpleListFilter):
     title = 'Zeitpunkt'
     # Parameter for the filter that will be used in the URL query.
@@ -284,9 +336,9 @@ class BoehnliDateFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'past':
-            return queryset.filter(job__time__gte=date.today())
-        if self.value() == 'future':
             return queryset.filter(job__time__lte=date.today())
+        if self.value() == 'future':
+            return queryset.filter(job__time__gte=date.today())
         if self.value() == 'last_week':
             return queryset.filter(job__time__lte=date.today(), 
                                    job__time__gte=date.today() - timedelta(days=7))
@@ -322,13 +374,29 @@ class BoehnliAdmin(admin.ModelAdmin):
     # show pretty icon
     car_needed.boolean = True
     
-    list_display = ["__unicode__", "job", "zeit", "loco", "car_needed", "with_car"]
-    # Not recommended to edit directly, thus only showing the link to the job (and loco)
-    list_display_links = ["job", "loco"]
+    list_display = ["__unicode__", "job_link", "zeit", "loco_link", "car_needed", "with_car"]
     search_fields = ["id", "job__typ__name", "job__typ__displayed_name", "loco__user__username", "loco__first_name", "loco__last_name"]
     list_filter = [BoehnliCarFilter, BoehnliDateFilter]
     raw_id_fields = ["job", "loco"]
-
+    
+    def job_link(self, obj):
+        return u'<a href="/admin/my_ortoloco/job/%s/">%s</a>' % (obj.job.pk, obj.job)
+        
+    def loco_link(self, obj):
+        return u'<a href="/admin/my_ortoloco/loco/%s/">%s</a>' % (obj.loco.pk, obj.loco)
+        
+    # Not recommended to edit Boehnli directly, thus only showing the link to the job (and loco)
+    job_link.allow_tags = True
+    job_link.short_description = "Job"
+    loco_link.allow_tags = True
+    loco_link.short_description = "Mitgliet"
+    
+    # In django 1.7 there'd be a valid
+    # list_display_links = None
+    def __init__(self,*args,**kwargs):
+        super(BoehnliAdmin, self).__init__(*args, **kwargs)
+        self.list_display_links = (None, )
+        
 
 class LocoAdminForm(forms.ModelForm):
     class Meta:
@@ -360,6 +428,8 @@ class LocoAdmin(admin.ModelAdmin):
     readonly_fields = ["user"]
     actions = ["impersonate_job"]
 
+    list_filter = ["addr_location"]
+    
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
             self.message_user(request, u"Genau 1 Loco auswählen!", level=messages.ERROR)
