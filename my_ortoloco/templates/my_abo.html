@@ -9,12 +9,7 @@
             <div class="alert alert-danger"><b>Achtung:</b> Wir haben noch nicht alle Daten hier nachgetragen und bitten um etwas Geduld.</div>
             <dt>Abogrösse</dt>
             <dd>
-                {% if loco.abo.groesse == 1 %}
-                    Kleines Abo
-                {% endif %}
-                {% if loco.abo.groesse == 2 %}
-                    Grosses Abo
-                {% endif %}
+                {{ loco.abo.groesse_name }}
             </dd>
             <dt>&nbsp;</dt>
             <dd>&nbsp;</dd>

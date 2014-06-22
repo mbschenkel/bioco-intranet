@@ -8,54 +8,32 @@
         <br/>
 
         <h5>Infos:</h5>
-
         Um Mitglied der Genossenschaft {% settings_value "SITE_NAME" %} zu werden, musst du mindestens einen Anteilschein (CHF 250) erwerben.
         <br/><br/>
 
         <form action="" method="post" class="form-horizontal createabo">
             {% csrf_token %}
-            <div class="control-group">
-                <label class="control-label">Abogrösse</label>
+            
+            
+            
+            
+            {% for size, type in abo_types.items %}
+            {% if type.visible %}
+                <div class="control-group">
+                    <label class="control-label">{% cycle 'Abogrösse' '' '' '' '' '' %}</label>
 
-                <div class="controls">
-                    <label class="radio" for="small">
-                        <input type="radio" name="abo" value="small" id="small" {% if selected_abo == "small" %}checked="checked"{% endif %}/>
-                        <strong>Kleines Abo</strong>
-
-                        <div>
-                            Das kleine Abo ist für 2-3 Personen geeignet und benötigt mindestens zwei Anteilscheine.
-                        </div>
-                    </label>
+                    <div class="controls">
+                        <label class="radio" for="size_{{ type.size}}">
+                            <input type="radio" name="abo" value="{{ type.size}}" id="size_{{ type.size }}" {% if selected_abo == type.size %}checked="checked"{% endif %}/>
+                            <strong>{{ type.name_long }}</strong>
+                            <div>
+                                {{ type.description }}.
+                            </div>
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label"></label>
-
-                <div class="controls">
-                    <label class="radio" for="big">
-                        <input type="radio" name="abo" value="big" id="big" {% if selected_abo == "big" %}checked="checked"{% endif %}/>
-                        <strong>Grosses Abo</strong>
-
-                        <div>
-                            Das grosse Abo empfiehlt sich für WG's oder Familien (ca. 4-6 Personen) und benötigt vier Anteilscheine.
-                        </div>
-                    </label>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label"></label>
-
-                <div class="controls">
-                    <label class="radio" for="none">
-                        <input type="radio" name="abo" value="none" id="none"/>
-                        <strong>Kein Abo</strong>
-
-                        <div>
-                            Du kannst auch ohne Gemüseabo {% settings_value "SITE_NAME" %}-GenossenschafterIn sein. Bleibe auf dem Laufenden und mach mit, wenn du Lust hast.
-                        </div>
-                    </label>
-                </div>
-            </div>
+            {% endif %}
+            {% endfor %}
             <div class="control-group">
                 <label class="control-label" for="depot">Depot</label>
 

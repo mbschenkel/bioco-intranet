@@ -32,14 +32,14 @@ class ProfileLocoForm(ModelForm):
             'email': TextInput(attrs={'placeholder': 'beate@muster.ch'}),
         }
 
-
-class AboForm(Form):
-    anteilscheine = CharField(label='asdf', min_length=1)
-    anteilscheine_added = DecimalField(max_digits=2, decimal_places=0)
-    kleine_abos = DecimalField(max_digits=2, decimal_places=0)
-    grosse_abos = DecimalField(max_digits=2, decimal_places=0)
-    haus_abos = DecimalField(max_digits=2, decimal_places=0)
-    depot = CharField(widget=Select)
+#todo - in use?
+#class AboForm(Form):
+#    anteilscheine = CharField(label='asdf', min_length=1)
+#    anteilscheine_added = DecimalField(max_digits=2, decimal_places=0)
+#    kleine_abos = DecimalField(max_digits=2, decimal_places=0)
+#    grosse_abos = DecimalField(max_digits=2, decimal_places=0)
+#    haus_abos = DecimalField(max_digits=2, decimal_places=0)
+#    depot = CharField(widget=Select)
 
 
 

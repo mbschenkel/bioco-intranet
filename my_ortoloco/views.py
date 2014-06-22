@@ -32,6 +32,7 @@ def getBohnenDict(request):
     loco = request.user.loco
     next_jobs = set()
     if loco.abo is not None:
+        # todo: improve this query by counting in year in SQL
         allebohnen = Boehnli.objects.filter(loco=loco)
         userbohnen = []
         loco_pk = loco.pk
@@ -39,8 +40,13 @@ def getBohnenDict(request):
         for bohne in allebohnen:
             if bohne.job.time.year == date.today().year and bohne.job.time < datetime.datetime.now():
                 userbohnen.append(bohne)
-        bohnenrange = range(0, max(userbohnen.__len__(), loco.abo.groesse * 10 / loco.abo.locos.count()))
+        # todo: maybe extend this such that we show 
+        #       (A) user-bohnen, (B) other-user-in-abo-bohnen (C) to-be-done-bohnen        
+        bohnen_done = userbohnen.__len__()
+        bohnen_required = Abo.abo_types[loco.abo.groesse].required_bohnen / loco.abo.locos.count()
+        bohnenrange = range(0, max(bohnen_done, bohnen_required))
 
+        # todo: improve this query by comparing time in SQL
         for bohne in Boehnli.objects.all().filter(loco=loco).order_by("job__time"):
             if bohne.job.time > datetime.datetime.now():
                 next_jobs.add(bohne.job)
@@ -297,6 +303,10 @@ def my_depot_change(request, abo_id):
 
 @primary_loco_of_abo
 def my_size_change(request, abo_id):
+    # todo - currently not supported, adjust to new abo_types definition
+    return
+
+
     """
     Eine Abo-Grösse ändern
     """
@@ -437,6 +447,10 @@ def my_signup(request):
 
                     loco.user.set_password(password)
                     loco.user.save()
+                    
+                    #registration is not complete, but loco and user exist anyway, so we send mail now
+                    send_welcome_mail(loco.email, password, request.META["HTTP_HOST"])
+                    send_welcome_mail(settings.BG_INFO_MAIL, "<geheim>", request.META["HTTP_HOST"])
 
                     #log in to allow him to make changes to the abo
                     loggedin_user = authenticate(username=loco.user.username, password=password)
@@ -531,13 +545,20 @@ def my_createabo(request):
     """
     loco = request.user.loco
     scheineerror = False
+    if loco.abo is None:
+        selectedabo = Abo.SIZE_SMALL
+    else:
+        selectedabo = loco.abo.groesse
+    
+    """        
     if loco.abo is None or loco.abo.groesse is 1:
         selectedabo = "small"
     elif loco.abo.groesse is 2:
         selectedabo = "big"
     else:
         selectedabo = "house"
-
+    """
+    
     loco_scheine = 0
     if loco.abo is not None:
         for abo_loco in loco.abo.bezieher_locos().exclude(email=request.user.loco.email):
@@ -545,24 +566,19 @@ def my_createabo(request):
 
     if request.method == "POST":
         scheine = int(request.POST.get("scheine"))
-        selectedabo = request.POST.get("abo")
-
+        selectedabo = int(request.POST.get("abo"))
+        print 'selectedabo', selectedabo
+        
         scheine += loco_scheine
-        if (scheine < 4 and request.POST.get("abo") == "big") or (scheine < 20 and request.POST.get("abo") == "house") or (scheine < 2 and request.POST.get("abo") == "small" ) or (scheine == 0):
+        scheine_required = Abo.abo_types[selectedabo].min_anteilsscheine
+        if scheine < scheine_required:
             scheineerror = True
         else:
             depot = Depot.objects.all().filter(id=request.POST.get("depot"))[0]
-            groesse = 1
-            if request.POST.get("abo") == "house":
-                groesse = 10
-            elif request.POST.get("abo") == "big":
-                groesse = 2
-            else:
-                groesse = 1
             if loco.abo is None:
-                loco.abo = Abo.objects.create(groesse=groesse, primary_loco=loco, depot=depot)
+                loco.abo = Abo.objects.create(groesse=selectedabo, primary_loco=loco, depot=depot)
             else:
-                loco.abo.groesse = groesse
+                loco.abo.groesse = selectedabo
                 loco.abo.depot = depot
             loco.abo.save()
             loco.save()
@@ -576,15 +592,7 @@ def my_createabo(request):
             if request.POST.get("add_loco"):
                 return redirect("/my/abonnent/" + str(loco.abo_id))
             else:
-                password = password_generator()
-
-                request.user.set_password(password)
-                request.user.save()
-
-                #user did it all => send confirmation mail
-                send_welcome_mail(loco.email, password, request.META["HTTP_HOST"])
-                send_welcome_mail("lea@ortoloco.ch", "<geheim>", request.META["HTTP_HOST"])
-
+                #registration completed
                 return redirect("/my/willkommen")
 
     selected_depot = None
@@ -594,6 +602,7 @@ def my_createabo(request):
         mit_locos = request.user.loco.abo.bezieher_locos().exclude(email=request.user.loco.email)
 
     renderdict = {
+        'abo_types': Abo.abo_types,
         'loco_scheine': loco_scheine,
         "loco": request.user.loco,
         "depots": Depot.objects.all(),
@@ -764,7 +773,6 @@ def logout_view(request):
     auth.logout(request)
     # Redirect to a success page.
     return HttpResponseRedirect("/my/home")
-    # return HttpResponseRedirect("/aktuelles")
 
 
 def alldepots_list(request, name):
@@ -776,42 +784,43 @@ def alldepots_list(request, name):
     else:
         depots = [get_object_or_404(Depot, code__iexact=name)]
 
-    #todo: more generic!
-    overview = {
-        'Dienstag': {
-            'small_abo': 0,
-            'big_abo': 0,
-            'entities': 0
-        },
-        'Freitag': {
-            'small_abo': 0,
-            'big_abo': 0,
-            'entities': 0
-        },
-        'all': {
-            'small_abo': 0,
-            'big_abo': 0,
-            'entities': 0
-        }
-    }
-
+    abo_types = Abo.abo_types.copy()
+    print 'abo_types',abo_types
+    # ignore zero-size
+    del abo_types[Abo.SIZE_NONE]
+    
+    empty_day = {}
+    for abo_type in abo_types:
+        print 'abo_type', abo_type
+        empty_day[abo_type] = 0
+    empty_day['entities'] = 0
+    
+    #collect data for first page
+    overview = {}
+    all = empty_day.copy()    
     for depot in depots:
-        row = overview.get(depot.get_weekday_display())
-        if row is None:
-            pass
-            #todo shouldnt happen...
-        else:    
-            all = overview.get('all')
-            row['small_abo'] += depot.small_abos()
-            row['big_abo'] += depot.big_abos()
-            row['entities'] += 2 * depot.big_abos() + depot.small_abos()
+        weekday = depot.get_weekday_display()
+        if not weekday in overview:
+            overview[weekday] = empty_day.copy()
+        row = overview.get(weekday)
+        for abo_type in abo_types:
+            number = depot.get_abo_by_size(abo_type)
+            entities = number * abo_type / float(Abo.SIZE_SMALL)
+            row['entities'] += entities 
+            all['entities'] += entities 
+            row[abo_type]   += number
+            all[abo_type]   += number
+    overview['all'] = all
 
     renderdict = {
+        "abo_types": abo_types,
         "overview": overview,
         "depots": depots,
         "datum": datetime.datetime.now()
     }
 
+    #HTML Render:
+    #return render(request, "exports/all_depots.html", renderdict)
     return render_to_pdf(request, "exports/all_depots.html", renderdict, 'Depotlisten')
 
 

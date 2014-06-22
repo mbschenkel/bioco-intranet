@@ -68,37 +68,37 @@
     Gedruckt am {{ datum |date:"d.m.Y" }}
 </div>
 
-{% for i in "xx" %}
+{# repeat 2x #}
+{% for i in "12" %}
 <div>
     <table cellpadding="5" cellspacing="0" style="width:100%; margin-bottom:5px;" class="bottom-border">
         <tr>
             <td style="width:200px"></td>
-            <th colspan="2" class="top-border left-border right-border">ABO</th>
+            <th colspan="{{ overview.all.items|length|add:"-1" }}" class="top-border left-border right-border">ABO</th>
             <th class="top-border right-border"></th>
         </tr>
         <tr>
-            <td></td>
-            <td class="small left-border bottom-border" style="text-align: right;">klein</td>
-            <td class="small bottom-border right-border" style="text-align: right;">gross</td>
-            <td class="small bottom-border right-border" style="text-align: right;">Einheiten</td>
+            <td class="small right-border" ></td>
+            {% for size, type in abo_types.items %}
+                <td class="small bottom-border" style="text-align: right;">{{ type.name_short }}</td>
+            {% endfor %}
+            <td class="small bottom-border left-border right-border" style="text-align: right;">Einheiten</td>
         </tr>
+        {% for day, abos in overview.items %}{% if day != 'all' %}
         <tr>
-            <td>Dienstag</td>
-            <td style="text-align: right;">{{ overview.Dienstag.small_abo }}</td>
-            <td style="text-align: right;">{{ overview.Dienstag.big_abo }}</td>
-            <td style="text-align: right;">{{ overview.Dienstag.entities }}</td>
+            <td>{{ day }}</td>
+            {% for abo, count in abos.items %}{% if abo != 'entities' %}
+                <td style="text-align: right;">{{ count }}</td>
+            {% endif %}{% endfor %}
+            <td style="text-align: right;">{{ abos.entities }}</td>
         </tr>
+        {% endif %}{% endfor %}
         <tr>
-            <td>Freitag</td>
-            <td style="text-align: right;">{{ overview.Freitag.small_abo }}</td>
-            <td style="text-align: right;">{{ overview.Freitag.big_abo }}</td>
-            <td style="text-align: right;">{{ overview.Freitag.entities }}</td>
-        </tr>
-        <tr>
-            <td><b>Di + Fr</b></td>
-            <td style="text-align: right;"><b>{{ overview.all.small_abo }}</b></td>
-            <td style="text-align: right;"><b>{{ overview.all.big_abo }}</b></td>
-            <td style="text-align: right;"><b>{{ overview.all.entities }}</b></td>
+            <td><strong>Total</strong></td>
+            {% for abo, count in overview.all.items %}{% if abo != 'entities' %}
+                <td style="text-align: right;">{{ count }}</td>
+            {% endif %}{% endfor %}
+            <td style="text-align: right;">{{ overview.all.entities }}</td>
         </tr>
     </table>
     <img src="http://bioco.ch/wp-content/uploads/2014/01/cropped-banner-v1b3.png" style="width: 512pt;">
@@ -122,30 +122,37 @@
         <tr>
             <td></td>
             <td></td>
-            <th colspan="2" class="top-border left-border right-border">ABO</th>
+            <th colspan="{{ abo_types.items|length }}" class="top-border left-border right-border">ABO</th>
             <th colspan="2" class="top-border right-border"></th>
         </tr>
         <tr>
             <td></td>
-            <td></td>
-            <td class="small left-border bottom-border">klein</td>
-            <td class="small bottom-border right-border">gross</td>
-            <td></td>
+            <td class="right-border"></td>
+            {% for size, type in abo_types.items %}
+                <td class="small bottom-border">{{ type.name_short }}</td>
+            {% endfor %}
+            <td class="bottom-border left-border"></td>
             <td class="small bottom-border right-border"></td>
         </tr>
         <tr>
             <td style="width:220px;"></td>
             <td style="width:220px; text-align:right;">TOTAL</td>
+            {% for size, number in depot.get_abos_by_sizes.items %}
+                <td style="width:40px; text-align:right;">{{ number }}</td>
+            {% endfor %}
+            {% comment %}
             <td style="width:40px; text-align:right;">{{ depot.small_abos }}</td>
             <td style="width:40px; text-align:right;">{{ depot.big_abos }}</td>
+            {% endcomment %}
             <td style="width:60px;"></td>
             <td style="width:60px;"></td>
         </tr>
         <tr>
             <th>Name</th>
             <th>Abo mit</th>
-            <th></th>
-            <th></th>
+            {% for size, name in abo_types.items %}
+                <th></th>
+            {% endfor %}
             <th style="text-align: right;">abgeholt</th>
             <th style="text-align: right;">Tasche retour</th>
         </tr>
@@ -153,8 +160,15 @@
             <tr>
                 <td style="text-align:right" class="top-border left-border">{{ abo.primary_loco.get_name }}</td>
                 <td style="text-align:right" class="top-border left-border">{{ abo.andere_bezieher }}</td>
+                {% for size, name in abo_types.items %}
+                    <td style="text-align:right" class="top-border left-border">
+                        {% if size == abo.groesse %}1{% endif %}
+                    </td>
+                {% endfor %}
+                {% comment %}
                 <td style="text-align:right" class="top-border left-border">{% if abo.kleine_abos %}{{ abo.kleine_abos }} {% endif %}</td>
                 <td style="text-align:right" class="top-border left-border">{% if abo.grosse_abos %}{{ abo.grosse_abos }} {% endif %}</td>
+                {% endcomment %}
                 <td class="top-border left-border"></td>
                 <td class="top-border left-border right-border"></td>
             </tr>

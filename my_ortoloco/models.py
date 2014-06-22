@@ -12,8 +12,11 @@ from datetime import date
 
 import model_audit
 import helpers
+from collections import namedtuple
 
 from tinymce import models as tinymce_models
+
+from ortoloco import settings
 
 class Depot(models.Model):
     """
@@ -33,7 +36,6 @@ class Depot(models.Model):
     def __unicode__(self):
         return u"%s %s" % (self.id, self.name)
 
-
     def active_abos(self):
         return self.abo_set.filter(active=True)
 
@@ -42,54 +44,25 @@ class Depot(models.Model):
         if self.weekday < 8 and self.weekday > 0:
             day = helpers.weekdays[self.weekday]
         return day
-
+    
+    def get_abo_by_size(self, abo_size):
+        return len(self.active_abos().filter(groesse=abo_size))
+        
+    def get_abos_by_sizes(self):
+        result = {}
+        for abo_size in Abo.abo_types:
+            if abo_size is not Abo.SIZE_NONE:
+                result[abo_size] = len(self.active_abos().filter(groesse=abo_size))
+        print 'get_abos_by_size', self, result
+        return result   
+        
+    """
     def small_abos(self):
         return len(self.active_abos().filter(Q(groesse=1) | Q(groesse=3)))
 
     def big_abos(self):
         return len(self.active_abos().filter(Q(groesse=2) | Q(groesse=3) | Q(groesse=4))) + len(self.active_abos().filter(groesse=4))
-
-    def vier_eier(self):
-        eier = 0
-        for abo in self.active_abos().all():
-            eier += len(abo.extra_abos.all().filter(description="Eier 4er Pack"))
-        return eier
-
-    def sechs_eier(self):
-        eier = 0
-        for abo in self.active_abos().all():
-            eier += len(abo.extra_abos.all().filter(description="Eier 6er Pack"))
-        return eier
-
-    def kaese_ganz(self):
-        kaese = 0
-        for abo in self.active_abos().all():
-            kaese += len(abo.extra_abos.all().filter(description="Käse ganz"))
-        return kaese
-
-    def kaese_halb(self):
-        kaese = 0
-        for abo in self.active_abos().all():
-            kaese += len(abo.extra_abos.all().filter(description="Käse halb"))
-        return kaese
-
-    def kaese_viertel(self):
-        kaese = 0
-        for abo in self.active_abos().all():
-            kaese += len(abo.extra_abos.all().filter(description="Käse viertel"))
-        return kaese
-
-    def big_obst(self):
-        obst = 0
-        for abo in self.active_abos().all():
-            obst += len(abo.extra_abos.all().filter(description="Obst gr. (2kg)"))
-        return obst
-
-    def small_obst(self):
-        obst = 0
-        for abo in self.active_abos().all():
-            obst += len(abo.extra_abos.all().filter(description="Obst kl. (1kg)"))
-        return obst
+    """
 
     class Meta:
         verbose_name = "Depot"
@@ -115,15 +88,52 @@ class Abo(models.Model):
     """
     One Abo that may be shared among several people.
     """
+    SIZE_NONE = 0
+    SIZE_HALF = 1
+    SIZE_SMALL = 2
+    SIZE_BIG = 4
+    SIZE_HOUSE = 10
+    
+    # required_bohnen are per abo, not per person
+    AboTyp = namedtuple('AboTyp', ['size', 'name_short', 'name_long', 'description', 'min_anteilsscheine', 'visible', 'required_bohnen']);
+    abo_types = {
+        SIZE_NONE:  AboTyp( size=SIZE_NONE,  name_short='Keins',  name_long='Kein Abo', 
+                            min_anteilsscheine=1, visible=True, required_bohnen = 0,
+                            description=u"Du kannst auch ohne Gemüseabo "+settings.SITE_NAME+"-GenossenschafterIn sein. Bleibe auf dem Laufenden und mach mit, wenn du Lust hast"),
+        SIZE_HALF:  AboTyp( size=SIZE_HALF,  name_short='Halb',  name_long='Halbes Abo',
+                            min_anteilsscheine=1, visible=False, required_bohnen = 6,
+                            description=u"Halbe Abos können in Ausnahmefällen vergeben werden"),
+        SIZE_SMALL: AboTyp( size=SIZE_SMALL, name_short='Klein', name_long='Kleines Abo', 
+                            min_anteilsscheine=2, visible=True, required_bohnen = 12,
+                            description=u"Das kleine Abo ist für 2-3 Personen geeignet und benötigt mindestens zwei Anteilscheine"),
+        SIZE_BIG:   AboTyp( size=SIZE_BIG,   name_short='Gross', name_long='Grosses Abo', 
+                            min_anteilsscheine=4, visible=True, required_bohnen = 24,
+                            description=u"Das grosse Abo empfiehlt sich für WG's oder Familien (ca. 4-6 Personen) und benötigt vier Anteilscheine")
+    }
+    
+    SIZE_CHOICES = ((k, v.name_short) for k, v in abo_types.iteritems())
+    """
+    todo remove
+    SIZE_CHOICES = (
+        (SIZE_HALF,  abo_types[SIZE_HALF ].name_short),
+        (SIZE_SMALL, abo_types[SIZE_SMALL].name_short),
+        (SIZE_BIG,   abo_types[SIZE_BIG  ].name_short),
+    )
+    """
     depot = models.ForeignKey(Depot, on_delete=models.PROTECT)
-    groesse = models.PositiveIntegerField(default=1)
+    groesse = models.PositiveIntegerField(choices=SIZE_CHOICES,default=SIZE_SMALL)
     extra_abos = models.ManyToManyField(ExtraAboType, null=True, blank=True)
     primary_loco = models.ForeignKey("Loco", related_name="abo_primary", null=True, blank=True,
                                      on_delete=models.PROTECT)
     active = models.BooleanField(default=False)
 
     def __unicode__(self):
-        namelist = ["1 Einheit" if self.groesse == 1 else "%d Einheiten" % self.groesse]
+        if self.SIZE_HALF == self.groesse:
+            namelist = ["1/2 Einheit"]
+        elif self.SIZE_SMALL == self.groesse:
+            namelist = ["1 Einheit"]
+        else:
+            namelist = ["%f Einheiten" % (self.groesse / float(self.SIZE_SMALL))]
         namelist.extend(extra.name for extra in self.extra_abos.all())
         return u"Abo (%s) %s" % (" + ".join(namelist), self.id)
 
@@ -142,50 +152,24 @@ class Abo(models.Model):
         loco = self.primary_loco
         return unicode(loco) if loco is not None else ""
 
+    """    
+    todo in use?
     def haus_abos(self):
         return int(self.groesse / 10)
 
     def grosse_abos(self):
         return int((self.groesse % 10) / 2)
 
-    def groesse_name(self):
-        if self.groesse == 1:
-            return "Kleines Abo"
-        elif self.groesse == 2:
-            return "Grosses Abo"
-        elif self.groesse == 10:
-            return "Haus Abo"
-        elif self.groesse == 3:
-            return "Kleines + Grosses Abo"
-        elif self.groesse == 4:
-            return "2 Grosse Abos"
-        else:
-            return "Spezialgrösse"
-
     def kleine_abos(self):
         return self.groesse % 2
-
-    def vier_eier(self):
-        return len(self.extra_abos.all().filter(description="Eier 4er Pack")) > 0
-
-    def sechs_eier(self):
-        return len(self.extra_abos.all().filter(description="Eier 6er Pack")) > 0
-
-    def ganze_kaese(self):
-        return len(self.extra_abos.all().filter(description="Käse ganz")) > 0
-
-    def halbe_kaese(self):
-        return len(self.extra_abos.all().filter(description="Käse halb")) > 0
-
-    def viertel_kaese(self):
-        return len(self.extra_abos.all().filter(description="Käse viertel")) > 0
-
-    def gross_obst(self):
-        return len(self.extra_abos.all().filter(description="Obst gr. (2kg)")) > 0
-
-    def klein_obst(self):
-        return len(self.extra_abos.all().filter(description="Obst kl. (1kg)")) > 0
-
+    """
+    
+    def groesse_name(self):
+        return self.abo_types[self.groesse].name_long
+        
+    def groesse_name_short(self):
+        return self.get_groesse_display()
+        
     class Meta:
         verbose_name = "Abo"
         verbose_name_plural = "Abos"
@@ -318,7 +302,7 @@ class Job(models.Model):
     reminder_sent = models.BooleanField("Reminder verschickt", default=False)
 
     def __unicode__(self):
-        return u'Job #%s' % (self.id)
+        return u'Job #%s (%s)' % (self.id, self.typ.name)
 
     def wochentag(self):
         weekday = helpers.weekdays[self.time.isoweekday()]
