@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+from datetime import timedelta
 
 from django.contrib import admin, messages
 from django import forms
@@ -268,11 +269,65 @@ class BereichAdmin(admin.ModelAdmin):
     list_display = ["name", "core", "hidden", "coordinator"]
 
 
-"""
+class BoehnliDateFilter(admin.SimpleListFilter):
+    title = 'Zeitpunkt'
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'boehnli_date'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('past', u'Vergangene Einsätze'),
+            ('last_week', u'Letzte 7 Tage'),
+            ('next_week', u'Nächste 7 Tage'),
+            ('future', u'Zukünftige Einsätze'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'past':
+            return queryset.filter(job__time__gte=date.today())
+        if self.value() == 'future':
+            return queryset.filter(job__time__lte=date.today())
+        if self.value() == 'last_week':
+            return queryset.filter(job__time__lte=date.today(), 
+                                   job__time__gte=date.today() - timedelta(days=7))
+        if self.value() == 'next_week':
+            return queryset.filter(job__time__gte=date.today(), 
+                                   job__time__lte=date.today() + timedelta(days=7))
+                                    
+class BoehnliCarFilter(admin.SimpleListFilter):
+    title = 'Auto'
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'boehnli_car'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('not_needed', u'Nicht benötigt'),
+            ('needed_available', u'Benötigt und verfügbar'),
+            ('needed_not_available', u'Benötigt aber nicht verfügbar'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'not_needed':
+            return queryset.filter(job__typ__car_needed=False)
+        if self.value() == 'needed_available':
+            return queryset.filter(job__typ__car_needed=True, with_car=True)
+        if self.value() == 'needed_not_available':
+            return queryset.filter(job__typ__car_needed=True, with_car=False)
+
 class BoehnliAdmin(admin.ModelAdmin):
-    list_display = ["__unicode__", "job", "zeit", "loco"]
+    def job_with_name(self, obj):
+        return obj.job.name
+    def car_needed(self, obj):
+        return obj.job.typ.car_needed
+    # show pretty icon
+    car_needed.boolean = True
+    
+    list_display = ["__unicode__", "job", "zeit", "loco", "car_needed", "with_car"]
+    # Not recommended to edit directly, thus only showing the link to the job (and loco)
+    list_display_links = ["job", "loco"]
+    search_fields = ["id", "job__typ__name", "job__typ__displayed_name", "loco__user__username", "loco__first_name", "loco__last_name"]
+    list_filter = [BoehnliCarFilter, BoehnliDateFilter]
     raw_id_fields = ["job", "loco"]
-"""
 
 
 class LocoAdminForm(forms.ModelForm):
@@ -320,17 +375,16 @@ class JobTypAdmin(admin.ModelAdmin):
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(ExtraAboType)
-admin.site.register(Boehnli)
 admin.site.register(Abo, AboAdmin)
 admin.site.register(Loco, LocoAdmin)
 admin.site.register(Taetigkeitsbereich, BereichAdmin)
 admin.site.register(Anteilschein, AnteilscheinAdmin)
 
 # This is only added to admin for debugging
-#admin.site.register(model_audit.Audit, AuditAdmin)
+# admin.site.register(model_audit.Audit, AuditAdmin)
 
-# Not adding this because it can and should be edited from Job, 
-# where integrity constraints are checked
-#admin.site.register(Boehnli, BoehnliAdmin)
+# Adding this without edit-links, because it can and should be edited 
+# from Job, where integrity constraints are checked
+admin.site.register(Boehnli, BoehnliAdmin)
 admin.site.register(JobTyp, JobTypAdmin)
 admin.site.register(Job, JobAdmin)
