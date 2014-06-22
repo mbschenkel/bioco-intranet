@@ -177,6 +177,7 @@ def my_participation(request):
             continue
         my_areas.append({
             'name': area.name,
+            'description': area.description,
             'checked': loco in area.locos.all(),
             'id': area.id,
             'core': area.core,
