@@ -7,7 +7,7 @@ Am {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }} findet dein {%
 
 Details:
 
-Job:             {{ job.typ.description }}
+Job:             {{ job.typ.description|striptags }}
 Zeit:            {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
 mitlocos:        {{ participants }}
 Ort:             {{ job.typ.location }}
