@@ -3,13 +3,13 @@ import models
 from django.utils import timezone
 import datetime
 from mailer import send_job_reminder
-
+from time import gmtime, strftime
 
 class Send_Job_Reminders(Job):
     run_every = 60 # every minute, but the cron library does it every 10minutes so it gets executed between 10 and 11 minutes
 
     def job(self):
-        print '---cron running---'
+        print '---cron running--- '+strftime("%a, %d %b %Y %H:%M:%S +0000", gmtime())
         now = datetime.datetime.now();
         end = now + datetime.timedelta(1);
         for job in models.Job.objects.filter(time__range=(now, end), reminder_sent__exact=False):
