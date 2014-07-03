@@ -1,22 +1,39 @@
 {% load from_settings %}
+<style>
+    @import url(http://fonts.googleapis.com/css?family=Philosopher|Overlock:400,700,900|Philosopher:400,700|Ubuntu);
+</style>
+<body style="@import url(http://fonts.googleapis.com/css?family=Philosopher|Overlock:400,700,900|Philosopher:400,700|Ubuntu);">
 <table width="600px">
     <tr>
-        <td colspan="3" background="{{ serverurl }}/static/img/erbse_x.png" align="center" height="20" style="padding:0; margin:0; font-size:12px; height:20px;">&nbsp;</td>
+        <td style="padding:20px; padding-bottom: 40px;">
+            <a href="http://{% settings_value "SITE_URL" %}">
+            <img src="{{ serverurl }}/static/img/bioco_logo_small.png">
+        </a></td>
+        <td style="font-size:14px;font-family: 'Overlock', sans-serif; font-weight: 700; padding:20px; color:#7f1d42; padding-top: 5px;">
+            <h1>{% settings_value "SITE_NAME" %}</h1>
+            <h2>Die regionale Gartenkooperative</h2>
+        </td>
     </tr>
     <tr>
-        <td rowspan="2" background="{{ serverurl }}/static/img/erbse_y.png" width="20" style="padding:0; margin:0; font-size:12px; height:20px;">&nbsp;</td>
-        <td style="font-size:14px;font-family: 'Courier New', monospace; font-weight: bold;padding:20px;">{{ subject }}</td>
-        <td rowspan="2" background="{{ serverurl }}/static/img/erbse_y.png" width="20" style="padding:0; margin:0; font-size:12px; height:20px;">&nbsp;</td>
+        <td colspan="2" style="font-size:14px;font-family: 'Overlock', sans-serif; font-weight: 700; padding:20px; padding-top: 5px; padding-bottom: 5px; background-color: #7f1d42; color: #ffffff;">
+            <h2>{{ subject }}</h2>
+        </td>
     </tr>
     <tr>
-        <td style="font-size:14px;font-family: 'Courier New', monospace; padding:20px;">{% block content %}{% endblock %}</td>
+        <td colspan="2" style="font-size:14px;font-family: 'Ubuntu', sans-serif; padding:20px; padding-top: 10px; padding-bottom: 30px;">
+            {% block content %}{% endblock %}
+        </td>
     </tr>
     <tr>
-        <td colspan="3" background="{{ serverurl }}/static/img/erbse_x.png" align="center" height="20" style="padding:0; margin:0; font-size:12px; height:20px;">&nbsp;</td>
-    </tr>
-    <tr>
-        <td colspan="3" style="padding-top:25px;">
-            <a href="http://{% settings_value "SITE_URL" %}">{% settings_value "SITE_URL" %}</a>
+        <td colspan="2" style="padding:20px; padding-top:10px; padding-bottom:10px; background-color: #f2dede;">
+            <strong>{% settings_value "SITE_NAME" %}</strong>
+            &mdash;
+            Die regionale Gartenkooperative
+            <br/>
+            Web: <a href="http://{% settings_value "SITE_URL" %}">www.{% settings_value "SITE_URL" %}</a>
+            &nbsp;|&nbsp;
+            Intranet: <a href="http://{{ serverurl }}">intranet.{% settings_value "SITE_URL" %}</a>
         </td>
     </tr>
 </table>
+</body>

@@ -7,63 +7,52 @@ from django.template import Context
 from django.core.mail import EmailMultiAlternatives
 import re
 
-#todo remove
-#import logging
-#FORMAT = '%(asctime)-15s %(clientip)s %(user)-8s %(message)s'
-#logging.basicConfig(format=FORMAT, level=logging.DEBUG)
-#dj only
-#import logging
-#logger = logging.getLogger(__name__)
-
-
-#single point of change, todo check settings.DEFAULT_FROM_EMAIL
-#(maybe move to settings and adjust address itself)
-SENDER_EMAIL_ADDRESS = 'test@bioco.ch'
+#single point of change
+SENDER_EMAIL_ADDRESS = settings.EMAIL_HOST_USER
 
 # sends mail only to specified email-addresses if dev mode
 def send_mail(subject, message, from_email, to_emails):
-    print 'send_mail from ' + SENDER_EMAIL_ADDRESS
     okmails = []
     if settings.DEBUG is False:
-        pass
-        #todo re-enable when stable.... okmails = to_emails
+        okmails = to_emails
     else:
-        #todo: not tested
-        okmails.append(settings.DEBUG_EMAIL_ADDRESS)
-        message =  ',<br/>'.join(to_emails) + message
-
+        # in debug mode send to dummy address
+        okmails = [settings.DEBUG_EMAIL_ADDRESS]
+        print "Mail intended for " + ", ".join(to_emails) + " reroutet to " + settings.DEBUG_EMAIL_ADDRESS
+    
     if len(okmails) > 0:
         for amail in okmails:
             res = mail.send_mail(subject, message, from_email, [amail], fail_silently=False)
-            # todo: log errors
-            print 'sending mail from ' + from_email + ' to ' + amail 
+            print 'Sending mail from ' + from_email + ' to ' + amail 
             print ' res= ', res
-        print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
+        
+    # todo remove again later, for now send a copy every time
+    message_verbose =  message + '\n\nCopy of original sent to: ' + ', '.join(to_emails)
+    res = mail.send_mail(subject, message_verbose, from_email, [settings.DEBUG_EMAIL_ADDRESS], fail_silently=False)
 
     return None
 
 
 def send_mail_multi(email_multi_message):
-    print 'send_mail_multi from ' + SENDER_EMAIL_ADDRESS
+    to_emails = email_multi_message.to
     okmails = []
     if settings.DEBUG is False:
-        pass
-        #todo re-enable when stable.... okmails = email_multi_message.to
-        #     also below!
+        okmails = email_multi_message.to
     else:
-        #todo improve, dirty hack to modify meassage, by just duplicating it...
-        okmails.append(settings.DEBUG_EMAIL_ADDRESS)
-        modif_message = email_multi_message.alternatives[0][0] + '<br/>Intended for: <br/>'
-        modif_message += u'<br/>-'.join(email_multi_message.to)
-        email_multi_message.attach_alternative(modif_message, "text/html")
+        okmails = [settings.DEBUG_EMAIL_ADDRESS]
+        print "Multi-Mail intended for " + ", ".join(to_emails) + " reroutet to " + settings.DEBUG_EMAIL_ADDRESS
         
     if len(okmails) > 0:
         email_multi_message.to = []
-        email_multi_message.bcc = [settings.DEBUG_EMAIL_ADDRESS]
+        email_multi_message.bcc = okmails
         res = email_multi_message.send()
-        # todo: log errors
         print "res = ", res
         print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
+        
+    # todo remove again later, for now send a copy every time
+    message_verbose =  email_multi_message.body + '\n\nCopy of original sent to: ' + ', '.join(to_emails)
+    res = mail.send_mail(email_multi_message.subject, message_verbose, email_multi_message.from_email, [settings.DEBUG_EMAIL_ADDRESS], fail_silently=False)
+
     return None
 
 
