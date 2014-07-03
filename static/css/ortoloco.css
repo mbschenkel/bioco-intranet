@@ -1,8 +1,5 @@
 /* general overrides of bootstrap */
 @font-face {
-    font-family: 'typenoksidi';
-    src: url('/static/fonts/typenoksidi-webfont.eot');
-    src: url('/static/fonts/typenoksidi-webfont.eot?#iefix') format('embedded-opentype'), url('/static/fonts/typenoksidi-webfont.woff') format('woff'), url('/static/fonts/typenoksidi-webfont.ttf') format('truetype'), url('/static/fonts/typenoksidi-webfont.svg#typenoksidiregular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -101,47 +98,6 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
     height: 350px;
     z-index: 0;
     padding-bottom: 500px;
-    
-    /*
-    padding-bottom: 400px;
-    margin-top: -280px;;
-    
-    position: absolute;
-    bottom: -5px;
-    right: 70px;
-    width: 623px;
-    height: 600px;
-    */
-}
-
-.container .erbsetop {
-    position: absolute;
-    left: 0;
-    top: 20px;
-    right: 0;
-    background-image: url(/static/img/banner_horiz.png);
-    height: 32px;
-    opacity: 1.0;
-}
-
-.container .erbseleft {
-    position: absolute;
-    left: 0px;
-    top: 36px;
-    background-image: url(/static/img/banner_vert.png);
-    bottom: 0px;
-    width: 32px;
-    opacity: 1.0;
-}
-
-.container .erbseright {
-    position: absolute;
-    right: -5px;
-    top: 36px;
-    background-image: url(/static/img/banner_vert.png);
-    bottom: 0px;
-    width: 32px;
-    opacity: 1.0;
 }
 
 /* menu */
@@ -162,12 +118,16 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 .nav-pills > li > a {
     border-radius: 0;
     margin-top: 0;
-    margin-left: -25px;
-    padding-left: 25px;
+    margin-left: -6px;
+    padding-left: 6px;
 }
 
 .nav-pills.nav-stacked > li > a, .nav-pills ul.nav-pills.nav-stacked > li:last-child > a {
     margin-bottom: 0;
+}
+
+.nav-pills li:hover > a{
+    background-color: #f2e8ec;
 }
 
 .nav-pills a:hover {

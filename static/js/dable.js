@@ -21,9 +21,10 @@
                 asyncData: {},
                 asyncStart: 0,
                 asyncLength: 1000,
-                style: 'none',
-                evenRowColor: 'rgba(76, 148, 52, 0.1)',
-                oddRowColor: '#fffff7'
+                style: 'none'
+                //evenRowColor: false,
+                //evenRowColor: 'rgba(76, 148, 52, 0.1)',
+                //oddRowColor: '#fffff7'
             };
 
             $export.RowCount = function () {
@@ -484,11 +485,11 @@
 
                 var oddRows = tableDiv.querySelectorAll('.table-row-odd');
                 for (var i = 0; i < oddRows.length; ++i) {
-                    oddRows[i].setAttribute('style', 'background-color: ' + $export.oddRowColor);
+                    //oddRows[i].setAttribute('style', 'background-color: ' + $export.oddRowColor);
                 }
                 var evenRows = tableDiv.querySelectorAll('.table-row-even');
                 for (var i = 0; i < evenRows.length; ++i) {
-                    evenRows[i].setAttribute('style', 'background-color: ' + $export.evenRowColor);
+                    //evenRows[i].setAttribute('style', 'background-color: ' + $export.evenRowColor);
                 }
                 var cells = tableDiv.querySelectorAll('td');
                 for (var i = 0; i < cells.length; ++i) {
