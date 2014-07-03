@@ -12,17 +12,28 @@ a {
 }
 
 a:hover, a:focus {
-    color: #315f21;
+    color: #f68712;
 }
 
 html, body {
-    font-size: 16px;
+    font-size: 14px;
     background-color: #fffff7;
     height: 100%;
+    font-family: "Ubuntu", "Overlock", sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, .main-menu {
-    font-family: "typenoksidi", serif;
+    font-family: "Overlock", "Philosopher", sans-serif;
+    font-weight: 900;
+}
+
+h1 a {
+    color: #7f1d42;
+}
+
+h1 a:hover, h1 a:focus {
+    color: #f68712;
+    text-decoration: none;
 }
 
 select, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
@@ -160,7 +171,7 @@ select, input[type="text"], input[type="password"], input[type="datetime"], inpu
 }
 
 .nav-pills a:hover {
-    background: url(/static/img/erbse_y.png) no-repeat left -88px;
+    /* background: url(/static/img/erbse_y.png) no-repeat left -88px; */
     text-decoration: underline !important;
 }
 
