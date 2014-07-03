@@ -18,7 +18,7 @@
                 left: 50pt;
                 width: 512pt;
                 top: 50pt;
-                height: 40pt;
+                height: 70pt;
                 text-align: center;
             }
         }
@@ -65,6 +65,9 @@
 
 <body>
 <div id="header_content">
+    &nbsp;&nbsp;
+    <img src="http://{{ servername }}/static/img/bioco_logo_small.png">
+    &nbsp;&nbsp;&nbsp;&nbsp;
     Gedruckt am {{ datum |date:"d.m.Y" }}
 </div>
 
@@ -100,8 +103,7 @@
             {% endif %}{% endfor %}
             <td style="text-align: right;">{{ overview.all.entities }}</td>
         </tr>
-    </table>
-    <img src="http://bioco.ch/wp-content/uploads/2014/01/cropped-banner-v1b3.png" style="width: 512pt;">
+    </table>    
     <div class="page-break"></div>
 </div>
 {% endfor %}

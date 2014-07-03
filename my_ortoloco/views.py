@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.models import Group
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.core.management import call_command
@@ -457,6 +458,23 @@ def my_signup(request):
                     loggedin_user = authenticate(username=loco.user.username, password=password)
                     login(request, loggedin_user)
                     success = True
+                                    
+                    # todo remove again after test phase
+                    # add @bioco.ch users directly to access-group "betriebsgruppe"
+                    if '@bioco.ch' in loco.email:
+                        group_name = 'Betriebsgruppe'
+                        print loco.email, 'is @bioco.ch, adding to group', group_name
+                        grp = Group.objects.get(name=group_name) 
+                        if grp:
+                            print 'Group', group_name, 'found, adding'
+                            grp.user_set.add(loco.user)
+                            loco.user.is_staff = True
+                            loco.user.save()                    
+                        else:
+                            print 'Group', group_name, 'NOT found, NOT adding'
+                    else:
+                        print 'Non BG-member, skip.'
+    
                     return redirect("/my/aboerstellen")
     else:
         locoform = ProfileLocoForm()
@@ -813,11 +831,14 @@ def alldepots_list(request, name):
             all[abo_type]   += number
     overview['all'] = all
 
+    servername = request.META["SERVER_NAME"] + ':' + request.META["SERVER_PORT"]
+    
     renderdict = {
         "abo_types": abo_types,
         "overview": overview,
         "depots": depots,
-        "datum": datetime.datetime.now()
+        "datum": datetime.datetime.now(),
+        "servername": servername,
     }
 
     #HTML Render:
