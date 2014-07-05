@@ -306,7 +306,7 @@ class Job(models.Model):
 
     def wochentag(self):
         weekday = helpers.weekdays[self.time.isoweekday()]
-        return weekday[:2]
+        return weekday
 
     def time_stamp(self):
         return int(time.mktime(self.time.timetuple()) * 1000)

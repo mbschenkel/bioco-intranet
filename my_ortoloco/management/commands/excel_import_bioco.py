@@ -72,6 +72,9 @@ class Command(BaseCommand):
             create_taetigkeitsbereiche()
             create_jobtyps()
             
+            #TODO also create access-right-groups (Betriebsgruppe, Depotadmin, ...)
+            #     and assign people as staff
+            
             # from excel
             self.import_locos(loco_worksheet)
             self.import_depots(depot_worksheet)
