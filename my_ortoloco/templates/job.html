@@ -36,10 +36,13 @@
             <ul>
                 {% for participant in participants %}
                     <li>
-                    {% if participant.pk == loco_pk %}
-                        <strong>{{ participant.first_name }} {{ participant.last_name }}</strong>
+                    {% if participant.loco.pk == loco_pk %}
+                        <strong>{{ participant.loco }}</strong>
                     {% else %}
-                        {{ participant.first_name }} {{ participant.last_name }}
+                        {{ participant.loco }}
+                    {% endif %}
+                    {% if participant.with_car %}
+                        <img src="/static/img/auto_green.png" style="margin-top: -8px; margin-left: 5px;" width="24" title="Mit Auto" />
                     {% endif %}
                     </li>
                 {% endfor %}
@@ -59,10 +62,11 @@
                 {% if job.needs_car %}
                     <input type="checkbox" class="span1" name="with_car" id="with_car"/> 
                     <label for="with_car">Mit Auto</label>
+                    <br/><br/>
                 {% endif %}
                 <button type="submit" class="btn btn-success">Ich schreib mich ein</button>
             </form>
-            <div class="help-block">Anzahl Personen eintragen, die zum Einsatz kommen, z.B: 1, 2 oder 3</div>
+            <div class="help-block">Anzahl Personen eintragen, die zum Einsatz kommen, z.B: 1, 2 oder 3.</div>
         </div>
     </div>
 {% endblock %}
