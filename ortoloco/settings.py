@@ -302,7 +302,10 @@ SITE_MY_NAME = u'biocò Intranet'
 SITE_MY_URL  = u'intranet.bioco.ch'
 LINK_REL_STATUTEN = u'http://bioco.ch/wp-content/uploads/2013/11/13-11-15_Statuten_bioco.pdf'
 LINK_REL_REGLEMENT = u'http://bioco.ch/wp-content/uploads/2013/11/Gm%C3%BCes_Betriebsreglement_131114a.pdf'
+
 BG_INFO_MAIL = 'info@bioco.ch'
+DEPOT_INFO_MAIL = 'daniela@bioco.ch'
+JOB_INFO_MAIL = 'einsatz@bioco.ch'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

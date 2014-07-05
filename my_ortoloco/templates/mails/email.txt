@@ -1,5 +1,8 @@
 {% load from_settings %}
 {% block content %}{% endblock %}
 
-============
-weitere Infos: http://{% settings_value "SITE_URL" %} 
+============================================================
+{% settings_value "SITE_NAME" %} - Die regionale Gartenkooperative
+Web: www.{% settings_value "SITE_URL" %} | Email: {% settings_value "BG_INFO_MAIL" %} | Intranet: {% settings_value "SITE_URL" %}
+Bei Fragen zum Intranet bitte an {% settings_value "JOB_INFO_MAIL" %} wenden.
+============================================================
