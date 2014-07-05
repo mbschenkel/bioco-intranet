@@ -10,8 +10,10 @@
     <br/>
     <ul class="unstyled">
         {% for bohne in bohnen %}
-            <li><a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a><br/>
-            <div class="time">{{ bohne.job.time|date:"d.m H:i" }}-{{ bohne.job.end_time|date:"H:i" }}</div>
+            <li>
+                <img alt="" title="Ein geleisteter Einsatz" src="/static/img/ruebli_color.png">&nbsp;
+                <a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a> am 
+                {{ bohne.job.time|date:"d.m H:i" }} &ndash; {{ bohne.job.end_time|date:"H:i" }}
             </li>
         {% endfor %}
     </ul>
