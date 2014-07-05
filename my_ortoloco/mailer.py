@@ -185,8 +185,10 @@ def send_mail_password_reset(email, password, server):
 def send_job_reminder(emails, job, participants, server):
     plaintext = get_template('mails/job_reminder_mail.txt')
     htmly = get_template('mails/job_reminder_mail.html')
-
+    subject = settings.SITE_NAME + " - Job-Erinnerung"
+    
     d = Context({
+        'subject': subject,
         'job': job,
         'participants': participants,
         'serverurl': "http://" + server
@@ -195,6 +197,6 @@ def send_job_reminder(emails, job, participants, server):
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
 
-    msg = EmailMultiAlternatives(settings.SITE_NAME + " - Job-Erinnerung", text_content, SENDER_EMAIL_ADDRESS, emails)
+    msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
     send_mail_multi(msg)

@@ -22,5 +22,4 @@ class Command(BaseCommand):
                 loco.user.set_password(pw)
                 loco.user.save()
                 send_mail_password_reset(loco.email, pw, "intranet.bioco.ch")
-                return
                 
