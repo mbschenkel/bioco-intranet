@@ -19,17 +19,25 @@
         <script type="text/javascript">
             tinymce.init({
                 selector: "textarea",
-                'theme': "modern",
-                'plugins': 'link',
+                theme: "modern",
+                plugins: "link code lists image table searchreplace contextmenu paste",
                 'relative_urls': false,
                 "valid_styles": {
                     '*': 'color,text-align,font-size,font-weight,font-style,text-decoration'
                 },
-                menu: {
-                    edit: {title: 'Edit', items: 'undo redo | cut copy paste | selectall'},
-                    insert: {title: 'Insert', items: 'link'},
-                    format: {title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats | removeformat'}
+                // possible file edit view insert format table tools
+                menubar: "edit insert view format table tools",
+                /*
+                menu : { // this is the complete default configuration
+                    file   : {title : 'File'  , items : 'newdocument'},
+                    edit   : {title : 'Edit'  , items : 'undo redo | cut copy paste pastetext | selectall'},
+                    insert : {title : 'Insert', items : 'link media | template hr'},
+                    view   : {title : 'View'  , items : 'visualaid'},
+                    format : {title : 'Format', items : 'bold italic underline strikethrough superscript subscript | formats | removeformat'},
+                    table  : {title : 'Table' , items : 'inserttable tableprops deletetable | cell row column'},
+                    tools  : {title : 'Tools' , items : 'spellchecker code'}
                 }
+                */
             });
         </script>
         <form action="/my/mails" method="POST" class="form-horizontal">
