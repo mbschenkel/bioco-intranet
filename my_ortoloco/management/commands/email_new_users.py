@@ -7,6 +7,7 @@ from django.contrib.auth.models import *
 from my_ortoloco.views import password_generator
 from my_ortoloco.mailer import *
 
+# Console script to send new password to all users who have never logged in
 class Command(BaseCommand):
 
     # entry point used by manage.py
