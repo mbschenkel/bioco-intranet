@@ -1,16 +1,14 @@
 {% extends "mails/email.txt" %}
 {% load from_settings %}
 {% block content %}
-Nicht vergessen:
-
-Am {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }} findet dein {% settings_value "SITE_NAME" %}-Arbeitseinsatz "{{ job.typ.displayed_name }}" statt.
+Nicht vergessen: Am {{ job.time |date:"d.m.Y H:i" }} - {{ job.end_time|date:"H:i" }} findet dein {% settings_value "SITE_NAME" %}-Arbeitseinsatz "{{ job.typ.displayed_name }}" statt.
 
 Details:
 
-Job:             {{ job.typ.description|striptags }}
-Zeit:            {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
-mitlocos:        {{ participants }}
-Ort:             {{ job.typ.location }}
+Job:        {{ job.typ.description|striptags }}
+Zeit:       {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
+Mit dabei:  {{ participants }}
+Ort:        {{ job.typ.location }}
 
 Wir freuen uns, dich zu sehen und zählen auf dich!
 
