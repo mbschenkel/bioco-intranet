@@ -60,9 +60,9 @@ weekdays = dict(weekday_choices)
 
 
 def get_current_jobs():
-	from models import Job
-	return Job.objects.filter(time__gte=datetime.datetime.now()).order_by("time")
-
+    from models import Job
+    return Job.objects.filter(time__gte=datetime.datetime.now()).order_by("time").select_related("typ")
+    
 
 class Swapstd(object):
     def __init__(self, f=None, g=None):

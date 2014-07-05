@@ -33,24 +33,19 @@ def getBohnenDict(request):
     loco = request.user.loco
     next_jobs = set()
     if loco.abo is not None:
-        # todo: improve this query by counting in year in SQL
-        allebohnen = Boehnli.objects.filter(loco=loco)
-        userbohnen = []
+        year = date.today().year
+        userbohnen = Boehnli.objects.filter(loco=loco, job__time__lte=datetime.datetime.now(), job__time__year=year)
+    
         loco_pk = loco.pk
 
-        for bohne in allebohnen:
-            if bohne.job.time.year == date.today().year and bohne.job.time < datetime.datetime.now():
-                userbohnen.append(bohne)
         # todo: maybe extend this such that we show 
         #       (A) user-bohnen, (B) other-user-in-abo-bohnen (C) to-be-done-bohnen        
         bohnen_done = userbohnen.__len__()
         bohnen_required = Abo.abo_types[loco.abo.groesse].required_bohnen / loco.abo.locos.count()
         bohnenrange = range(0, max(bohnen_done, bohnen_required))
 
-        # todo: improve this query by comparing time in SQL
-        for bohne in Boehnli.objects.all().filter(loco=loco).order_by("job__time"):
-            if bohne.job.time > datetime.datetime.now():
-                next_jobs.add(bohne.job)
+        next_jobs = Job.objects.filter(boehnli__loco=loco, time__gte=datetime.datetime.now()).order_by("time")
+        
     else:
         bohnenrange = None
         userbohnen = []
