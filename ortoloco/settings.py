@@ -11,12 +11,15 @@ if "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'production'
     # todo - so far everything is debug...
     DEBUG = True
+    GA_TRACKING_CODE = 'UA-46125166-1'
 elif "test" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'test'
     DEBUG = True
+    GA_TRACKING_CODE = ''
 else:
     TARGET = 'local'
     DEBUG = True
+    GA_TRACKING_CODE = ''
     
 if 'local' == TARGET:
     # accept all IPs from local network and show admin toolbar    
