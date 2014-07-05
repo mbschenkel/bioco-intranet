@@ -541,6 +541,7 @@ def my_add_loco(request, abo_id):
                    "phone": loco.phone,
         }
         locoform = ProfileLocoForm(initial=initial)
+    
     renderdict = getBohnenDict(request)
     renderdict.update({
         'scheine': scheine,
@@ -549,7 +550,7 @@ def my_add_loco(request, abo_id):
         'locoform': locoform,
         "loco": request.user.loco,
         "depots": Depot.objects.all()
-    }
+    })
     return render(request, "add_loco.html", renderdict)
 
 
