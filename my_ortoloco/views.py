@@ -122,7 +122,7 @@ def my_job(request, job_id):
     participants = []
     for bohne in Boehnli.objects.filter(job_id=job.id):
         if bohne.loco is not None:
-            participants.append(bohne.loco)
+            participants.append(bohne)
 
     renderdict = getBohnenDict(request)
     renderdict.update({
@@ -541,7 +541,8 @@ def my_add_loco(request, abo_id):
                    "phone": loco.phone,
         }
         locoform = ProfileLocoForm(initial=initial)
-    renderdict = {
+    renderdict = getBohnenDict(request)
+    renderdict.update({
         'scheine': scheine,
         'userexists': userexists,
         'scheineerror': scheineerror,
