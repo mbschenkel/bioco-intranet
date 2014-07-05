@@ -40,6 +40,13 @@ Z.B. vom Abpackraum, von Werkzeugen, Tunnels und Zäunen.''',
 'description':     u'''Hier geht es ums Organisieren von einmaligen und regelmäigen Anlässen.''',
 },
 {
+'name':            u'IT und Marketing',
+'core':            False,
+'hidden':          True,
+'coordinator':     u'Schenkel',
+'description':     u'''Hier geht es ums Gestalten von Flyern, Schreiben von Texten und Pflegen der Webseite und des Intranets.''',
+},
+{
 'name':            u'Administratives',
 'core':            False,
 'hidden':          True,
@@ -54,8 +61,6 @@ def create_taetigkeitsbereiche():
     print '***************************************************************'
         
     for d in taetigkeitsbereiche:
-        # TODO:
         d["coordinator"] = Loco.objects.get(last_name__contains=d["coordinator"])
-        #d["coordinator"] = 1;
         obj = Taetigkeitsbereich(**d)
         obj.save()
