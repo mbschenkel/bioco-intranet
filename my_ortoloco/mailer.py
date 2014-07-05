@@ -18,7 +18,7 @@ def send_mail(subject, message, from_email, to_emails):
     else:
         # in debug mode send to dummy address
         okmails = [settings.DEBUG_EMAIL_ADDRESS]
-        print "Mail intended for " + ", ".join(to_emails) + " reroutet to " + settings.DEBUG_EMAIL_ADDRESS
+        print "Mail intended for " + ", ".join(to_emails) + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS
     
     if len(okmails) > 0:
         for amail in okmails:
@@ -40,7 +40,7 @@ def send_mail_multi(email_multi_message):
         okmails = email_multi_message.to
     else:
         okmails = [settings.DEBUG_EMAIL_ADDRESS]
-        print "Multi-Mail intended for " + ", ".join(to_emails) + " reroutet to " + settings.DEBUG_EMAIL_ADDRESS
+        print "Multi-Mail intended for " + ", ".join(to_emails) + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS
         
     if len(okmails) > 0:
         email_multi_message.to = []
