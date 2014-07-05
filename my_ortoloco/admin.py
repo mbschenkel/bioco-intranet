@@ -421,14 +421,23 @@ class LocoAdminForm(forms.ModelForm):
 
 class LocoAdmin(admin.ModelAdmin):
     form = LocoAdminForm
-    list_display = ["email", "first_name", "last_name"]
+    list_display = ["email", "first_name", "last_name", "show_boehnli_count"]
     search_fields = ["first_name", "last_name", "email"]
     #raw_id_fields = ["abo"]
     exclude = ["abo"]
     readonly_fields = ["user"]
     actions = ["impersonate_job"]
 
-    list_filter = ["addr_location"]
+    list_filter = ["addr_location"] 
+    
+    # Add boehnli-count to SQL query as a left-join
+    def queryset(self, request):
+        # todo limit to year, might need https://pypi.python.org/pypi/django-aggregate-if/
+        return Loco.objects.annotate(boehnli_count=Count('boehnli'))
+    def show_boehnli_count(self, inst):
+        return inst.boehnli_count
+    show_boehnli_count.admin_order_field = 'boehnli_count'
+    show_boehnli_count.short_description = 'Anzahl Einsätze'
     
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
@@ -436,7 +445,6 @@ class LocoAdmin(admin.ModelAdmin):
             return HttpResponseRedirect("")
         inst, = queryset.all()
         return HttpResponseRedirect("/impersonate/%s/" % inst.user.id)
-
     impersonate_job.short_description = "Loco imitieren (impersonate)..."
 
 class JobTypAdmin(admin.ModelAdmin):
