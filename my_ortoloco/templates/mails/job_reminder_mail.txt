@@ -1,6 +1,7 @@
 {% extends "mails/email.txt" %}
 {% load from_settings %}
 {% block content %}
+{% autoescape off %}
 Nicht vergessen: Am {{ job.time |date:"d.m.Y H:i" }} - {{ job.end_time|date:"H:i" }} findet dein {% settings_value "SITE_NAME" %}-Arbeitseinsatz "{{ job.typ.displayed_name }}" statt.
 
 Details:
@@ -14,4 +15,5 @@ Wir freuen uns, dich zu sehen und zählen auf dich!
 
 Herzlich grüsst,
 dein {% settings_value "SITE_NAME" %}-Team
+{% endautoescape %}
 {% endblock %}

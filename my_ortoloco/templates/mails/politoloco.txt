@@ -1,6 +1,8 @@
 {% load from_settings %}
 {% block content %}
+{% autoescape off %}
 {{ content }}
+{% endautoescape %}
 {% endblock %}
 ============
 weitere Infos: http://{% settings_value "SITE_URL" %}
