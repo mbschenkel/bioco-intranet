@@ -65,7 +65,7 @@ if EMAIL_USE_TLS:
 else:
     EMAIL_PORT = 587
 EMAIL_HOST = 'mail.bioco.ch'
-EMAIL_HOST_USER = 'test@bioco.ch'
+EMAIL_HOST_USER = 'intranet@bioco.ch'
 EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'  
     
 TEMPLATE_DEBUG = DEBUG
@@ -303,6 +303,7 @@ else:
 # This is a custom variable to replace ortoloco with bioco in templates and co.
 SITE_NAME = u'biocò'
 SITE_URL  = u'bioco.ch'
+SITE_DESCRIPTION = u'Gemüsegenossenschaft Region Baden-Brugg'
 SITE_MY_NAME = u'biocò Intranet'
 SITE_MY_URL  = u'intranet.bioco.ch'
 LINK_REL_STATUTEN = u'http://bioco.ch/wp-content/uploads/2013/11/13-11-15_Statuten_bioco.pdf'

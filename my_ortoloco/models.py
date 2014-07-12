@@ -112,14 +112,7 @@ class Abo(models.Model):
     }
     
     SIZE_CHOICES = ((k, v.name_short) for k, v in abo_types.iteritems())
-    """
-    todo remove
-    SIZE_CHOICES = (
-        (SIZE_HALF,  abo_types[SIZE_HALF ].name_short),
-        (SIZE_SMALL, abo_types[SIZE_SMALL].name_short),
-        (SIZE_BIG,   abo_types[SIZE_BIG  ].name_short),
-    )
-    """
+    
     depot = models.ForeignKey(Depot, on_delete=models.PROTECT)
     groesse = models.PositiveIntegerField(choices=SIZE_CHOICES,default=SIZE_SMALL)
     extra_abos = models.ManyToManyField(ExtraAboType, null=True, blank=True)
@@ -133,7 +126,7 @@ class Abo(models.Model):
         elif self.SIZE_SMALL == self.groesse:
             namelist = ["1 Einheit"]
         else:
-            namelist = ["%f Einheiten" % (self.groesse / float(self.SIZE_SMALL))]
+            namelist = ["%i Einheiten" % int(self.groesse / float(self.SIZE_SMALL))]
         namelist.extend(extra.name for extra in self.extra_abos.all())
         return u"Abo (%s) %s" % (" + ".join(namelist), self.id)
 
@@ -188,6 +181,12 @@ class Loco(models.Model):
     last_name = models.CharField("Nachname", max_length=30)
     email = models.EmailField(unique=True)
 
+    SEX = [
+        ("M", "Herr"),
+        ("F", "Frau")
+    ]
+
+    sex = models.CharField("Geschlecht", max_length=1, choices=SEX, default='F')
     addr_street = models.CharField("Strasse", max_length=100)
     addr_zipcode = models.CharField("PLZ", max_length=10)
     addr_location = models.CharField("Ort", max_length=50)
@@ -199,6 +198,18 @@ class Loco(models.Model):
                             on_delete=models.SET_NULL)
 
     confirmed = models.BooleanField("bestätigt", default=True)
+
+    def get_salutation(self):
+        if self.sex is 'M':
+            return 'Herr'
+        else:
+            return 'Frau'
+            
+    def get_full_salutation(self):
+        if self.sex is 'M':
+            return 'Lieber '+self.get_name()
+        else:
+            return 'Liebe '+self.get_name()
 
     def get_taetigkeitsbereiche(self):
         tbs = []
@@ -227,10 +238,9 @@ class Loco(models.Model):
     def post_delete(cls, sender, instance, **kwds):
         instance.user.delete()
 
-
     class Meta:
-        verbose_name = "Mitglied (Loco)"
-        verbose_name_plural = "Mitglieder (Locos)"
+        verbose_name = "Mitglied"
+        verbose_name_plural = "Mitglieder"
 
     def get_name(self):
         return u"%s %s" % (self.first_name, self.last_name)

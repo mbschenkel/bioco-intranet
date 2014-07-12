@@ -2,6 +2,11 @@
 
 {% block content %}
     <h3>Alle Mitglieder im Überblick</h3>
+    <div class="alert alert-danger">
+        <b>Hinweis:</b> 
+        Die Daten auf dieser Seite sind ausschliesslich dazu bestimmt, die Zusammenarbeit innerhalb der Genossenschaft zu vereinfachen.
+        Sie dürfen nicht für andere Zwecke verwendet werden.
+    </div>
     <style>
         .container {
             width: 1200px;
@@ -15,7 +20,7 @@
                 <th>Name</th>
                 <th>Taetigkeitsbereiche</th>
                 <th>Depot</th>
-                <th>Email <a data-clipboard-text="Copy Me!" id="copy-emails" href="#">alle kopieren</a></th>
+                <th>E-Mail <a data-clipboard-text="Copy Me!" id="copy-emails" href="#">alle kopieren</a></th>
                 <th>Telefon</th>
                 <th>Mobile</th>
             </tr>
@@ -25,9 +30,7 @@
                 <tr>
                     <td>{{ loco.first_name }} {{ loco.last_name }}</td>
                     <td>
-                        {% for bereich in loco.get_taetigkeitsbereiche %}
-                            {{ bereich.name }},
-                        {% endfor %}
+                        {{ loco.get_taetigkeitsbereiche|join:", " }}
                     </td>
                     <td>{{ loco.abo.depot.name }}</td>
                     <td class="email">{{ loco.email }}</td>
@@ -43,6 +46,7 @@
     <script type="text/javascript" src="/static/js/dable.js"></script>
     <script type="text/javascript" src="/static/js/jquery-1.9.0.min.js"></script>
     <script type="text/javascript">
+        {% comment %} TODO use jquery tables https://datatables.net/examples/basic_init/zero_configuration.html {% endcomment %}
         var dable = new Dable("filter-locos");
         dable.UpdateDisplayedRows();        // Update the table
         dable.UpdateStyle();                // Reapply our styles

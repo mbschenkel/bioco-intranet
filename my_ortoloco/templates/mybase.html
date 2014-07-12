@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <title>{% settings_value "SITE_MY_NAME" %}</title>
+    <title>{% settings_value "SITE_MY_NAME" %}{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <link href='http://fonts.googleapis.com/css?family=Philosopher|Overlock:400,700,900|Philosopher:400,700|Ubuntu' rel='stylesheet' type='text/css'>
     <link rel="shortcut icon" href="/static/img/favicon.ico"/>
@@ -46,6 +46,9 @@
                     <li class="{{ menu.contact }}">
                         <a href="/my/kontakt">Kontakt</a>
                     </li>
+                    <li>
+                            <a href="/my/filters">Alle Mitglieder</a>
+                    </li>
                     <li class="{{ menu.ortoloco }}">
                         <a href="http://{% settings_value "SITE_URL" %}">{% settings_value "SITE_URL" %} Hauptseite</a>
                     </li>
@@ -59,9 +62,6 @@
                         </li>
                         <li>
                             <a href="/my/depotlisten">Depotlisten drucken</a>
-                        </li>
-                        <li>
-                            <a href="/my/filters">Mitglieder filtern</a>
                         </li>
                         <li>
                             <a href="/admin">Zum Admin-Interface</a>

@@ -11,7 +11,7 @@
         </a></td>
         <td style="font-size:14px;font-family: 'Overlock', sans-serif; font-weight: 700; padding:20px; color:#7f1d42; padding-top: 5px;">
             <h1>{% settings_value "SITE_NAME" %}</h1>
-            <h2>Die regionale Gartenkooperative</h2>
+            <h2>{% settings_value "SITE_DESCRIPTION" %}</h2>
         </td>
     </tr>
     <tr>
@@ -28,7 +28,7 @@
         <td colspan="2" style="padding:20px; padding-top:10px; padding-bottom:10px; background-color: #f2dede;">
             <strong>{% settings_value "SITE_NAME" %}</strong>
             &mdash;
-            Die regionale Gartenkooperative
+            {% settings_value "SITE_DESCRIPTION" %}
             <br/>
             Web: <a href="http://{% settings_value "SITE_URL" %}">www.{% settings_value "SITE_URL" %}</a>
             &nbsp;|&nbsp;

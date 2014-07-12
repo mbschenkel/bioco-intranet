@@ -2,10 +2,13 @@
 {% load from_settings %}
 {% block content %}
 {% autoescape off %}
+{{ loco.get_full_salutation }}
+
 Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen.
 
 Unter {% settings_value "SITE_MY_URL" %} kannst du dich ab sofort für Jobs anmelden und vieles mehr.
 
+Name: {{ loco }}
 Email: {{ username }}
 Passwort: {{ password }}
 Bitte setze dir hier gleich ein neues Passwort:

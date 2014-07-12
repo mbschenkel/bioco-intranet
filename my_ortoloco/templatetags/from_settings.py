@@ -7,7 +7,7 @@ register = template.Library()
 @register.simple_tag
 def settings_value(name):
     # dont serve arbitrary settings
-    whitelist = ('SITE_NAME', 'SITE_URL', 'SITE_MY_NAME', 'SITE_MY_URL', 
+    whitelist = ('SITE_NAME', 'SITE_URL', 'SITE_MY_NAME', 'SITE_MY_URL', 'SITE_DESCRIPTION',
         'BG_INFO_MAIL', 'JOB_INFO_MAIL', 'DEPOT_INFO_MAIL', 
         'EMAIL_HOST_USER', 'LINK_REL_STATUTEN', 'LINK_REL_REGLEMENT', 
         'MAP_CENTER_LAT', 'MAP_CENTER_LONG', 'MAP_CENTER_ZOOM'

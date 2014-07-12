@@ -8,7 +8,7 @@ from django.core.mail import EmailMultiAlternatives
 import re
 
 #single point of change
-SENDER_EMAIL_ADDRESS = settings.EMAIL_HOST_USER
+SENDER_EMAIL_ADDRESS = '<' + settings.EMAIL_HOST_USER + '> ' + settings.SITE_MY_NAME
 
 # sends mail only to specified email-addresses if dev mode
 def send_mail(subject, message, from_email, to_emails):
@@ -67,14 +67,15 @@ def send_contact_form(subject, message, loco, copy_to_loco):
         send_mail('Anfrage per ' + settings.SITE_MY_URL + ': ' + subject, message, loco.email, [loco.email])
 
 
-def send_welcome_mail(email, password, server):
+def send_welcome_mail(email, loco, password, server):
     plaintext = get_template('mails/welcome_mail.txt')
     htmly = get_template('mails/welcome_mail.html')
 
     # reset password so we can send it to him
     d = Context({
         'subject': 'Willkommen bei ' + settings.SITE_NAME,
-        'username': email,
+        'username': loco.email,
+        'loco': loco,
         'password': password,
         'serverurl': "http://" + server
     })

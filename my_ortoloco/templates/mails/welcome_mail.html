@@ -1,10 +1,13 @@
 {% extends "mails/email.html" %}
 {% load from_settings %}
 {% block content %}
+    {{ loco.get_full_salutation }}
+    <br/><br/>
     Wir freuen uns, dich bei {% settings_value "SITE_NAME" %} begrüssen zu dürfen.
     <br/><br/>
     Unter <a href="http://{% settings_value "SITE_MY_URL" %}">{% settings_value "SITE_MY_URL" %}</a> kannst du dich ab sofort für Arbeitseinsätze anmelden und vieles mehr.
     <br/><br/>
+    Name: {{ loco }}<br/>
     Email: {{ username }}<br/>
     Passwort: {{ password }} (bitte setze dir <a href="{{ serverurl }}/my/passwort">hier</a> gleich ein neues Passwort)
     <br/><br/>

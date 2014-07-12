@@ -421,14 +421,14 @@ class LocoAdminForm(forms.ModelForm):
 
 class LocoAdmin(admin.ModelAdmin):
     form = LocoAdminForm
-    list_display = ["email", "first_name", "last_name", "show_boehnli_count"]
+    list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count"]
     search_fields = ["first_name", "last_name", "email"]
     #raw_id_fields = ["abo"]
     exclude = ["abo"]
     readonly_fields = ["user"]
     actions = ["impersonate_job"]
 
-    list_filter = ["addr_location"] 
+    list_filter = ["addr_location", "sex"] 
     
     # Add boehnli-count to SQL query as a left-join
     def queryset(self, request):

@@ -1,6 +1,7 @@
 {% extends "mails/email.html" %}
 {% load from_settings %}
 {% block content %}
+    {{ loco.get_full_salutation }}<br/><br/>
     Nicht vergessen: Am <b>{{ job.time |date:"d.m.Y H:i" }} &ndash; {{ job.end_time|date:"H:i" }}</b> findet dein {% settings_value "SITE_NAME" %}-Arbeitseinsatz <b>"{{ job.typ.displayed_name }}"</b> statt.
     <br/><br/>
     <strong>Details:</strong>

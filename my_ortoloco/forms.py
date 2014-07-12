@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db.models.fields import DecimalField
-from django.forms import CharField, PasswordInput, Form, ValidationError, ModelForm, Select, TextInput, ChoiceField, CheckboxInput
+from django.forms import CharField, PasswordInput, Form, ValidationError, ModelForm, Select, TextInput, RadioSelect, ChoiceField, CheckboxInput
 from my_ortoloco.models import Loco, User
 
 
@@ -17,10 +17,11 @@ class PasswordForm(Form):
 class ProfileLocoForm(ModelForm):
     class Meta:
         model = Loco
-        fields = ['first_name', 'last_name', 'email',
+        fields = ['sex', 'first_name', 'last_name', 'email',
                   'addr_street', 'addr_zipcode', 'addr_location',
                   'birthday', 'phone', 'mobile_phone']
         widgets = {
+            'sex': RadioSelect(attrs={}),
             'first_name': TextInput(attrs={'placeholder': 'Berta'}),
             'last_name': TextInput(attrs={'placeholder': 'Muster'}),
             'addr_street': TextInput(attrs={'placeholder': 'Zürcherstrasse 123'}),
@@ -46,10 +47,11 @@ class ProfileLocoForm(ModelForm):
 class RegisterLocoForm(ModelForm):
     class Meta:
         model = Loco
-        fields = ['first_name', 'last_name', 'email',
+        fields = ['sex', 'first_name', 'last_name', 'email',
                   'addr_street', 'addr_zipcode', 'addr_location',
                   'birthday', 'phone', 'mobile_phone']
         widgets = {
+            'sex': RadioSelect(attrs={}),
             'first_name': TextInput(attrs={'placeholder': 'Berta'}),
             'last_name': TextInput(attrs={'placeholder': 'Muster'}),
             'addr_street': TextInput(attrs={'placeholder': 'Zürcherstrasse 123'}),

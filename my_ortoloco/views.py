@@ -12,6 +12,7 @@ from django.contrib.auth.models import Group
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.core.management import call_command
+from django import db
 
 from my_ortoloco.models import *
 from my_ortoloco.forms import *
@@ -78,7 +79,7 @@ def my_home(request):
     renderdict = getBohnenDict(request)
     renderdict.update({
         'info_text': info_text,
-        'jobs': jobs[:7],
+        'jobs': jobs[:9],
         'teams': Taetigkeitsbereich.objects.filter(hidden=False),
         'no_abo': request.user.loco.abo is None
     })
@@ -435,6 +436,7 @@ def my_signup(request):
                     password = password_generator()
 
                     loco = Loco.objects.create(first_name=locoform.cleaned_data['first_name'], last_name=locoform.cleaned_data['last_name'], email=locoform.cleaned_data['email'])
+                    loco.sex = locoform.cleaned_data['sex']
                     loco.addr_street = locoform.cleaned_data['addr_street']
                     loco.addr_zipcode = locoform.cleaned_data['addr_zipcode']
                     loco.addr_location = locoform.cleaned_data['addr_location']
@@ -446,8 +448,8 @@ def my_signup(request):
                     loco.user.save()
                     
                     #registration is not complete, but loco and user exist anyway, so we send mail now
-                    send_welcome_mail(loco.email, password, request.META["HTTP_HOST"])
-                    send_welcome_mail(settings.BG_INFO_MAIL, "<geheim>", request.META["HTTP_HOST"])
+                    send_welcome_mail(loco.email, loco, password, request.META["HTTP_HOST"])
+                    send_welcome_mail(settings.BG_INFO_MAIL, loco, "<geheim>", request.META["HTTP_HOST"])
 
                     #log in to allow him to make changes to the abo
                     loggedin_user = authenticate(username=loco.user.username, password=password)
@@ -685,6 +687,7 @@ def my_profile(request):
         locoform = ProfileLocoForm(request.POST, instance=loco)
         if locoform.is_valid():
             #set all fields of user
+            loco.sex = locoform.cleaned_data['sex']
             loco.first_name = locoform.cleaned_data['first_name']
             loco.last_name = locoform.cleaned_data['last_name']
             loco.email = locoform.cleaned_data['email']
@@ -771,11 +774,13 @@ def my_mails(request):
     return render(request, 'mail_sender.html', renderdict)
 
 
-@staff_member_required
+#@staff_member_required
+@login_required
 def my_filters(request):
     renderdict = getBohnenDict(request)
+    locos = Loco.objects.select_related('abo').select_related('abo__depot').all()
     renderdict.update({
-        'locos': Loco.objects.all()
+        'locos': locos
     })
     return render(request, 'filters.html', renderdict)
 
@@ -861,7 +866,8 @@ def my_createlocoforsuperuserifnotexist(request):
 
 @staff_member_required
 def my_startmigration(request):
-    #TODO remove
+    #TODO remove?
+    return    
     f = StringIO()
     with Swapstd(f):
         pass
@@ -872,6 +878,8 @@ def my_startmigration(request):
 
 @staff_member_required
 def migrate_apps(request):
+    #TODO remove?
+    return    
     f = StringIO()
     with Swapstd(f):
         call_command('migrate', 'my_ortoloco')
@@ -881,12 +889,16 @@ def migrate_apps(request):
 
 @staff_member_required
 def pip_install(request):
+    #TODO remove?
+    return    
     command = "pip install -r requirements.txt"
     res = run_in_shell(request, command)
     return res
 
 
 def test_filters(request):
+    #TODO remove?
+    return    
     lst = Filter.get_all()
     res = []
     for name in Filter.get_names():
@@ -898,6 +910,8 @@ def test_filters(request):
 
 
 def test_filters_post(request):
+    #TODO remove?
+    return    
     # TODO: extract filter params from post request
     # the full list of filters is obtained by Filter.get_names()
     filters = ["Zusatzabo Eier", "Depot GZ Oerlikon"]
