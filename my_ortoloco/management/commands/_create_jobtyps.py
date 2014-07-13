@@ -150,7 +150,7 @@ def create_jobtyps():
     print '***************************************************************'
         
     for d in jobtyps:
-        print (u'adding %s to bereich %s:' % (d["name"], d["bereich"])).encode('utf-8')
+        print (u'adding jobtyp %s to bereich %s' % (d["name"], d["bereich"])).encode('utf-8')
         d["bereich"] = Taetigkeitsbereich.objects.get(name=d["bereich"])
         obj = JobTyp(**d)
         obj.save()
