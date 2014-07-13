@@ -3,13 +3,53 @@ from my_ortoloco.models import *
 
 jobtyps = [ 
 {
-'name':            u'Ernten',
+'name':            u'Ernten vor Verteilfahrt',
 'displayed_name':  None,
 'duration':        4,
-'bereich':         u'Ernten und Verteilen',
-'location':        u'Acker',
-'description':     u'''Wir ernten unser Gemüse und erledigen sonstige Arbeiten. Von 13-17h. Gute Schuhe und wetterfeste Kleidung anziehen.''',
+'bereich':         u'Ernten und Verpacken',
+'location':        u'Geisshof',
+'description':     u'''Wir ernten unser Gemüse und erledigen sonstige Arbeiten. Gute Schuhe und wetterfeste Kleidung anziehen.''',
 },
+
+{
+'name':            u'Verteilfahrt Dienstag',
+'displayed_name':  None,
+'duration':        4,
+'bereich':         u'Verteilfahrten',
+'location':        u'Geisshof und unterwegs',
+'description':     u'Fahren oder Mitfahren (entsprechendes Feld ankreuzen), mindestens eine Person bringt ein Auto mit und fährt damit zu den Depots. Du informierst dich über die <a href="http://bioco.ch/intranet/touren_bioco_dienstag/">Route zu den Depots und den Verteilplan</a>.',
+},
+
+{
+'name':            u'Verteilfahrt Freitag',
+'displayed_name':  None,
+'duration':        4,
+'bereich':         u'Verteilfahrten',
+'location':        u'Geisshof und unterwegs',
+'description':     u'Fahren oder Mitfahren (entsprechendes Feld ankreuzen), mindestens eine Person bringt ein Auto mit und fährt damit zu den Depots. Du informierst dich über die <a href="http://bioco.ch/intranet/touren_bioco_freitag/">Route zu den Depots und den Verteilplan</a>.',
+},
+
+
+{
+'name':            u'Aktionstag',
+'displayed_name':  None,
+'duration':        8,
+'bereich':         u'Events',
+'location':        u'Geisshof',
+'description':     u'Gartengenuss am Wochenende: Von 9 bis 17 Uhr arbeiten wir auf Hof und Feld. Du bist auch willkommen, wenn du nicht den ganzen Tag bleiben kannst. Findet bei jedem Wetter statt. Fürs Zmittag ist gesorgt.',
+},
+
+
+{
+'name':            u'Feierabendjäten',
+'displayed_name':  None,
+'duration':        3,
+'bereich':         u'Ernten und Verpacken',
+'location':        u'Geisshof',
+'description':     u'Nach einem Tag am Schreibtisch lockt die Abendsonne noch einmal raus aufs Feld. Dann ist es Zeit fürs Feierabendjäten mit kühlem Bier und Sirup. 18-21 Uhr.',
+},
+
+
 ]
 
 """
@@ -36,16 +76,6 @@ TODO Adjust for bioco
 
 
 
-{
-'name':            u'Ernteverteilung',
-'displayed_name':  None,
-'duration':        4,
-'bereich':         u'verteilen',
-'location':        u'Zürcherstr. 43, Dietikon',
-'description':     u'MIT-fahren (kein Führerschein benötigt): Du bringst zusammen mit einer/m FahrerIn die Gemüsetaschen in die Depots. Das Auto steht an der Zürcherstr. 43 in Dietikon.',
-},
-
-
 
 {
 'name':            u'Ernteverteilung+F',
@@ -56,16 +86,6 @@ TODO Adjust for bioco
 'description':     u'Fahren (mit Führerschein): Du bringst zusammen mit einer/m MitfahrerIn die Gemüsetaschen in die Depots. Das Auto steht an der Zürcherstr. 43 in Dietikon.',
 },
 
-
-
-{
-'name':            u'Aktionstag',
-'displayed_name':  None,
-'duration':        8,
-'bereich':         u'rand',
-'location':        u'Fondli-Hof',
-'description':     u'Gartengenuss am Wochenende: Von 9 bis 17 Uhr arbeiten wir auf Hof und Feld. Du bist auch willkommen, wenn du nicht den ganzen Tag bleiben kannst. Findet bei jedem Wetter statt. Fürs Zmittag ist gesorgt.',
-},
 
 
 
@@ -130,7 +150,7 @@ def create_jobtyps():
     print '***************************************************************'
         
     for d in jobtyps:
-        print 'adding bereich:', d["bereich"]
+        print (u'adding %s to bereich %s:' % (d["name"], d["bereich"])).encode('utf-8')
         d["bereich"] = Taetigkeitsbereich.objects.get(name=d["bereich"])
         obj = JobTyp(**d)
         obj.save()
