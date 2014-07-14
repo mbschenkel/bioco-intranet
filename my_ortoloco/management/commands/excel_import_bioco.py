@@ -2,7 +2,7 @@
 
 #use as
 #./manage.py clean_db
-#./manage.py excel_import_bioco ..... bioco_init_data_20140714.xlsx 2>&1 | tee -a import_log.txt | less
+#./manage.py excel_import_bioco ../data/bioco_init_data_20140714.xlsx 2>&1 | tee -a import_log.txt | less
 
 from django.core.management.base import BaseCommand, CommandError
 

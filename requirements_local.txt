@@ -5,6 +5,7 @@ South==0.8.4
 argparse==1.2.1
 dj-database-url==0.3.0
 dj-static==0.0.5
+django-debug-toolbar==1.2
 django-impersonate==0.8.1
 django-tinymce==1.5.2
 gunicorn==18.0
@@ -18,5 +19,5 @@ xhtml2pdf==0.0.6
 #for admindocs
 docutils=0.11
 #excel read for import:
-xlrd=??
+xlrd==0.9.3
 django-debug-toolbar=0.1.11
