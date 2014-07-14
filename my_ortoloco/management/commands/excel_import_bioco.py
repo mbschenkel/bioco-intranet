@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+#use as
+#./manage.py clean_db
+#./manage.py excel_import_bioco ..... bioco_init_data_20140714.xlsx 2>&1 | tee -a import_log.txt | less
+
 from django.core.management.base import BaseCommand, CommandError
 
 from my_ortoloco.models import *
@@ -173,7 +177,7 @@ class Command(BaseCommand):
                 
                 l.status = worksheet.cell_value(row, self.LOCO_STATUS).strip()
                 if l.status not in [u'B', u'b', u'G', u'g']:
-                    print (u'Status is %s and not B or G - skipping      ******' % (l.status)).encode('utf-8')
+                    print (u'Status is %s and not B or G - skipping' % (l.status)).encode('utf-8')
                     continue
                                 
                 l.insert()
@@ -265,7 +269,7 @@ class new_loco(object):
     def insert(self):
         res = Loco.objects.filter(email=self.email)
         if 0 < res.count():
-            print (u'A loco with email %s is already known, adding "doppelt"    ********' % self.email).encode('utf-8')
+            print (u'A loco with email %s is already known, adding "+doppelt"    ********' % self.email).encode('utf-8')
             self.email = self.email.replace('@', '+doppelt@')
         l = Loco()
         l.first_name = self.first_name
@@ -329,7 +333,7 @@ class new_loco(object):
         if 0 == a.count():
             d = Depot.objects.filter(name__contains=self.depot)
             if (not self.depot) or (not d.count()):
-                print u'No depot found, using Geisshof  *********'
+                print (u'No depot "%s" found, using Geisshof  *********' % self.depot).encode('utf-8')
                 d = Depot.objects.filter(name__contains='Geisshof')
             a = Abo(id=abo_id)
             a.depot = d.first()
@@ -346,7 +350,7 @@ class new_loco(object):
             loco.abo = a
             loco.save()
             if self.status in [u'B', u'b']: #abo_id > 900:
-                print u'User assigned to staff  ********'
+                print u'User assigned to staff!!!'
                 loco.user.is_staff = True
                 loco.user.save()
         else:
