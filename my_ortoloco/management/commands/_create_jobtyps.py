@@ -8,6 +8,7 @@ jobtyps = [
 'duration':        4,
 'bereich':         u'Ernten und Verpacken',
 'location':        u'Geisshof',
+'car_needed':      False,
 'description':     u'''Wir ernten unser Gemüse und erledigen sonstige Arbeiten. Gute Schuhe und wetterfeste Kleidung anziehen.''',
 },
 
@@ -17,6 +18,7 @@ jobtyps = [
 'duration':        4,
 'bereich':         u'Verteilfahrten',
 'location':        u'Geisshof und unterwegs',
+'car_needed':      True,
 'description':     u'Fahren oder Mitfahren (entsprechendes Feld ankreuzen), mindestens eine Person bringt ein Auto mit und fährt damit zu den Depots. Du informierst dich über die <a href="http://bioco.ch/intranet/touren_bioco_dienstag/">Route zu den Depots und den Verteilplan</a>.',
 },
 
@@ -26,6 +28,7 @@ jobtyps = [
 'duration':        4,
 'bereich':         u'Verteilfahrten',
 'location':        u'Geisshof und unterwegs',
+'car_needed':      True,
 'description':     u'Fahren oder Mitfahren (entsprechendes Feld ankreuzen), mindestens eine Person bringt ein Auto mit und fährt damit zu den Depots. Du informierst dich über die <a href="http://bioco.ch/intranet/touren_bioco_freitag/">Route zu den Depots und den Verteilplan</a>.',
 },
 
@@ -36,6 +39,7 @@ jobtyps = [
 'duration':        8,
 'bereich':         u'Events',
 'location':        u'Geisshof',
+'car_needed':      False,
 'description':     u'Gartengenuss am Wochenende: Von 9 bis 17 Uhr arbeiten wir auf Hof und Feld. Du bist auch willkommen, wenn du nicht den ganzen Tag bleiben kannst. Findet bei jedem Wetter statt. Fürs Zmittag ist gesorgt.',
 },
 
@@ -46,7 +50,19 @@ jobtyps = [
 'duration':        3,
 'bereich':         u'Ernten und Verpacken',
 'location':        u'Geisshof',
+'car_needed':      False,
 'description':     u'Nach einem Tag am Schreibtisch lockt die Abendsonne noch einmal raus aufs Feld. Dann ist es Zeit fürs Feierabendjäten mit kühlem Bier und Sirup. 18-21 Uhr.',
+},
+
+
+{
+'name':            u'Feldarbeit',
+'displayed_name':  None,
+'duration':        3,
+'bereich':         u'Feldarbeit',
+'location':        u'Geisshof',
+'car_needed':      False,
+'description':     u'Diverse Arbeiten auf dem Feld: Jäten, Pflanzen, etc.',
 },
 
 
