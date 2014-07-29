@@ -455,22 +455,6 @@ def my_signup(request):
                     loggedin_user = authenticate(username=loco.user.username, password=password)
                     login(request, loggedin_user)
                     success = True
-                                    
-                    # todo remove again after test phase
-                    # add @bioco.ch users directly to access-group "betriebsgruppe"
-                    if '@bioco.ch' in loco.email:
-                        group_name = 'Betriebsgruppe'
-                        print loco.email, 'is @bioco.ch, adding to group', group_name
-                        grp = Group.objects.get(name=group_name) 
-                        if grp:
-                            print 'Group', group_name, 'found, adding'
-                            grp.user_set.add(loco.user)
-                            loco.user.is_staff = True
-                            loco.user.save()                    
-                        else:
-                            print 'Group', group_name, 'NOT found, NOT adding'
-                    else:
-                        print 'Non BG-member, skip.'
     
                     return redirect("/my/aboerstellen")
     else:
