@@ -176,8 +176,8 @@ class Command(BaseCommand):
                 l.print_out()
                 
                 l.status = worksheet.cell_value(row, self.LOCO_STATUS).strip()
-                if l.status not in [u'B', u'b', u'G', u'g']:
-                    print (u'Status is %s and not B or G - skipping' % (l.status)).encode('utf-8')
+                if l.status not in [u'B', u'b', u'G', u'GG', u'gg', u'g']:
+                    print (u'Status is %s and not B, G or GG - skipping' % (l.status)).encode('utf-8')
                     continue
                                 
                 l.insert()
@@ -300,6 +300,8 @@ class new_loco(object):
         else:
             l.birthday = datetime(1900, 1, 1, 0, 0, 0) 
         
+        l.confirmed = True
+        
         try:
             l.full_clean()
         except ValidationError as e:
@@ -367,5 +369,5 @@ class new_loco(object):
 
         
     def print_out(self):
-        s = u'%s %s from %s (%s) with Abo id %s' % (self.first_name, self.last_name, self.city, unicode(self.zip), unicode(self.abo_id))
+        s = u'%s %s (%s) from %s (%s) with Abo id %s' % (self.first_name, self.last_name, self.email, self.city, unicode(self.zip), unicode(self.abo_id))
         print s.encode('utf-8')
