@@ -88,6 +88,7 @@
                 <div class="bohnen">
                     {% block bohnen %}
                         <h5>Dein Rüebli-Konto</h5>
+                        <p>
                         {% for i in bohnenrange %}
                             {% if i < userbohnen %}
                                 <img alt="Volle Erbse" title="Ein geleisteter Einsatz" class="ruebli" src="/static/img/ruebli_color.png"/>
@@ -95,6 +96,9 @@
                                 <img alt="Leere Erbse" title="Ein noch zu leistender Einsatz"  class="ruebli" src="/static/img/ruebli_bw.png"/>
                             {% endif %}
                         {% endfor %}
+                        </p><p>
+                        Du hast {{ userbohnen }} von {{ bohnenrange|length }} Einsätzen geleistet.
+                        </p>
                     {% endblock %}
                 </div>
                 <hr>
