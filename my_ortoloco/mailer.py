@@ -18,12 +18,12 @@ def send_mail(subject, message, from_email, to_emails):
     else:
         # in debug mode send to dummy address
         okmails = [settings.DEBUG_EMAIL_ADDRESS]
-        print "Mail intended for " + ", ".join(to_emails) + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS
+        print "Mail intended for " + ", ".join(to_emails).encode('utf-8') + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS.encode('utf-8')
     
     if len(okmails) > 0:
         for amail in okmails:
             res = mail.send_mail(subject, message, from_email, [amail], fail_silently=False)
-            print 'Sending mail from ' + from_email + ' to ' + amail 
+            print 'Sending mail from ' + from_email.encode('utf-8') + ' to ' + amail.encode('utf-8') 
             print ' res= ', res
         
     # todo remove again later, for now send a copy every time
@@ -40,14 +40,14 @@ def send_mail_multi(email_multi_message):
         okmails = email_multi_message.to
     else:
         okmails = [settings.DEBUG_EMAIL_ADDRESS]
-        print "Multi-Mail intended for " + ", ".join(to_emails) + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS
+        print "Multi-Mail intended for " + ", ".join(to_emails).encode('utf-8') + " rerouted to " + settings.DEBUG_EMAIL_ADDRESS.encode('utf-8')
         
     if len(okmails) > 0:
         email_multi_message.to = []
         email_multi_message.bcc = okmails
         res = email_multi_message.send()
         print "res = ", res
-        print "Mail sent to " + ", ".join(okmails) + (", on whitelist" if settings.DEBUG else "")
+        print "Mail sent to " + ", ".join(okmails).encode('utf-8') + (", on whitelist" if settings.DEBUG else "")
         
     # todo remove again later, for now send a copy every time
     message_verbose =  email_multi_message.body + '\n\nCopy of original sent to: ' + ', '.join(to_emails)
