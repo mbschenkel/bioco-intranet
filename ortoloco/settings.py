@@ -9,8 +9,7 @@ print('---------- in settings.py ------------')
 # as little stuff in settings_local.py as necessary
 if "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'production'
-    # todo - so far everything is debug...
-    DEBUG = True
+    DEBUG = False
     GA_TRACKING_CODE = 'UA-46125166-1'
 elif "test" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'test'
