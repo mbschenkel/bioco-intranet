@@ -101,8 +101,9 @@ def my_job(request, job_id):
         if s[0] in ('-', '+'):
             return s[1:].isdigit()
         return s.isdigit()
-
+            
     error = None
+    send_mail = False
     if request.method == 'POST':
         num = request.POST.get("jobs")
         with_car = request.POST.get("with_car", False)
@@ -115,7 +116,8 @@ def my_job(request, job_id):
         elif int(num) > job.freie_plaetze():
             error = "Zu hohe Anzahl Anmeldungen oder der Einsatz ist bereits ausgebucht"
         else:
-            # adding participants
+            # adding new participants
+            send_mail = True
             add = int(num)
             for i in range(add):
                 bohne = Boehnli.objects.create(loco=loco, job=job, with_car=with_car)
@@ -124,7 +126,10 @@ def my_job(request, job_id):
     for bohne in Boehnli.objects.filter(job_id=job.id):
         if bohne.loco is not None:
             participants.append(bohne)
-
+    
+    if send_mail:
+        send_job_signup([loco.email], job, participants, request.META["HTTP_HOST"])
+            
     renderdict = getBohnenDict(request)
     renderdict.update({
         'participants': participants,

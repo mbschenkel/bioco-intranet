@@ -186,18 +186,47 @@ def send_mail_password_reset(email, password, server):
 def send_job_reminder(emails, job, participants, server):
     plaintext = get_template('mails/job_reminder_mail.txt')
     htmly = get_template('mails/job_reminder_mail.html')
+    vcal_template = get_template('mails/cal.ical')
+    
     subject = settings.SITE_NAME + " - Job-Erinnerung"
     
     d = Context({
         'subject': subject,
         'job': job,
         'participants': participants,
+        'server': server,
         'serverurl': "http://" + server
     })
 
     text_content = plaintext.render(d)
     html_content = htmly.render(d)
+    vcal_content = vcal_template.render(d)
 
     msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, emails)
     msg.attach_alternative(html_content, "text/html")
+    msg.attach_alternative(vcal_content, "text/calendar")
+    send_mail_multi(msg)
+
+def send_job_signup(emails, job, participants, server):
+    plaintext = get_template('mails/job_signup_mail.txt')
+    htmly = get_template('mails/job_signup_mail.html')
+    vcal_template = get_template('mails/cal.ical')
+    
+    subject = settings.SITE_NAME + " - Job-Anmeldung"
+    
+    d = Context({
+        'subject': subject,
+        'job': job,
+        'participants': participants,
+        'server': server,
+        'serverurl': "http://" + server
+    })
+
+    text_content = plaintext.render(d)
+    html_content = htmly.render(d)
+    vcal_content = vcal_template.render(d)
+    
+    msg = EmailMultiAlternatives(subject, text_content, SENDER_EMAIL_ADDRESS, emails)
+    msg.attach_alternative(html_content, "text/html")
+    msg.attach_alternative(vcal_content, "text/calendar")
     send_mail_multi(msg)

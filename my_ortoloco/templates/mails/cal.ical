@@ -1,0 +1,27 @@
+{% comment %}
+    ical files according to RFC must use Carriage Return/Line Feed (CRLF)!
+    http://tools.ietf.org/html/rfc5545
+{% endcomment %}
+{% load from_settings %}
+{% block content %}  
+{% autoescape off %}
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:{{ serverurl }}
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:{{ job.id }}@{{ server }}
+ORGANIZER;CN="{% settings_value "SITE_NAME" %} - {% settings_value "SITE_DESCRIPTION" %}":MAILTO:{% settings_value "EMAIL_HOST_USER" %}
+LOCATION:{{ job.typ.location }}
+SUMMARY:{% settings_value "SITE_NAME" %}-Einsatz "{{ job.typ.displayed_name }}"
+DESCRIPTION:{{ job.typ.description|ical_escape }}
+ \n\n
+ Weitere Informationen: {{ serverurl }}/my/jobs/{{ job.id }}
+URL:{{ serverurl }}/my/jobs/{{ job.id }}
+CLASS:PUBLIC
+DTSTART;TZID=Europe/Zurich:{{ job.time   |date:"Ymd" }}T{{ job.time     |date:"His" }}
+DTEND;TZID=Europe/Zurich:{{ job.end_time |date:"Ymd" }}T{{ job.end_time |date:"His" }}
+END:VEVENT
+END:VCALENDAR
+{% endautoescape %}
+{% endblock %}

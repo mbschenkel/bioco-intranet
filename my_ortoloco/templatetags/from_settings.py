@@ -1,6 +1,10 @@
+# encoding: utf-8
+
 from django import template
 from django.conf import settings
-
+import HTMLParser
+from django.utils.html import strip_tags
+ 
 register = template.Library()
 
 # settings value
@@ -27,7 +31,6 @@ def boehnli_progress(participants, slots):
             text += '<img class="jobstatus" src="/static/img/erbse_leer.png" title="%s"/> ' % title
     return text + '&nbsp;' + title
 
-
 @register.simple_tag
 def ga_tracking():
     if settings.GA_TRACKING_CODE:
@@ -44,3 +47,23 @@ def ga_tracking():
         return code.replace('[[code]]', settings.GA_TRACKING_CODE)          
     else:
         return '<!-- no tracking code set -->'
+
+# Decode HTML (i.e. &uuml; -> ü), then replace newline with newline+space
+# to match the expected ICal formatting
+@register.filter
+def ical_escape(value):
+    # Add actual new-line character before HTML-decoding
+    value = value.replace(u"<br />", u"<br />\\n")
+    value = value.replace(u"<br/>",  u"<br />\\n")
+    value = value.replace(u"<br>",   u"<br />\\n")
+    value = value.replace(u"</p>",   u"</p>\\n")
+    # Strip tags
+    value = strip_tags(value)
+    # HTML decode
+    h = HTMLParser.HTMLParser()
+    value = h.unescape(value)
+    # first convert all CLRF to CL only
+    value = value.replace(u"\r\n", u"\n")
+    # Then add CLRF newlines followed by one space for all breaks
+    value = value.replace(u"\n", u"\r\n ")
+    return value
