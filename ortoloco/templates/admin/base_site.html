@@ -1,11 +1,11 @@
-
 {% extends "admin/base.html" %}
+{% load from_settings %}
 {% load i18n %}
 
 {% block title %}{{ title }} | {% trans 'Django site admin' %}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name">{% trans 'Django administration' %}</h1>
+<h1 id="site-name">{% settings_value "SITE_MY_NAME" %} &mdash; Administration</h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

@@ -97,7 +97,11 @@
                             {% endif %}
                         {% endfor %}
                         </p><p>
-                        Du hast {{ userbohnen }} von {{ bohnenrange|length }} Einsätzen geleistet.
+                        Du hast <a href="/my/vergangenejobs">{{ userbohnen }} {{ userbohnen|pluralize:"Einsatz,Einsätze" }}</a> 
+                        {% if bohnenrange %}
+                            von {{ bohnenrange|length }} 
+                        {% endif %}
+                        geleistet
                         </p>
                     {% endblock %}
                 </div>
@@ -115,7 +119,7 @@
                                 {% endfor %}
                             </ul>
                         {% else %}
-                            Noch für keine Jobs angemeldet
+                            Noch für keine <a href="/my/einsaetze">Jobs</a> angemeldet
                         {% endif %}
                     {% endblock %}
                 </div>
