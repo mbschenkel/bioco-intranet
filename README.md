@@ -1,6 +1,7 @@
-bioco.ch (forked from ortoloco.ch)
+bioco.ch 
 ===================
-###die regionale gartenkooperative
+### Gemüsegenossenschaft Region Baden-Brugg
+(forked from ortoloco.ch: https://github.com/ortoloco/ortoloco)
 
 
 We implement a "specific" web solution to organize all the work on a farm as a group of about ~400 persons.
