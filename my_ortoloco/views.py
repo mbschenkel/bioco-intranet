@@ -869,7 +869,17 @@ def my_createlocoforsuperuserifnotexist(request):
     # we do just nothing if its not a superuser or he has already a loco
     return redirect("/my/home")
 
+    
+@staff_member_required
+def my_dumpdata(request):
+    if not request.user.is_superuser:
+        return    
+    f = StringIO()
+    with Swapstd(f):
+        call_command('dumpdata', indent=4)
+    return HttpResponse(f.getvalue(), content_type="text/plain")
 
+    
 @staff_member_required
 def my_startmigration(request):
     #TODO remove?
