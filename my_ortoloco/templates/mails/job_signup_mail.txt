@@ -6,7 +6,7 @@ Du hast dich für den {% settings_value "SITE_NAME" %}-Arbeitseinsatz "{{ job.ty
 
 Details:
 
-Job:        {{ job.typ.description|striptags }}
+Job:        {{ job.typ.description|html_decode }}
 Zeit:       {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
 Mit dabei:  {% for participant in participants %}
             {{ participant.loco }}{% endfor %}

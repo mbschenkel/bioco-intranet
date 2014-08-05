@@ -6,7 +6,7 @@ Nicht vergessen: Am {{ job.time |date:"d.m.Y H:i" }} - {{ job.end_time|date:"H:i
 
 Details:
 
-Job:        {{ job.typ.description|striptags }}
+Job:        {{ job.typ.description|html_decode }}
 Zeit:       {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
 Mit dabei:  {{ participants }}
 Ort:        {{ job.typ.location }}

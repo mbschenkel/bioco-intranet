@@ -1,11 +1,4 @@
-{% comment %}
-    ical files according to RFC must use Carriage Return/Line Feed (CRLF)!
-    http://tools.ietf.org/html/rfc5545
-{% endcomment %}
-{% load from_settings %}
-{% block content %}  
-{% autoescape off %}
-BEGIN:VCALENDAR
+{% load from_settings %}{% block content %}{% autoescape off %}BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:{{ serverurl }}
 METHOD:PUBLISH
@@ -22,6 +15,9 @@ CLASS:PUBLIC
 DTSTART;TZID=Europe/Zurich:{{ job.time   |date:"Ymd" }}T{{ job.time     |date:"His" }}
 DTEND;TZID=Europe/Zurich:{{ job.end_time |date:"Ymd" }}T{{ job.end_time |date:"His" }}
 END:VEVENT
-END:VCALENDAR
-{% endautoescape %}
-{% endblock %}
+END:VCALENDAR{% endautoescape %}{% endblock %}{% comment %}
+    Header should be 'spaceless' such that BEGIN:... is at the first character
+
+    ical files according to RFC must use Carriage Return/Line Feed (CRLF)!
+    http://tools.ietf.org/html/rfc5545
+{% endcomment %}

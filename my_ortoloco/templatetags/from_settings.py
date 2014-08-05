@@ -48,10 +48,9 @@ def ga_tracking():
     else:
         return '<!-- no tracking code set -->'
 
-# Decode HTML (i.e. &uuml; -> ü), then replace newline with newline+space
-# to match the expected ICal formatting
+# Decode HTML (i.e. &uuml; -> ü, <br> -> \n)
 @register.filter
-def ical_escape(value):
+def html_decode(value):
     # Add actual new-line character before HTML-decoding
     value = value.replace(u"<br />", u"<br />\\n")
     value = value.replace(u"<br/>",  u"<br />\\n")
@@ -62,7 +61,14 @@ def ical_escape(value):
     # HTML decode
     h = HTMLParser.HTMLParser()
     value = h.unescape(value)
-    # first convert all CLRF to CL only
+    return value
+
+# Decode HTML (i.e. &uuml; -> ü), then replace newline with newline+space
+# to match the expected ICal formatting
+@register.filter
+def ical_escape(value):
+    value = html_decode(value)
+    # First convert all CLRF to CL only
     value = value.replace(u"\r\n", u"\n")
     # Then add CLRF newlines followed by one space for all breaks
     value = value.replace(u"\n", u"\r\n ")
