@@ -54,13 +54,31 @@
 
                 <div class="controls text-label">
                     Wähle mind. eine der folgenden Gruppen:
+                    <label class="checkbox" for="one_depot">
+                        <input type="checkbox" id="one_depot" name="one_depot">
+                        Alle vom Depot 
+                        <select name="the_depot">
+                            {% for depot in all_depots %}
+                                <option value="{{ depot.pk }}">{{ depot.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="checkbox" for="one_area">
+                        <input type="checkbox" id="one_area" name="one_area">
+                        Alle in  Tätigkeitsbereich
+                        <select name="the_area">
+                            {% for area in all_areas %}
+                                <option value="{{ area.pk }}">{{ area.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
                     <label class="checkbox" for="allabo">
                         <input type="checkbox" id="allabo" name="allabo">
-                        Alle Abonnenten (inkl. MitabonnentInnen)
+                        Alle Abonnenten (inkl. MitabonnentInnen, mit oder ohne Anteilsschein)
                     </label>
                     <label class="checkbox" for="allanteilsschein">
                         <input type="checkbox" id="allanteilsschein" name="allanteilsschein">
-                        Alle Genossenschafter
+                        Alle Genossenschafter (alle mit Anteilsscheinen, mit oder ohne Abo)
                     </label>
                     <label class="checkbox" for="all">
                         <input type="checkbox" id="all" name="all">

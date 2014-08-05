@@ -742,6 +742,15 @@ def my_mails(request):
     sent = 0
     if request.method == 'POST':
         emails = set()
+        if request.POST.get("one_depot") == "on":
+            the_depot = request.POST.get("the_depot")
+            for loco in Loco.objects.filter(abo__depot=the_depot):
+                emails.add(loco.email)
+        if request.POST.get("one_area") == "on":
+            the_area = request.POST.get("the_area")
+            area = Taetigkeitsbereich.objects.filter(pk=the_area)[0]
+            for loco in area.locos.all():
+                emails.add(loco.email)
         if request.POST.get("allabo") == "on":
             for loco in Loco.objects.exclude(abo=None):
                 emails.add(loco.email)
@@ -755,9 +764,14 @@ def my_mails(request):
         if len(emails) > 0:
             send_filtered_mail(request.POST.get("subject"), request.POST.get("message"), request.POST.get("textMessage"), emails, request.META["HTTP_HOST"])
             sent = len(emails)
+            
+    all_depots = Depot.objects.all()
+    all_areas = Taetigkeitsbereich.objects.all()
     renderdict = getBohnenDict(request)
     renderdict.update({
         'sent': sent,
+        'all_areas': all_areas,
+        'all_depots': all_depots,
         'mail_is_live': settings.DEBUG
     })
     return render(request, 'mail_sender.html', renderdict)
@@ -790,7 +804,7 @@ def alldepots_list(request, name):
     Printable list of all depots to check on get gemüse
     """
     if name == "":
-        depots = Depot.objects.all().order_by("code")
+        depots = Depot.objects.all().order_by("weekday", "code")
     else:
         depots = [get_object_or_404(Depot, code__iexact=name)]
 
@@ -824,17 +838,20 @@ def alldepots_list(request, name):
 
     servername = request.META["SERVER_NAME"] + ':' + request.META["SERVER_PORT"]
     
+    print_time = datetime.datetime.now()
     renderdict = {
         "abo_types": abo_types,
         "overview": overview,
         "depots": depots,
-        "datum": datetime.datetime.now(),
+        "datum": print_time,
         "servername": servername,
     }
 
     #HTML Render:
     #return render(request, "exports/all_depots.html", renderdict)
-    return render_to_pdf(request, "exports/all_depots.html", renderdict, 'Depotlisten')
+    
+    file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
+    return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
 
 
 def my_createlocoforsuperuserifnotexist(request):

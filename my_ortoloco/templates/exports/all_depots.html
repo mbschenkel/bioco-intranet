@@ -1,4 +1,5 @@
 <!-- Will use PISA to generate PDF, refer to http://xhtml2pdf.appspot.com/static/pisa-en.html -->
+{% load from_settings %}
 <html>
 <head>
     <title>Depotlisten</title>
@@ -65,10 +66,18 @@
 
 <body>
 <div id="header_content">
-    &nbsp;&nbsp;
-    <img src="http://{{ servername }}/static/img/bioco_logo_small.png">
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    Gedruckt am {{ datum |date:"d.m.Y" }}
+    <table cellpadding="5" cellspacing="0" style="width:100%;"><tr>
+    <td style="width: 150pt;">
+        <img src="http://{{ servername }}/static/img/bioco_logo_small.png" style="width:136pt; height:75pt; margin-right: 30px; margin-left: 5px; ">
+    </td>
+    <td>
+        <h1>Depotliste</h1>
+        <b>{% settings_value "SITE_NAME" %}</b> &ndash;
+        {% settings_value "SITE_DESCRIPTION" %}
+        <br />
+        <br />
+        Gedruckt am {{ datum |date:"d.m.Y" }}
+    </td>
 </div>
 
 {# repeat 2x #}
@@ -142,10 +151,6 @@
             {% for size, number in depot.get_abos_by_sizes.items %}
                 <td style="width:40px; text-align:right;">{{ number }}</td>
             {% endfor %}
-            {% comment %}
-            <td style="width:40px; text-align:right;">{{ depot.small_abos }}</td>
-            <td style="width:40px; text-align:right;">{{ depot.big_abos }}</td>
-            {% endcomment %}
             <td style="width:60px;"></td>
             <td style="width:60px;"></td>
         </tr>
@@ -167,10 +172,6 @@
                         {% if size == abo.groesse %}1{% endif %}
                     </td>
                 {% endfor %}
-                {% comment %}
-                <td style="text-align:right" class="top-border left-border">{% if abo.kleine_abos %}{{ abo.kleine_abos }} {% endif %}</td>
-                <td style="text-align:right" class="top-border left-border">{% if abo.grosse_abos %}{{ abo.grosse_abos }} {% endif %}</td>
-                {% endcomment %}
                 <td class="top-border left-border"></td>
                 <td class="top-border left-border right-border"></td>
             </tr>
