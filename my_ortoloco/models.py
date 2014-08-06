@@ -144,18 +144,6 @@ class Abo(models.Model):
     def verantwortlicher_bezieher(self):
         loco = self.primary_loco
         return unicode(loco) if loco is not None else ""
-
-    """    
-    todo in use?
-    def haus_abos(self):
-        return int(self.groesse / 10)
-
-    def grosse_abos(self):
-        return int((self.groesse % 10) / 2)
-
-    def kleine_abos(self):
-        return self.groesse % 2
-    """
     
     def groesse_name(self):
         return self.abo_types[self.groesse].name_long
