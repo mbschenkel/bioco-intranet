@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib import admin, messages
 from django import forms
-from django.db.models import Q, F, Count
+from django.db.models import Q, F, Count, Sum
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf.urls import patterns
 from django.utils import timezone
@@ -306,7 +306,8 @@ class AuditAdmin(admin.ModelAdmin):
 
 class AnteilscheinAdmin(admin.ModelAdmin):
     list_display = ["__unicode__", "loco", "paid", "canceled"]
-    search_fields = ["id", "loco__username", "loco__first_name", "loco__last_name"]
+    list_filter = ["paid", "canceled"]
+    search_fields = ["id", "loco__email", "loco__first_name", "loco__last_name"]
     raw_id_fields = ["loco"]
 
 
@@ -318,7 +319,14 @@ class DepotAdmin(admin.ModelAdmin):
 class BereichAdmin(admin.ModelAdmin):
     filter_horizontal = ["locos"]
     raw_id_fields = ["coordinator"]
-    list_display = ["name", "core", "hidden", "coordinator"]
+    list_display = ["name", "core", "hidden", "coordinator", "show_loco_count"]
+
+    def queryset(self, request):
+        return Taetigkeitsbereich.objects.annotate(loco_count=Count('locos'))
+    def show_loco_count(self, inst):
+        return inst.loco_count
+    show_loco_count.admin_order_field = 'loco_count'
+    show_loco_count.short_description = 'Anzahl Mitglieder'
     
     
 class BoehnliDateFilter(admin.SimpleListFilter):
@@ -421,14 +429,14 @@ class LocoAdminForm(forms.ModelForm):
 
 class LocoAdmin(admin.ModelAdmin):
     form = LocoAdminForm
-    list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count"]
+    list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count", "abo_size"]
     search_fields = ["first_name", "last_name", "email"]
     #raw_id_fields = ["abo"]
     exclude = ["abo"]
     readonly_fields = ["user"]
     actions = ["impersonate_job"]
 
-    list_filter = ["addr_location", "sex"] 
+    list_filter = ["addr_location", "sex", "abo__groesse"] 
     
     # Add boehnli-count to SQL query as a left-join
     def queryset(self, request):
@@ -438,6 +446,17 @@ class LocoAdmin(admin.ModelAdmin):
         return inst.boehnli_count
     show_boehnli_count.admin_order_field = 'boehnli_count'
     show_boehnli_count.short_description = 'Anzahl Einsätze'
+
+    # Show abo
+    def abo_size(self, inst):
+        abo = inst.abo
+        if abo:
+            size = abo.groesse
+            return Abo.abo_types[size].name_long
+        else:
+            return 'Kein Abo'
+    abo_size.admin_order_field = "abo__groesse"
+    abo_size.short_description = 'Abo'
     
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
