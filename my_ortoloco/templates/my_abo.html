@@ -17,6 +17,12 @@
             <dd>
                 {% if loco.abo.active %}
                     Dein Abo ist aktiv, du erhälst wöchentlich dein Gemüse.
+                    <br />
+                    {% if loco.abo.paid %}
+                        Dein Abo ist bereits bezahlt.
+                    {% else %}
+                        <span class="text-error">Du hast dein Abo noch nicht bezahlt.</span>
+                    {% endif %}
                 {% else %}
                     <span class="text-error">Auf der Warteliste</span> - du erhälst leider im Moment noch kein Gemüse.
                 {% endif %}

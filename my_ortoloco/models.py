@@ -118,7 +118,8 @@ class Abo(models.Model):
     extra_abos = models.ManyToManyField(ExtraAboType, null=True, blank=True)
     primary_loco = models.ForeignKey("Loco", related_name="abo_primary", null=True, blank=True,
                                      on_delete=models.PROTECT)
-    active = models.BooleanField(default=False)
+    paid = models.BooleanField(default=False, verbose_name="Bezahlt")
+    active = models.BooleanField(default=False, verbose_name="Aktiv")
 
     def __unicode__(self):
         if self.SIZE_HALF == self.groesse:
@@ -241,8 +242,8 @@ class Loco(models.Model):
 
 class Anteilschein(models.Model):
     loco = models.ForeignKey(Loco, null=True, blank=True, on_delete=models.SET_NULL)
-    paid = models.BooleanField(default=False)
-    canceled = models.BooleanField(default=False)
+    paid = models.BooleanField(default=False, verbose_name="Bezahlt")
+    canceled = models.BooleanField(default=False, verbose_name="Gekündigt")
 
     def __unicode__(self):
         return u"Anteilschein #%s" % (self.id)

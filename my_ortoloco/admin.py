@@ -281,21 +281,27 @@ class JobAdmin(admin.ModelAdmin):
 
 class AboAdmin(admin.ModelAdmin):
     form = AboAdminForm
-    list_display = ["__unicode__", "active", "bezieher", "verantwortlicher_bezieher", "depot"]
-    #filter_horizontal = ["users"]
+    list_display = ["__unicode__", "active", "paid", "bezieher", "verantwortlicher_bezieher", "depot"]
     search_fields = ["locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
-    #raw_id_fields = ["primary_loco"]
+    list_filter = ["paid", "active"]
     
-    actions = ["activate_abo", "deactivate_abo"]
+    actions = ["activate_abo", "deactivate_abo", "mark_as_paid_abo", "mark_as_unpaid_abo"]
 
     def activate_abo(self, request, queryset):
         queryset.update(active=True)
     def deactivate_abo(self, request, queryset):
         queryset.update(active=False)
     
-    #active.short_description = "Aktiv"
     activate_abo.short_description = "Abos auf aktiv schalten"
     deactivate_abo.short_description = "Abos auf inaktiv schalten"
+    
+    def mark_as_paid_abo(self, request, queryset):
+        queryset.update(paid=True)
+    def mark_as_unpaid_abo(self, request, queryset):
+        queryset.update(paid=False)
+    
+    mark_as_paid_abo.short_description = "Abos als bezahlt markieren"
+    mark_as_unpaid_abo.short_description = "Abos als nicht bezahlt markieren"
 
     
 class AuditAdmin(admin.ModelAdmin):
@@ -305,10 +311,19 @@ class AuditAdmin(admin.ModelAdmin):
 
 
 class AnteilscheinAdmin(admin.ModelAdmin):
-    list_display = ["__unicode__", "loco", "paid", "canceled"]
+    list_display = ["__unicode__", "canceled", "paid", "loco"]
     list_filter = ["paid", "canceled"]
     search_fields = ["id", "loco__email", "loco__first_name", "loco__last_name"]
     raw_id_fields = ["loco"]
+    actions = ["mark_as_paid_anteilsschein", "mark_as_unpaid_anteilsschein"]
+
+    def mark_as_paid_anteilsschein(self, request, queryset):
+        queryset.update(paid=True)
+    def mark_as_unpaid_anteilsschein(self, request, queryset):
+        queryset.update(paid=False)
+    
+    mark_as_paid_anteilsschein.short_description = "Anteilsscheine als bezahlt markieren"
+    mark_as_unpaid_anteilsschein.short_description = "Anteilsscheine als nicht bezahlt markieren"
 
 
 class DepotAdmin(admin.ModelAdmin):
