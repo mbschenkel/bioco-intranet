@@ -89,6 +89,9 @@
                     {% block bohnen %}
                         <h5>Dein Rüebli-Konto</h5>
                         <p>
+                            <small>Einsätze vor dem 1. August 2014 werden noch nicht angezeigt.</small>
+                        </p>
+                        <p>
                         {% for i in bohnenrange %}
                             {% if i < userbohnen %}
                                 <img alt="Volle Erbse" title="Ein geleisteter Einsatz" class="ruebli" src="/static/img/ruebli_color.png"/>
