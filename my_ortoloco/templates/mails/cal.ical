@@ -20,4 +20,15 @@ END:VCALENDAR{% endautoescape %}{% endblock %}{% comment %}
 
     ical files according to RFC must use Carriage Return/Line Feed (CRLF)!
     http://tools.ietf.org/html/rfc5545
+    
+    Have a look at those:
+    
+    Content-Type: text/calendar; charset=us-ascii; name=yyyyyyyyyyy.ics
+    Content-Transfer-Encoding: 7bit
+    Content-Disposition: attachment; filename=yyyyyyyy.ics
+
+    and the tag
+    
+    LOCATION:????
+
 {% endcomment %}

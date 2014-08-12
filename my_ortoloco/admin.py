@@ -223,7 +223,7 @@ class JobAdmin(admin.ModelAdmin):
     inlines = [BoehnliInline]
     readonly_fields = ["freie_plaetze"]
 
-    list_filter = [JobFullFilter, JobDateFilter]
+    list_filter = [JobFullFilter, JobDateFilter, "typ__bereich"]
     
 
     def mass_copy_job(self, request, queryset):
