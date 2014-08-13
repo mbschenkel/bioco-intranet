@@ -412,7 +412,7 @@ class BoehnliAdmin(admin.ModelAdmin):
     job_link.allow_tags = True
     job_link.short_description = "Job"
     loco_link.allow_tags = True
-    loco_link.short_description = "Mitgliet"
+    loco_link.short_description = "Mitglied"
     
     # In django 1.7 there'd be a valid
     # list_display_links = None
