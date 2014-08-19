@@ -13,6 +13,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login
 from django.core.management import call_command
 from django import db
+from django.db.models import Sum, Count
 
 from my_ortoloco.models import *
 from my_ortoloco.forms import *
@@ -254,7 +255,7 @@ def my_abo(request):
     if request.user.loco.abo:
         renderdict.update({
             'zusatzabos': request.user.loco.abo.extra_abos.all(),
-            'mitabonnenten': request.user.loco.abo.bezieher_locos().exclude(email=request.user.loco.abo.primary_loco.email),
+            'mitabonnenten': request.user.loco.abo.bezieher_locos().exclude(email=request.user.loco.email),
             'primary': request.user.loco.abo.primary_loco.email == request.user.loco.email
         })
     renderdict.update({
@@ -799,6 +800,7 @@ def logout_view(request):
     return HttpResponseRedirect("/my/home")
 
 
+@staff_member_required
 def alldepots_list(request, name):
     """
     Printable list of all depots to check on get gemüse
@@ -853,6 +855,102 @@ def alldepots_list(request, name):
     file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
     return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
 
+  
+@staff_member_required
+def my_statistics(request):
+    stat_as     = dict()
+    stat_abos   = dict()
+    stat_locos  = dict()
+    stat_depots = dict()
+    stat_jobs   = dict()
+
+    # AS:
+    stat_as['n_active'] = Anteilschein.objects.filter(canceled=False).count()
+    stat_as['n_paid']   = Anteilschein.objects.filter(canceled=False, paid=True).count()
+    stat_as['n_unpaid'] = stat_as['n_active'] - stat_as['n_paid']
+
+    stat_as['perc_active'] = float(1)
+    stat_as['perc_paid']   = float(stat_as['n_paid'])   / stat_as['n_active']
+    stat_as['perc_unpaid'] = float(stat_as['n_unpaid']) / stat_as['n_active']
+
+    MONEY_PER_AS = 250 # todo magic number
+    stat_as['money_active'] = stat_as['n_active'] * MONEY_PER_AS
+    stat_as['money_paid']   = stat_as['n_paid'] * MONEY_PER_AS
+    stat_as['money_unpaid'] = stat_as['n_unpaid'] * MONEY_PER_AS 
+
+    # Abos
+    stat_abos['n_active']  = Abo.objects.filter(active=True).count()
+    stat_abos['n_paid']    = Abo.objects.filter(active=True, paid=True).count()
+    stat_abos['n_unpaid']  = stat_abos['n_active'] - stat_abos['n_paid']
+    stat_abos['n_waiting'] = Abo.objects.filter(active=False).count()
+
+    stat_abos['perc_active']  = float(1)
+    stat_abos['perc_paid']    = float(stat_abos['n_paid'])   / stat_abos['n_active']
+    stat_abos['perc_unpaid']  = float(stat_abos['n_unpaid']) / stat_abos['n_active']
+    stat_abos['perc_waiting'] = float(stat_abos['n_waiting']) / stat_abos['n_active']
+
+    stat_abos['money_active'] = 0
+    stat_abos['money_paid']   = 0
+    stat_abos['units_active'] = 0
+    stat_abos['units_paid']   = 0
+    stat_jobs['slots_available'] = 0
+    stat_abos['per_size'] = []
+    
+    for id, the_size in Abo.abo_types.iteritems():
+        the_count = Abo.objects.filter(active=True, groesse=the_size.size).count()
+        the_count_paid = Abo.objects.filter(active=True, paid=True, groesse=the_size.size).count()
+        size_info = (the_size.name_short, the_count)
+        stat_abos['per_size'].append(size_info)
+        
+        stat_abos['money_active'] += the_size.cost * the_count
+        stat_abos['money_paid']   += the_size.cost * the_count_paid
+        
+        stat_abos['units_active'] += the_size.size * the_count / Abo.SIZE_SMALL
+        stat_abos['units_paid']   += the_size.size * the_count_paid / Abo.SIZE_SMALL
+        
+        stat_jobs['slots_available'] += the_size.required_bohnen * the_count
+    stat_abos['money_unpaid'] = stat_abos['money_active'] - stat_abos['money_paid']
+    stat_abos['units_unpaid'] = stat_abos['units_active'] - stat_abos['units_paid']
+        
+    # Locos
+    stat_locos = {}
+    stat_locos['n_total'] = Loco.objects.count()
+    stat_locos['n_abo'] = Loco.objects.filter(abo__isnull=False).count()
+    stat_locos['n_as'] = Loco.objects.annotate(num_as=Count('anteilschein')).filter(num_as__gt=0).count()
+    stat_locos['n_waiting'] = Loco.objects.filter(abo__active=False).count()
+
+
+    # Einsätze
+    # todo limit year
+    stat_jobs['offered'] = Job.objects.count()
+    job_sum = Job.objects.aggregate(Sum('slots'))
+    stat_jobs['slots_offered'] = job_sum['slots__sum']
+    stat_jobs['slots_booked'] = Boehnli.objects.count()
+    stat_jobs['slots_to_be_booked'] = stat_jobs['slots_available'] - stat_jobs['slots_booked']
+    stat_jobs['slots_by_month'] = 0 #Job.objects.(Group(month))
+
+    # Depots
+    stat_depots['n_count'] = Depot.objects.count()
+    stat_depots['n_abo_per_depot'] = float(stat_abos['n_active']) / stat_depots['n_count']
+    #average distance to depot
+
+    statistics = {
+        'anteilsscheine': stat_as, 
+        'abos':           stat_abos, 
+        'locos':          stat_locos, 
+        'depots':         stat_depots, 
+        'jobs':           stat_jobs,
+        'year':           u'2014' #todo
+    };
+    
+    renderdict = getBohnenDict(request)
+    locos = Loco.objects.select_related('abo').select_related('abo__depot').all()
+    renderdict.update({
+        'locos': locos,
+        'statistics': statistics
+    })
+    return render(request, 'my_statistics.html', renderdict)
+   
 
 def my_createlocoforsuperuserifnotexist(request):
     """

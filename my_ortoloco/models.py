@@ -95,19 +95,23 @@ class Abo(models.Model):
     SIZE_HOUSE = 10
     
     # required_bohnen are per abo, not per person
-    AboTyp = namedtuple('AboTyp', ['size', 'name_short', 'name_long', 'description', 'min_anteilsscheine', 'visible', 'required_bohnen']);
+    AboTyp = namedtuple('AboTyp', ['size', 'name_short', 'name_long', 'description', 'min_anteilsscheine', 'visible', 'required_bohnen', 'cost']);
     abo_types = {
         SIZE_NONE:  AboTyp( size=SIZE_NONE,  name_short='Keins',  name_long='Kein Abo', 
                             min_anteilsscheine=1, visible=True, required_bohnen = 0,
+                            cost = 0,
                             description=u"Du kannst auch ohne Gemüseabo "+settings.SITE_NAME+"-GenossenschafterIn sein. Bleibe auf dem Laufenden und mach mit, wenn du Lust hast"),
         SIZE_HALF:  AboTyp( size=SIZE_HALF,  name_short='Halb',  name_long='Halbes Abo',
                             min_anteilsscheine=1, visible=False, required_bohnen = 6,
+                            cost = 550,
                             description=u"Halbe Abos können in Ausnahmefällen vergeben werden"),
         SIZE_SMALL: AboTyp( size=SIZE_SMALL, name_short='Klein', name_long='Kleines Abo', 
                             min_anteilsscheine=2, visible=True, required_bohnen = 12,
+                            cost = 1100,
                             description=u"Das kleine Abo ist für 2-3 Personen geeignet und benötigt mindestens zwei Anteilscheine"),
         SIZE_BIG:   AboTyp( size=SIZE_BIG,   name_short='Gross', name_long='Grosses Abo', 
                             min_anteilsscheine=4, visible=True, required_bohnen = 24,
+                            cost = 2200,
                             description=u"Das grosse Abo empfiehlt sich für WG's oder Familien (ca. 4-6 Personen) und benötigt vier Anteilscheine")
     }
     
@@ -285,9 +289,9 @@ class JobTyp(models.Model):
         return u'%s - %s' % (self.bereich, self.get_name())
 
     def get_name(self):
-        if self.displayed_name is not None:
-            return self.displayed_name
-        return self.name
+        if self.name is not None:
+            return self.name
+        return self.displayed_name
 
     class Meta:
         verbose_name = 'Jobart'
@@ -340,11 +344,11 @@ class Job(models.Model):
         if needed:
             available = Boehnli.objects.filter(job_id=self.id,with_car=True)
             if available.count():
-                return '<img src="/static/img/auto_green.png" width="32" title="%s" />' % text
+                return '<img src="/static/img/auto_green.png" style="width:32px; height:22px;" width="32" height="22" title="%s" />' % text
             else:
-                return '<img src="/static/img/auto_red.png" width="32" title="%s" />' % text
+                return '<img src="/static/img/auto_red.png" style="width:32px; height:22px;" width="32" height="22" title="%s" />' % text
         else:
-            return '<img src="/static/img/auto_grey.png" width="32" title="%s" />' % text
+            return '<img src="/static/img/auto_grey.png" style="width:32px; height:22px;" width="32" height="22" title="%s" />' % text
         
     def get_car_status_text(self):
         needed = self.typ.car_needed

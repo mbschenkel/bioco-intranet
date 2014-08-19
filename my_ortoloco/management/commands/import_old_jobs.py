@@ -179,7 +179,7 @@ class Event:
             print '=== Day is in or after new Intranet was introduced, skipping'
             return
         
-        description  = u'<h4>Import aus altem Intranet</h4><br />'
+        description  = u'<h4>Import aus altem Intranet</h4>'
         description += u'<b>Kategorie:</b> ' + self.dict['category'] + u'<br />\n'
         description += u'<b>Beschreibung:</b> ' + self.dict['description'] + u'<br />\n'
         description += u'<b>Kategorie:</b> ' + self.dict['category'] + u'<br />\n'

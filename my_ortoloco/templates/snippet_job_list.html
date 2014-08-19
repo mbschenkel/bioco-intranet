@@ -15,8 +15,11 @@
             {% for job in jobs %}
                 <tr class="{{ job.status_class }}">
                     <td class="{{ job.status_class }}">
-                        {{ job.wochentag }} {{ job.time |date:"d. m. Y" }}<br/>
-                        {{ job.time |date:"H:i" }} &ndash; {{ job.end_time |date:"H:i" }}||{{ job.time_stamp }}
+                        {{ job.wochentag }}
+                        <br/>
+                        {{ job.time |date:"d." }}&nbsp;{{ job.time |date:"m." }}&nbsp;{{ job.time |date:"Y" }}
+                        <br/>
+                        {{ job.time |date:"H:i" }}&nbsp;&ndash;&nbsp;{{ job.end_time |date:"H:i" }}||{{ job.time_stamp }}
                     </td>
                     <td><a href="/my/jobs/{{ job.id }}">
                         <strong>{{ job.typ.bereich.name }}</strong><br/>
