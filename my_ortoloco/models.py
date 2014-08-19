@@ -286,12 +286,12 @@ class JobTyp(models.Model):
     car_needed = models.BooleanField("Auto benötigt", default=False)
 
     def __unicode__(self):
-        return u'%s - %s' % (self.bereich, self.get_name())
+        return u'%s - %s (%s h)' % (self.bereich, self.name, str(self.duration))
 
     def get_name(self):
-        if self.name is not None:
-            return self.name
-        return self.displayed_name
+        if self.displayed_name is not None:
+            return self.displayed_name
+        return self.name
 
     class Meta:
         verbose_name = 'Jobart'
