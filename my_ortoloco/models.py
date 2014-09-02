@@ -117,13 +117,19 @@ class Abo(models.Model):
     
     SIZE_CHOICES = ((k, v.name_short) for k, v in abo_types.iteritems())
     
+    number = models.CharField("Abo-Nummer", blank=True, max_length=6)
+    number.help_text  = "Interne Abo-Nummer"
     depot = models.ForeignKey(Depot, on_delete=models.PROTECT)
     groesse = models.PositiveIntegerField(choices=SIZE_CHOICES,default=SIZE_SMALL)
     extra_abos = models.ManyToManyField(ExtraAboType, null=True, blank=True)
+    extra_abos.help_text = "Zusatz-Abos existieren vorderhand nicht, dieses Feld bleibt leer."
     primary_loco = models.ForeignKey("Loco", related_name="abo_primary", null=True, blank=True,
                                      on_delete=models.PROTECT)
+    primary_loco.help_text  = "Primärer Ansprechpartner dieses Abos"
     paid = models.BooleanField(default=False, verbose_name="Bezahlt")
+    paid.help_text  = "Dieses Abo wurde vollständig bezahlt."
     active = models.BooleanField(default=False, verbose_name="Aktiv")
+    active.help_text  = "An dieses Abo wird Gemüse geliefert"
 
     def __unicode__(self):
         if self.SIZE_HALF == self.groesse:
@@ -133,7 +139,7 @@ class Abo(models.Model):
         else:
             namelist = ["%i Einheiten" % int(self.groesse / float(self.SIZE_SMALL))]
         namelist.extend(extra.name for extra in self.extra_abos.all())
-        return u"Abo (%s) %s" % (" + ".join(namelist), self.id)
+        return u"Abo (%s) #%s" % (" + ".join(namelist), self.number)
 
     def bezieher(self):
         locos = self.locos.all()
@@ -189,9 +195,11 @@ class Loco(models.Model):
 
     abo = models.ForeignKey(Abo, related_name="locos", null=True, blank=True,
                             on_delete=models.SET_NULL)
-
+    abo.help_text = "Um dieses Mitglied einem Abo zuzuweisen oder die Abozuordnung zu ändern, bitte wie die Abo-Seite gehen."
+    
     confirmed = models.BooleanField("bestätigt", default=True)
-
+    confirmed.help_text = "Neu-Anmeldungen über die Webseite sind zuerst nicht bestätigt. Dieses Feld muss danach manuell gesetzt werden."
+    
     def get_salutation(self):
         if self.sex is 'M':
             return 'Herr'
@@ -245,12 +253,16 @@ class Loco(models.Model):
 
 
 class Anteilschein(models.Model):
+    number = models.CharField("Anteilsschein-Nummer", blank=True, max_length=6)    
+    number.help_text  = "Interne Anteilsschein-Nummer"
     loco = models.ForeignKey(Loco, null=True, blank=True, on_delete=models.SET_NULL)
+    loco.help_text  = "Eigner des Anteilsscheins"
     paid = models.BooleanField(default=False, verbose_name="Bezahlt")
+    paid.help_text  = "Dieser Anteilsschein wurde vollständig bezahlt."
     canceled = models.BooleanField(default=False, verbose_name="Gekündigt")
 
     def __unicode__(self):
-        return u"Anteilschein #%s" % (self.id)
+        return u"Anteilschein #%s" % (self.number)
 
     class Meta:
         verbose_name = "Anteilschein"
@@ -300,9 +312,11 @@ class JobTyp(models.Model):
 
 class Job(models.Model):
     typ = models.ForeignKey(JobTyp, on_delete=models.PROTECT)
+    typ.help_text = "Bei einmaligen Einsätzen bitte einen neuen Typ erstellen (auf das Plus klicken) und dort im Titel das Datum angeben"
     slots = models.PositiveIntegerField("Plaetze")
     time = models.DateTimeField()
     reminder_sent = models.BooleanField("Reminder verschickt", default=False)
+    reminder_sent.help_text = "Wenn gesetzt, wurde die automatische Erinnerung 24h vor dem Einsatz bereits versandt. Sollte nur in Ausnahmefällen von Hand geändert werden müssen."
 
     def __unicode__(self):
         return u'Job #%s (%s)' % (self.id, self.typ.name)

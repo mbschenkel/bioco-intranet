@@ -282,7 +282,7 @@ class JobAdmin(admin.ModelAdmin):
 class AboAdmin(admin.ModelAdmin):
     form = AboAdminForm
     list_display = ["__unicode__", "active", "paid", "bezieher", "verantwortlicher_bezieher", "depot"]
-    search_fields = ["locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
+    search_fields = ["id", "number", "locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
     list_filter = ["paid", "active"]
     
     actions = ["activate_abo", "deactivate_abo", "mark_as_paid_abo", "mark_as_unpaid_abo"]
@@ -313,7 +313,7 @@ class AuditAdmin(admin.ModelAdmin):
 class AnteilscheinAdmin(admin.ModelAdmin):
     list_display = ["__unicode__", "canceled", "paid", "loco"]
     list_filter = ["paid", "canceled"]
-    search_fields = ["id", "loco__email", "loco__first_name", "loco__last_name"]
+    search_fields = ["id", "number", "loco__email", "loco__first_name", "loco__last_name"]
     raw_id_fields = ["loco"]
     actions = ["mark_as_paid_anteilsschein", "mark_as_unpaid_anteilsschein"]
 
