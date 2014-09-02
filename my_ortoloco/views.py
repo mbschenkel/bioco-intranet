@@ -107,6 +107,8 @@ def my_job(request, job_id):
     send_mail = False
     if request.method == 'POST':
         num = request.POST.get("jobs")
+        initial_number = Boehnli.objects.filter(job=job, loco=loco).count()
+        prev_initial_number = request.POST.get("initial_number")
         with_car = request.POST.get("with_car", False)
         my_bohnen = job.boehnli_set.all().filter(loco=loco)
         if not check_int(num):
@@ -116,6 +118,12 @@ def my_job(request, job_id):
             error = "Ungueltige Anzahl Einschreibungen %s (mindestens 1)" % num
         elif int(num) > job.freie_plaetze():
             error = "Zu hohe Anzahl Anmeldungen oder der Einsatz ist bereits ausgebucht"
+        elif int(prev_initial_number) != int(initial_number):
+            print "prev:", prev_initial_number 
+            print "now: ", initial_number 
+            error = ("Es scheint, dass du dich zweimal nacheinander eingetragen hast. "
+                     "Wir haben nur einen Eintrag vorgenommen. "
+                     "Wenn du dich tatsächlich zweimal eintragen willst, klicke bitte jetzt erneut.")
         else:
             # adding new participants
             send_mail = True
@@ -130,11 +138,15 @@ def my_job(request, job_id):
     
     if send_mail:
         send_job_signup([loco.email], job, participants, request.META["HTTP_HOST"])
-            
+    
+    # number of own registration before form-submit, to prevent unintended, 
+    # multiple registrations with refresh or double-clicks
+    initial_number = Boehnli.objects.filter(job=job, loco=loco).count()
     renderdict = getBohnenDict(request)
     renderdict.update({
         'participants': participants,
         'job': job,
+        'initial_number': initial_number,
         'slotrange': range(0, job.slots),
         'error': error
     });
