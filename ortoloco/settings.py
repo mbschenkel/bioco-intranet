@@ -210,6 +210,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'reversion.middleware.RevisionMiddleware',
     'impersonate.middleware.ImpersonateMiddleware'
 )
 
@@ -243,6 +244,7 @@ DJANGO_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
+    'reversion',
 )
 DEBUG_APPS = (
     # Uncomment the next line to enable admin documentation:

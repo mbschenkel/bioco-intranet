@@ -21,3 +21,4 @@ xhtml2pdf==0.0.5
 xlrd==0.9.3
 django-impersonate==0.8.1
 django-debug-toolbar==1.2
+django-reversion==1.8.2

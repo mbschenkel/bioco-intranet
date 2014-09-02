@@ -14,6 +14,8 @@ from my_ortoloco.models import *
 from my_ortoloco import helpers
 from my_ortoloco import admin_helpers
 
+import reversion
+
 # This form exists to restrict primary user choice to users that have actually set the
 # current abo as their abo
 class AboAdminForm(forms.ModelForm):
@@ -215,7 +217,7 @@ class JobDateFilter(admin.SimpleListFilter):
                                    time__lte=date.today() + timedelta(days=7))
                                    
         
-class JobAdmin(admin.ModelAdmin):
+class JobAdmin(reversion.VersionAdmin):
     list_display = ["__unicode__", "typ", "time", "slots", "freie_plaetze"]
     actions = ["copy_job", "mass_copy_job"]
     search_fields = ["typ__name", "typ__bereich__name"]
@@ -279,7 +281,7 @@ class JobAdmin(admin.ModelAdmin):
         return admin.ModelAdmin.construct_change_message(self, request, form, formsets)
 
 
-class AboAdmin(admin.ModelAdmin):
+class AboAdmin(reversion.VersionAdmin):
     form = AboAdminForm
     list_display = ["__unicode__", "active", "paid", "bezieher", "verantwortlicher_bezieher", "depot"]
     search_fields = ["id", "number", "locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
@@ -310,7 +312,7 @@ class AuditAdmin(admin.ModelAdmin):
     #can_delete = False
 
 
-class AnteilscheinAdmin(admin.ModelAdmin):
+class AnteilscheinAdmin(reversion.VersionAdmin):
     list_display = ["__unicode__", "canceled", "paid", "loco"]
     list_filter = ["paid", "canceled"]
     search_fields = ["id", "number", "loco__email", "loco__first_name", "loco__last_name"]
@@ -326,12 +328,12 @@ class AnteilscheinAdmin(admin.ModelAdmin):
     mark_as_unpaid_anteilsschein.short_description = "Anteilsscheine als nicht bezahlt markieren"
 
 
-class DepotAdmin(admin.ModelAdmin):
+class DepotAdmin(reversion.VersionAdmin):
     raw_id_fields = ["contact"]
     list_display = ["name", "code", "weekday", "contact"]
 
 
-class BereichAdmin(admin.ModelAdmin):
+class BereichAdmin(reversion.VersionAdmin):
     filter_horizontal = ["locos"]
     raw_id_fields = ["coordinator"]
     list_display = ["name", "core", "hidden", "coordinator", "show_loco_count"]
@@ -389,7 +391,7 @@ class BoehnliCarFilter(admin.SimpleListFilter):
         if self.value() == 'needed_not_available':
             return queryset.filter(job__typ__car_needed=True, with_car=False)
 
-class BoehnliAdmin(admin.ModelAdmin):
+class BoehnliAdmin(reversion.VersionAdmin):
     def job_with_name(self, obj):
         return obj.job.name
     def car_needed(self, obj):
@@ -442,7 +444,7 @@ class LocoAdminForm(forms.ModelForm):
                               label="Abo")
 
 
-class LocoAdmin(admin.ModelAdmin):
+class LocoAdmin(reversion.VersionAdmin):
     form = LocoAdminForm
     list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count", "abo_size"]
     search_fields = ["first_name", "last_name", "email"]
@@ -481,7 +483,7 @@ class LocoAdmin(admin.ModelAdmin):
         return HttpResponseRedirect("/impersonate/%s/" % inst.user.id)
     impersonate_job.short_description = "Loco imitieren (impersonate)..."
 
-class JobTypAdmin(admin.ModelAdmin):
+class JobTypAdmin(reversion.VersionAdmin):
     list_display = ["name", "displayed_name", "bereich", "location", "duration", "car_needed" ]
 
 
