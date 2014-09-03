@@ -844,9 +844,9 @@ def short_depots_list(request):
         weekday = number['depot__weekday']
         depot_id = number['depot']
         groesse = number['groesse']
-        number_inc = number['number'] * groesse / Abo.SIZE_SMALL
+        number_inc = number['number']
         table[weekday][depot_id]['sizes'][groesse] += number_inc
-        table[weekday][depot_id]['total'] += number_inc
+        table[weekday][depot_id]['total'] += float(number_inc) * groesse / Abo.SIZE_SMALL
         #table[weekday]['total'] += number_inc
     
     print "table", table

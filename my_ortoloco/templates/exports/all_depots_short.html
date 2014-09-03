@@ -35,7 +35,7 @@
                 {% for size, number in depot.sizes.items %}
                     <td>{{ number }}</td>
                 {% endfor %}
-                <td><b>{{ depot.total }}</b></td>
+                <td><b>{{ depot.total|floatformat }}</b></td>
                 </tr>
             {% endfor %}
         {% endfor %}
