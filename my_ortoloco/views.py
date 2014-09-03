@@ -813,6 +813,65 @@ def logout_view(request):
 
 
 @staff_member_required
+def short_depots_list(request):
+    """
+    Printable short overview list to be used when distributing
+    """
+    
+    depots = Depot.objects.all().order_by("name")  #order_by("weekday", "code")
+    numbers = Abo.objects.filter(active=True).values('groesse', 'depot').annotate(number=Count('id')).values('groesse', 'depot', 'depot__weekday', 'number')
+    abo_types = Abo.abo_types.copy()
+    del abo_types[Abo.SIZE_NONE]
+
+    # todo : think fat model here...
+    table = dict()
+    #weekdays = dict()
+    for depot in depots:
+        depot_info = dict(id=depot.id, name=depot.name, weekday=depot.get_weekday_display(), sizes=dict(), total=0)
+        for abo_type in abo_types:
+            #print 'type', abo_type
+            depot_info['sizes'][abo_type] = 0
+        if depot.weekday not in table:
+            table[depot.weekday] = dict()
+            #weekdays[depot.weekday] = dict(name=depot.get_weekday_display(), total=0)
+        table[depot.weekday][depot.id] = depot_info
+            
+    for number in numbers:
+        print "num", number
+        if not number['number']:
+            #skip empty ones
+            continue
+        weekday = number['depot__weekday']
+        depot_id = number['depot']
+        groesse = number['groesse']
+        number_inc = number['number'] / Abo.SIZE_SMALL
+        table[weekday][depot_id]['sizes'][groesse] += number_inc
+        table[weekday][depot_id]['total'] += number_inc
+        #table[weekday]['total'] += number_inc
+    
+    print "table", table
+    
+    servername = request.META["SERVER_NAME"] + ':' + request.META["SERVER_PORT"]
+    
+    print_time = datetime.datetime.now()
+    renderdict = getBohnenDict(request)
+    renderdict.update({
+        "abo_types": abo_types,
+        "table": table,
+        #"weekdays": weekdays,
+        "depots": depots,
+        "datum": print_time,
+        "servername": servername,
+    })
+
+    #HTML Render:
+    return render(request, "exports/all_depots_short.html", renderdict)
+    
+    #PDF Render:
+    file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
+    return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
+
+@staff_member_required
 def alldepots_list(request, name):
     """
     Printable list of all depots to check on get gemüse

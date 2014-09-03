@@ -1,0 +1,46 @@
+{% extends "mybase.html" %}
+{% load from_settings %}
+
+{% block content %}
+    <div class="span2"></div>
+    <div class="span8">
+        <h3>Depotliste kurz</h3>
+        {% for abo_type in abo_types.items %}
+            {{ abo_type.name_short }}
+        {% endfor %}
+
+        <br/>
+        
+        <table cellpadding="5" cellspacing="0" style="width:100%; margin-bottom:5px;" class="bottom-border">
+        <tr style="color: #fff; background-color: #7f1d42;">
+            <td><b>Tag / Depot</b></td>
+            {% for size, type in abo_types.items %}
+                <td style="" width=""><b>{{ type.name_short }}</b></td>
+            {% endfor %}
+            <td><b>Total Einheiten</b></td>
+        </tr>
+        {% for weekday, depots in table.items %}
+            {% for depot_id, depot in depots.items %}
+                {% ifchanged %}
+                    <tr><td colspan="4">
+                        <h4>{{ depot.weekday }}</h4>
+                    </td></tr>
+                {% endifchanged %}
+                {% cycle 'background-color: #f2e8ec' ' ' as rowcolors silent %}
+                <tr style="{{ rowcolors }}"><td>
+                    <a href="/my/depot/{{ depot.id }}">
+                        <b>{{ depot.name }}</b>
+                    </a>
+                </td>
+                {% for size, number in depot.sizes.items %}
+                    <td>{{ number }}</td>
+                {% endfor %}
+                <td><b>{{ depot.total }}</b></td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </table>
+
+    </div>
+{% endblock content %}
+        
