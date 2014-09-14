@@ -274,7 +274,7 @@ class Event:
                     
             if found:
                 loco = l[0]
-                print (u'{} Found (with {:10s})   {:25s}  ==  {}'.format(mark, method, loco, name)).encode('utf-8')
+                print (u'{0} Found (with {1:10s})   {2:25s}  ==  {4}'.format(mark, method, loco, name)).encode('utf-8')
                 if hasCar:
                     print(u'    --> With Car')
                 b = Boehnli()
@@ -310,7 +310,7 @@ class Intranet:
         ###TODO : 
         #nRows = 20
         #print('=== number of rows limited to {}'.format(nRows))
-        print('Going to import table with rows {} to {}'.format( SKIP_ROWS, nRows))
+        print('Going to import table with rows {0} to {1}'.format( SKIP_ROWS, nRows))
         for row in range(SKIP_ROWS, nRows):
             try:
                 self.events.append(Event(worksheet, row))
