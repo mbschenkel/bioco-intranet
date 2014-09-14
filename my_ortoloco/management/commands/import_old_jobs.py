@@ -274,7 +274,7 @@ class Event:
                     
             if found:
                 loco = l[0]
-                print (u'{0} Found (with {1:10s})   {2:25s}  ==  {4}'.format(mark, method, loco, name)).encode('utf-8')
+                print (u'{0} Found (with {1:10s})   {2:25s}  ==  {3}'.format(mark, method, loco, name)).encode('utf-8')
                 if hasCar:
                     print(u'    --> With Car')
                 b = Boehnli()
