@@ -833,7 +833,6 @@ def short_depots_list(request):
             depot_info['sizes'][abo_type] = 0
         if depot.weekday not in table:
             table[depot.weekday] = dict()
-            #weekdays[depot.weekday] = dict(name=depot.get_weekday_display(), total=0)
         table[depot.weekday][depot.id] = depot_info
             
     for number in numbers:
@@ -847,18 +846,17 @@ def short_depots_list(request):
         number_inc = number['number']
         table[weekday][depot_id]['sizes'][groesse] += number_inc
         table[weekday][depot_id]['total'] += float(number_inc) * groesse / Abo.SIZE_SMALL
-        #table[weekday]['total'] += number_inc
     
     print "table", table
     
     servername = request.META["SERVER_NAME"] + ':' + request.META["SERVER_PORT"]
     
+    # TODO evtl. once we have a last changed date, use max(last-changed) instead of now
     print_time = datetime.datetime.now()
     renderdict = getBohnenDict(request)
     renderdict.update({
         "abo_types": abo_types,
         "table": table,
-        #"weekdays": weekdays,
         "depots": depots,
         "datum": print_time,
         "servername": servername,

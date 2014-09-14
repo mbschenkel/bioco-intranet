@@ -1,4 +1,4 @@
-﻿{% extends "mybase.html" %}
+{% extends "mybase.html" %}
 
 {% block content %}
     <div id="depot">
@@ -156,7 +156,7 @@
                 <td>&nbsp;</td>
             </tr><tr>
                 <td><b>Anzahl Abos</b></td>
-                <td>{{ statistics.depots.n_abo_per_depot }} / Depot</td>
+                <td>{{ statistics.depots.n_abo_per_depot|floatformat }} / Depot</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>

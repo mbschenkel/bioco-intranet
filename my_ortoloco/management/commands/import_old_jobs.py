@@ -2,7 +2,7 @@
 
 #use as
 #./manage.py delete_job_data;
-#./manage.py excel_import_bioco ../data/xxxx.xlsx 2>&1 | tee -a ../import_jobs_log.txt | less
+#./manage.py import_old_jobs ../data/xxxx.xlsx 2>&1 | tee -a ../import_jobs_log.txt | less
 
 
 

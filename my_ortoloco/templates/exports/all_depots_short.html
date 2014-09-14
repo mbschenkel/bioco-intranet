@@ -5,12 +5,10 @@
     <div class="span2"></div>
     <div class="span8">
         <h3>Depotliste kurz</h3>
-        {% for abo_type in abo_types.items %}
-            {{ abo_type.name_short }}
-        {% endfor %}
+        <p>
+            Gedruckt am {{ datum |date:"d.m.Y" }}
+        </p>
 
-        <br/>
-        
         <table cellpadding="5" cellspacing="0" style="width:100%; margin-bottom:5px;" class="bottom-border">
         <tr style="color: #fff; background-color: #7f1d42;">
             <td><b>Tag / Depot</b></td>
