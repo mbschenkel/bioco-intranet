@@ -43,6 +43,9 @@
                     <li class="{{ menu.participation }}">
                         <a href="/my/einsaetze">Einsätze</a>
                     </li>
+                    <li>
+                        <a href="/my/depotuebersicht">Verteilübersicht</a>
+                    </li>
                     <li class="{{ menu.contact }}">
                         <a href="/my/kontakt">Kontakt</a>
                     </li>
@@ -55,17 +58,16 @@
                     {% if staff_user %}
                         <hr>
                         <li>
-                            <strong>Admin:</strong>
+                            <strong>Nur für Admins:</strong>
                         </li>
                         <li>
                             <a href="/my/mails">E-Mail verschicken</a>
                         </li>
+                        {% comment %}
                         <li>
                             <a href="/my/depotlisten">Depotlisten drucken</a>
                         </li>
-                        <li>
-                            <a href="/my/depotuebersicht">Verteilübersicht drucken</a>
-                        </li>
+                        {% endcomment %}
                         <li>
                             <a href="/admin">Zum Admin-Bereich</a>
                         </li>
@@ -76,7 +78,9 @@
                                 <hr>
                             {% endif %}
                             <!-- <a href="/my/politoloco">Newsletter versenden</a> -->
+                            {% comment %}
                             <a href="#" style="color: #bbb;" title="Noch nicht verfügbar">Newsletter versenden</a>
+                            {% endcomment %}
                         </li>
                     {% endif %}
                     <li class="{{ menu.personalInfo }}">

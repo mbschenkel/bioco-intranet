@@ -812,7 +812,8 @@ def logout_view(request):
     return HttpResponseRedirect("/my/home")
 
 
-@staff_member_required
+#@staff_member_required
+@login_required
 def short_depots_list(request):
     """
     Printable short overview list to be used when distributing
@@ -828,6 +829,7 @@ def short_depots_list(request):
     #weekdays = dict()
     for depot in depots:
         depot_info = dict(id=depot.id, name=depot.name, weekday=depot.get_weekday_display(), sizes=dict(), total=0)
+        depot_info['sizes'][0] = 0
         for abo_type in abo_types:
             #print 'type', abo_type
             depot_info['sizes'][abo_type] = 0

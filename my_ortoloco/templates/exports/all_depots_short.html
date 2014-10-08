@@ -6,7 +6,7 @@
     <div class="span8">
         <h3>Depotliste kurz</h3>
         <p>
-            Gedruckt am {{ datum |date:"d.m.Y" }}
+            Erstellt am {{ datum |date:"d.m.Y" }}
         </p>
 
         <table cellpadding="5" cellspacing="0" style="width:100%; margin-bottom:5px;" class="bottom-border">
@@ -31,7 +31,9 @@
                     </a>
                 </td>
                 {% for size, number in depot.sizes.items %}
-                    <td>{{ number }}</td>
+                    {% if size %}
+                        <td>{{ number }}</td>
+                    {% endif %}
                 {% endfor %}
                 <td><b>{{ depot.total|floatformat }}</b></td>
                 </tr>
