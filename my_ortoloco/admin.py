@@ -299,7 +299,6 @@ class AboAdmin(reversion.VersionAdmin):
         for loco in locos:
             cnt += loco.boehnli_set.count()
         return cnt
-    show_boehnli_count.admin_order_field = 'boehnli_count'
     show_boehnli_count.short_description = 'Anzahl Einsätze'
 
     def activate_abo(self, request, queryset):
