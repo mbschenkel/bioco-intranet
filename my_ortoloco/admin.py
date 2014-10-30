@@ -283,11 +283,24 @@ class JobAdmin(reversion.VersionAdmin):
 
 class AboAdmin(reversion.VersionAdmin):
     form = AboAdminForm
-    list_display = ["__unicode__", "active", "paid", "bezieher", "verantwortlicher_bezieher", "depot"]
+    list_display = ["__unicode__", "active", "paid", "bezieher", "verantwortlicher_bezieher", "depot", "show_boehnli_count"]
     search_fields = ["id", "number", "locos__user__username", "locos__first_name", "locos__last_name", "depot__name"]
     list_filter = ["paid", "active"]
     
     actions = ["activate_abo", "deactivate_abo", "mark_as_paid_abo", "mark_as_unpaid_abo"]
+
+    # Add boehnli-count per abo
+    # todo limit to year if needed
+    # todo this could be more efficient...
+    def show_boehnli_count(self, inst):
+        abo_id = inst.pk
+        locos = Loco.objects.filter(abo=abo_id);
+        cnt = 0
+        for loco in locos:
+            cnt += loco.boehnli_set.count()
+        return cnt
+    show_boehnli_count.admin_order_field = 'boehnli_count'
+    show_boehnli_count.short_description = 'Anzahl Einsätze'
 
     def activate_abo(self, request, queryset):
         queryset.update(active=True)
