@@ -1,0 +1,9 @@
+{% extends "mybase.html" %}
+
+{% block content %}
+    {% block message %} {% endblock %}
+
+    <h3>Gemüsevorschau</h3>
+    {{ preview|safe }}
+
+{% endblock %}

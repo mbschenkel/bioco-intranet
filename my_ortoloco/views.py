@@ -71,10 +71,7 @@ def my_home(request):
     Overview on myortoloco
     """
 
-    if StaticContent.objects.all().filter(name='IntranetHome').__len__() > 0:
-        info_text = StaticContent.objects.all().filter(name='IntranetHome')[0].content
-    else:
-        info_text = ''
+    info_text = StaticContent.getByName('IntranetHome', request.user.is_staff)
     
     jobs = get_current_jobs()
     renderdict = getBohnenDict(request)
@@ -1021,6 +1018,22 @@ def my_statistics(request):
         'statistics': statistics
     })
     return render(request, 'my_statistics.html', renderdict)
+
+
+@login_required
+def my_preview(request):
+    """
+    Weekly preview of veggies to be delivered
+    """
+    
+    preview = StaticContent.getByName('Preview', request.user.is_staff)
+    
+    renderdict = getBohnenDict(request)
+    renderdict.update({
+        'preview': preview
+    })
+    
+    return render(request, 'my_preview.html', renderdict)
    
 
 def my_createlocoforsuperuserifnotexist(request):

@@ -16,6 +16,21 @@ class StaticContent(models.Model):
     name = models.CharField("Name", max_length=100)
     content = tinymce_models.HTMLField("Html-Inhalt", max_length=10000, default="", blank=True)
 
+    @staticmethod
+    def getByName(name, is_staff=False):
+        contents = StaticContent.objects.all().filter(name=name)
+        if contents.__len__() > 0:
+            content = contents[0].content
+            edit_link = '/admin/static_ortoloco/staticcontent/' + str(contents[0].id)
+        else:
+            content = ''
+            edit_link = '/admin/static_ortoloco/staticcontent/add'
+            
+        if is_staff:
+            content = '<div class="admin_editable">' + content
+            content += '(<a class="admin_edit_link" href="' + edit_link + '">Diesen Text editieren</a>)</div>'
+            
+        return content
 
     def __unicode__(self):
         return u"%s" % (self.name)
