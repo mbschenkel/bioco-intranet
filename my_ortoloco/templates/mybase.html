@@ -34,14 +34,18 @@
         {% block allcontent %}
             <div class="span3">
                 <ul class="nav nav-pills nav-stacked">
-                    <li class="{{ menu.abonnement }}">
-                        <a href="/my/abo">Abo</a>
+                    <li>
+                        <strong>Einsätze:</strong>
                     </li>
                     <li class="{{ menu.participation }}">
-                        <a href="/my/mitarbeit">Mitarbeit</a>
+                        <a href="/my/einsaetze">Offene Einsätze</a>
                     </li>
                     <li class="{{ menu.participation }}">
-                        <a href="/my/einsaetze">Einsätze</a>
+                        <a href="/my/vergangenejobs">Meine geleisteten Einsätze</a>
+                    </li>
+                    <li>
+                        <hr>
+                        <strong>Informationen:</strong>
                     </li>
                     <li>
                         <a href="/my/depotuebersicht">Verteilübersicht</a>
@@ -49,11 +53,11 @@
                     <li>
                         <a href="/my/vorschau">Gemüsevorschau</a>
                     </li>
+                    <li>
+                        <a href="/my/filters">Alle Mitglieder</a>
+                    </li>
                     <li class="{{ menu.contact }}">
                         <a href="/my/kontakt">Kontakt</a>
-                    </li>
-                    <li>
-                            <a href="/my/filters">Alle Mitglieder</a>
                     </li>
                     <li class="{{ menu.ortoloco }}">
                         <a href="http://{% settings_value "SITE_URL" %}">{% settings_value "SITE_URL" %} Hauptseite</a>
@@ -86,52 +90,30 @@
                             {% endcomment %}
                         </li>
                     {% endif %}
-                    <li class="{{ menu.personalInfo }}">
+                    <li>
                         <hr>
-                        <a href="/my/profil">Personalien</a>
+                        <strong>Einstellungen:</strong>
+                    </li>
+                    <li class="{{ menu.abonnement }}">
+                        <a href="/my/abo">Mein Abo</a>
+                    </li>
+                    <li class="{{ menu.personalInfo }}">
+                        <a href="/my/profil">Meine Personalien</a>
+                    </li>
+                    <li class="{{ menu.participation }}">
+                        <a href="/my/mitarbeit">Mitarbeit in Kernbereichen</a>
                     </li>
                     <li class="{{ menu.logout }}">
                         <a href="/logout">Abmelden</a>
                     </li>
                 </ul>
                 <hr>
-                <div class="bohnen">
-                    {% block bohnen %}
-                        <h5>Dein Rüebli-Konto</h5>
-                        <p>
-                        {% for i in bohnenrange %}
-                            {% if i < userbohnen %}
-                                <img alt="Volle Erbse" title="Ein geleisteter Einsatz" class="ruebli" src="/static/img/ruebli_color.png"/>
-                            {% else %}
-                                <img alt="Leere Erbse" title="Ein noch zu leistender Einsatz"  class="ruebli" src="/static/img/ruebli_bw.png"/>
-                            {% endif %}
-                        {% endfor %}
-                        </p><p>
-                        Du hast <a href="/my/vergangenejobs">{{ userbohnen }} {{ userbohnen|pluralize:"Einsatz,Einsätze" }}</a> 
-                        {% if bohnenrange %}
-                            von {{ bohnenrange|length }} 
-                        {% endif %}
-                        geleistet
-                        </p>
-                    {% endblock %}
+                <div class="jobs">
+                    {% include "snippet_my_job_preview.html" %}
                 </div>
                 <hr>
-                <div class="jobs">
-                    {% block next_jobs %}
-                        <h5>Deine nächsten Einsätze</h5>
-                        {% if next_jobs|length > 0 %}
-                            <ul class="unstyled next-jobs">
-                                {% for job in next_jobs %}
-                                    <li><a href="/my/jobs/{{ job.id }}">{{ job.typ.name }}</a><br/>
-
-                                        <div class="time">{{ job.time|date:"d.m H:i" }}-{{ job.end_time|date:"H:i" }}</div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            Noch für keine <a href="/my/einsaetze">Jobs</a> angemeldet
-                        {% endif %}
-                    {% endblock %}
+                <div class="bohnen">
+                    {% include "snippet_boehnli_stat.html" %}
                 </div>
             </div>
             <div class="span9">

@@ -4,6 +4,7 @@ from datetime import date
 from StringIO import StringIO
 import string
 import random
+import math
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import auth
@@ -33,32 +34,52 @@ def password_generator(size=8, chars=string.ascii_uppercase + string.digits): re
 
 def getBohnenDict(request):
     loco = request.user.loco
+    loco_pk = loco.pk
     next_jobs = set()
     if loco.abo is not None:
         year = date.today().year
-        userbohnen = Boehnli.objects.filter(loco=loco, job__time__lte=datetime.datetime.now(), job__time__year=year)
-    
-        loco_pk = loco.pk
-
-        # todo: maybe extend this such that we show 
-        #       (A) user-bohnen, (B) other-user-in-abo-bohnen (C) to-be-done-bohnen        
-        bohnen_done = userbohnen.__len__()
-        bohnen_required = Abo.abo_types[loco.abo.groesse].required_bohnen / loco.abo.locos.count()
-        bohnenrange = range(0, max(bohnen_done, bohnen_required))
-
+        now = datetime.datetime.now()
+        
+        abo_count = loco.abo.locos.count()
+        abo_required = Abo.abo_types[loco.abo.groesse].required_bohnen or 0
+        loco_required = math.floor(abo_required / abo_count)
+        
+        loco_show = True
+        loco_sum = Boehnli.objects.filter(loco=loco, job__time__lte=now, job__time__year=year).aggregate(Sum('job__multiplier'))
+        loco_done = loco_sum['job__multiplier__sum'] or 0
+        loco_todo = max(0, loco_required - loco_done)
+        
+        abo_show = abo_count > 0
+        abo_sum = Boehnli.objects.filter(loco__abo=loco.abo, job__time__lte=now, job__time__year=year).aggregate(Sum('job__multiplier'))
+        abo_done = abo_sum['job__multiplier__sum'] or 0
+        abo_todo = max(0, abo_required - abo_done)
+        
         next_jobs = Job.objects.filter(boehnli__loco=loco, time__gte=datetime.datetime.now()).order_by("time")
         
     else:
-        bohnenrange = None
-        userbohnen = []
+        loco_required = 0
+        loco_done = 0
+        loco_todo = 0
+        abo_required = 0
+        abo_done = 0
+        abo_todo = 0
+        abo_show = False
+        loco_show = False
         next_jobs = set()
-        loco_pk = 0
 
     return {
         'loco_pk': loco_pk,
         'user': request.user,
-        'bohnenrange': bohnenrange,
-        'userbohnen': len(userbohnen),
+        'bohnenstat': {
+            'loco_show':     loco_show,
+            'loco_required': int(loco_required),
+            'loco_done':     int(loco_done),
+            'loco_todo':     int(loco_todo),
+            'abo_show':      abo_show,
+            'abo_required':  int(abo_required),
+            'abo_done':      int(abo_done),
+            'abo_todo':      int(abo_todo)
+        },
         'next_jobs': next_jobs,
         'staff_user': request.user.is_staff,
         'politoloco': request.user.has_perm('static_ortoloco.can_send_newsletter')
@@ -210,17 +231,15 @@ def my_pastjobs(request):
     All past jobs of current user
     """
     loco = request.user.loco
-
-    allebohnen = Boehnli.objects.filter(loco=loco)
-    past_bohnen = []
-
-    for bohne in allebohnen:
-        if bohne.job.time < datetime.datetime.now():
-            past_bohnen.append(bohne)
-
+    now = datetime.datetime.now()
+        
+    loco_bohnen = Boehnli.objects.filter(loco=loco, job__time__lte=now)
+    abo_bohnen = Boehnli.objects.filter(loco__abo=loco.abo, job__time__lte=now)
+    
     renderdict = getBohnenDict(request)
     renderdict.update({
-        'bohnen': past_bohnen
+        'loco_bohnen': loco_bohnen,
+        'abo_bohnen': abo_bohnen
     })
     return render(request, "my_pastjobs.html", renderdict)
 
@@ -926,6 +945,8 @@ def alldepots_list(request, name):
   
 @staff_member_required
 def my_statistics(request):
+    # TODO: Take into account new job.multiplier here as well!
+    
     stat_as     = dict()
     stat_abos   = dict()
     stat_locos  = dict()
@@ -990,6 +1011,7 @@ def my_statistics(request):
 
     # Einsätze
     # todo limit year
+    # todo take multiplier into account
     stat_jobs['offered'] = Job.objects.count()
     job_sum = Job.objects.aggregate(Sum('slots'))
     stat_jobs['slots_offered'] = job_sum['slots__sum']

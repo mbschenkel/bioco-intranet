@@ -1,23 +1,55 @@
 {% extends "mybase.html" %}
 
-{% block content %}
-    <h3>Deine vergangenen Einsätze</h3>
+{% load from_settings %}
 
-    <div class="alert alert-danger"><b>Hinweis:</b> 
-    Wir haben Einsätze, die vor der Einführung der neuen Intranet-Seite geleistet wurden, nun übernommen.
-    Wenn deiner Meinung nach ein Eintrag fehlt, so melde dich bitte bei <a href="mailto:einsatz@bioco.ch">einsatz@bioco.ch</a>.
+{% block content %}
+    <div class="alert alert-warning"><b>Hinweis:</b> 
+    Achtung, es werden nur Einsätze für das aktuelle Geschäftsjahr angezeigt.
     </div>
-    <!--
-    <div>Achtung, es werden nur Einsätze von diesem Kalenderjahr angezeigt.</div>
-    -->
-    <br/>
-    <ul class="unstyled">
-        {% for bohne in bohnen %}
-            <li>
-                <img alt="" title="Ein geleisteter Einsatz" src="/static/img/ruebli_color.png">&nbsp;
-                <a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a> am 
-                {{ bohne.job.time|date:"d.m H:i" }} &ndash; {{ bohne.job.end_time|date:"H:i" }}
-            </li>
+    
+    <h3>Geleistete Einsätze</h3>
+    <h4>Von dir</h4>
+
+    <table class="unstyled">
+        {% for bohne in loco_bohnen %}
+        <tr>
+            <td>
+                {{ bohne.job.multiplier }}&nbsp;x&nbsp;
+                <img alt="" title="Ein geleisteter Einsatz" src="/static/img/ruebli_color.png">
+            </td><td>
+                <a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a>
+                <br/>
+                am {{ bohne.job.time|date:"d.m H:i" }} &ndash; {{ bohne.job.end_time|date:"H:i" }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td>
+            Du hast dieses Jahr noch keinen Einsatz geleistet.
+        </td></tr>
         {% endfor %}
-    </ul>
+    </table>
+    
+    <br />
+    
+    <h4>Von allen Abopartnern</h4>
+    <table>
+        {% for bohne in abo_bohnen %}
+        <tr>
+            <td>
+                {{ bohne.job.multiplier }}&nbsp;x&nbsp;
+                <img alt="" title="Job zählt {{ bohne.job.multiplier }}-fach" src="/static/img/ruebli_color.png">
+            </td><td>
+                <a href="/my/jobs/{{ bohne.job.id }}">{{ bohne.job.typ }}</a>
+                <br/>
+                am {{ bohne.job.time|date:"d.m H:i" }} &ndash; {{ bohne.job.end_time|date:"H:i" }}
+                ({{ bohne.loco }})
+            </td>
+        {% empty %}
+        <tr><td>
+            In deinem Abo hat dieses Jahr noch niemand einen Einsatz geleistet.
+        </td></tr>
+        {% endfor %}
+        </tr>
+    </table>
+    
 {% endblock %}

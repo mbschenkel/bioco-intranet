@@ -1,0 +1,16 @@
+
+{% block next_jobs %}
+    <h5>Meine nächsten Einsätze</h5>
+    {% if next_jobs|length > 0 %}
+        <ul class="unstyled next-jobs">
+            {% for job in next_jobs %}
+                <li><a href="/my/jobs/{{ job.id }}">{{ job.typ.name }}</a><br/>
+
+                    <div class="time">{{ job.time|date:"d.m H:i" }}-{{ job.end_time|date:"H:i" }}</div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        Noch für keine <a href="/my/einsaetze">Jobs</a> angemeldet
+    {% endif %}
+{% endblock %}

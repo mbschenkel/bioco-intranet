@@ -4,8 +4,11 @@
 {% block content %}
     <h3>Job {{ job.typ.displayed_name }}</h3>
     <div class="row">
-        <div class="span3">Zeitpunkt:</div>
-        <div class="span5">{{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}</div>
+        <div class="span3">Rüebli:</div>
+        <div class="span5">
+            {% ruebli_count job %}&nbsp;&nbsp;&nbsp;&nbsp;
+            Dieser Einsatz zählt {{ job.multiplier }}-fach
+        </div>
     </div>
     <br/>
     <div class="row">
@@ -17,12 +20,17 @@
     <br/>
     <div class="row">
         <div class="span3">Auto:</div>
-        <div class="span5">{{ job.get_car_status|safe }} {{ job.get_car_status_text }}</div>
+        <div class="span5">{{ job.get_car_status|safe }}&nbsp;&nbsp;&nbsp;{{ job.get_car_status_text }}</div>
     </div>
     <br/>
     <div class="row">
         <div class="span3">Ort:</div>
         <div class="span5">{{ job.typ.location }}</div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="span3">Zeitpunkt:</div>
+        <div class="span5">{{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}</div>
     </div>
     <br/>
     <div class="row">

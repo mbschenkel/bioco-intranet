@@ -7,6 +7,7 @@
                 <th>Datum</th>
                 <th>Beschreibung</th>
                 <th>Status</th>
+                <th>Status</th>
                 <th>Auto</th>
                 <th>Angemeldet</th>
             </tr>
@@ -25,6 +26,10 @@
                         <strong>{{ job.typ.bereich.name }}</strong><br/>
                         {{ job.typ.get_name }}</a><br/>
                         (Ort: {{ job.typ.location }})
+                    </td>
+                    <td>
+                        {{ job.multiplier }}&nbsp;x
+                        <img alt="" title="Einsatz zählt {{ job.multiplier }}-fach." src="/static/img/ruebli_color.png">
                     </td>
                     <td class="status">{{ job.get_status_bohne_bar|safe }}</td>
                     <td>{{ job.get_car_status|safe }}</td>

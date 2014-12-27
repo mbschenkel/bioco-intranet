@@ -102,15 +102,15 @@ class Abo(models.Model):
                             cost = 0,
                             description=u"Du kannst auch ohne Gemüseabo "+settings.SITE_NAME+"-GenossenschafterIn sein. Bleibe auf dem Laufenden und mach mit, wenn du Lust hast"),
         SIZE_HALF:  AboTyp( size=SIZE_HALF,  name_short='Halb',  name_long='Halbes Abo',
-                            min_anteilsscheine=1, visible=False, required_bohnen = 6,
+                            min_anteilsscheine=1, visible=False, required_bohnen = 12,
                             cost = 550,
                             description=u"Halbe Abos können in Ausnahmefällen vergeben werden"),
         SIZE_SMALL: AboTyp( size=SIZE_SMALL, name_short='Klein', name_long='Kleines Abo', 
-                            min_anteilsscheine=2, visible=True, required_bohnen = 12,
+                            min_anteilsscheine=2, visible=True, required_bohnen = 24,
                             cost = 1100,
                             description=u"Das kleine Abo ist für 2-3 Personen geeignet und benötigt mindestens zwei Anteilscheine"),
         SIZE_BIG:   AboTyp( size=SIZE_BIG,   name_short='Gross', name_long='Grosses Abo', 
-                            min_anteilsscheine=4, visible=True, required_bohnen = 24,
+                            min_anteilsscheine=4, visible=True, required_bohnen = 48,
                             cost = 2200,
                             description=u"Das grosse Abo empfiehlt sich für WG's oder Familien (ca. 4-6 Personen) und benötigt vier Anteilscheine")
     }
@@ -294,7 +294,9 @@ class JobTyp(models.Model):
     description = tinymce_models.HTMLField("Beschreibung", max_length=1000, default="")
     bereich = models.ForeignKey(Taetigkeitsbereich, on_delete=models.PROTECT)
     duration = models.PositiveIntegerField("Dauer in Stunden")
+    duration.help_text = "Diese Dauer wird bei allen Einsätzen dieses Typs verwendet werden."
     location = models.CharField("Ort", max_length=100, default="")
+    location.help_text = "Dieser Ort wird bei allen Einsätzen dieses Typs angezeigt werden."
     car_needed = models.BooleanField("Auto benötigt", default=False)
 
     def __unicode__(self):
@@ -313,8 +315,14 @@ class JobTyp(models.Model):
 class Job(models.Model):
     typ = models.ForeignKey(JobTyp, on_delete=models.PROTECT)
     typ.help_text = "Bei einmaligen Einsätzen bitte einen neuen Typ erstellen (auf das Plus klicken) und dort im Titel das Datum angeben"
+    # A job can now count for more (or less) than 1 boehnli / ruebli
+    multiplier = models.PositiveIntegerField("Anzahl Rüebli", default=1)
+    multiplier.help_text = "Anzahl Rüebli, die jede Person für ihre Teilnahme an diesem Einsatz erhält."
+    # Slots are in number of people, indipendent of multiplier
     slots = models.PositiveIntegerField("Plaetze")
-    time = models.DateTimeField()
+    slots.help_text = "Anzahl Personen, die sich für diesen Einsatz eintragen können."
+    time = models.DateTimeField("Anfangszeit")
+    time.help_text = "Die Endzeit wird berechnet aus Anfangszeit plus Dauer (übernommen vom Typ)"
     reminder_sent = models.BooleanField("Reminder verschickt", default=False)
     reminder_sent.help_text = "Wenn gesetzt, wurde die automatische Erinnerung 24h vor dem Einsatz bereits versandt. Sollte nur in Ausnahmefällen von Hand geändert werden müssen."
 
@@ -378,7 +386,6 @@ class Job(models.Model):
     def get_status_bohne_bar(self):
         boehnlis = Boehnli.objects.filter(job_id=self.id)
         participants = boehnlis.count()
-        pctfull = participants * 100 / self.slots
         status = self.get_status_bohne_text()
         
         result = ''

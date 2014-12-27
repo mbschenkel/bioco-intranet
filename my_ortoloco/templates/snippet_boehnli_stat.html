@@ -1,0 +1,33 @@
+{% load from_settings %}
+
+{% block bohnen %}
+    
+    {% if bohnenstat.loco_show %}
+        <h5>Mein persönliches Rüebli-Konto</h5>
+        {% for i in bohnenstat.loco_done|get_range %}
+            <img alt="Volle Erbse" title="Ein geleisteter Einsatz" class="ruebli" src="/static/img/ruebli_color.png"/> 
+        {% endfor %}
+        {% for i in bohnenstat.loco_todo|get_range %}
+            <img alt="Leere Erbse" title="Ein noch zu leistender Einsatz"  class="ruebli" src="/static/img/ruebli_bw.png"/>
+        {% endfor %}
+        </p><p>
+        Du hast <a href="/my/vergangenejobs">{{ bohnenstat.loco_done }} von {{ bohnenstat.loco_required }}  Einsätzen</a> geleistet.
+        </p>
+        <hr/>
+    {% endif %}
+
+    {% if bohnenstat.abo_show %}
+        <h5>Rüebli-Konto meines Abos</h5>
+        {% for i in bohnenstat.abo_done|get_range %}
+            <img alt="Volle Erbse" title="Ein geleisteter Einsatz" class="ruebli" src="/static/img/ruebli_color.png"/> 
+        {% endfor %}
+        {% for i in bohnenstat.abo_todo|get_range %}
+            <img alt="Leere Erbse" title="Ein noch zu leistender Einsatz"  class="ruebli" src="/static/img/ruebli_bw.png"/>
+        {% endfor %}
+        </p><p>
+        Ihr alle habt zusammen <a href="/my/vergangenejobs">{{ bohnenstat.abo_done }} von {{ bohnenstat.abo_required }}  Einsätzen</a> geleistet.
+        </p>
+        <hr/>
+    {% endif %}
+        
+{% endblock %}

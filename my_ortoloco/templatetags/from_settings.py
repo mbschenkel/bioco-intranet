@@ -20,6 +20,29 @@ def settings_value(name):
         return getattr(settings, name, "")
     return '[not permitted]'
  
+ 
+# Source: https://djangosnippets.org/snippets/1357/
+@register.filter
+def get_range( value ):
+    """
+    Filter - returns a list containing range made from given value
+    Usage (in template):
+
+    <ul>{% for i in 3|get_range %}
+      <li>{{ i }}. Do something</li>
+    {% endfor %}</ul>
+
+    Results with the HTML:
+    <ul>
+      <li>0. Do something</li>
+      <li>1. Do something</li>
+      <li>2. Do something</li>
+    </ul>
+
+    Instead of 3 one may use the variable set in the views
+    """
+    return range( value )
+  
 @register.simple_tag
 def boehnli_progress(participants, slots):
     title = "%d von %d gebucht" % (len(participants), len(slots))
@@ -29,8 +52,15 @@ def boehnli_progress(participants, slots):
             text += '<img class="jobstatus" src="/static/img/erbse_voll.png" title="%s"/> ' % title
         else:
             text += '<img class="jobstatus" src="/static/img/erbse_leer.png" title="%s"/> ' % title
-    return text + '&nbsp;' + title
+    return text + '&nbsp;&nbsp;' + title
 
+@register.simple_tag
+def ruebli_count(job):
+    text = ''
+    for i in range(job.multiplier):
+        text += '<img alt="" title="" src="/static/img/ruebli_color.png" class="ruebli" />'
+    return text
+    
 @register.simple_tag
 def ga_tracking():
     if settings.GA_TRACKING_CODE:
