@@ -112,7 +112,7 @@ def my_job(request, job_id):
     Details for a job
     """
     loco = request.user.loco
-    job = get_object_or_404(Job, id=int(job_id))
+    job = get_object_or_404(Job.objects.select_related(), id=int(job_id))
 
     def check_int(s):
         if not s:
@@ -120,34 +120,39 @@ def my_job(request, job_id):
         if s[0] in ('-', '+'):
             return s[1:].isdigit()
         return s.isdigit()
-            
+        
     error = None
     send_mail = False
     if request.method == 'POST':
-        num = request.POST.get("jobs")
-        initial_number = Boehnli.objects.filter(job=job, loco=loco).count()
-        prev_initial_number = request.POST.get("initial_number")
-        with_car = request.POST.get("with_car", False)
-        my_bohnen = job.boehnli_set.all().filter(loco=loco)
-        if not check_int(num):
-            # assume the user wanted to subscribe anyway
-            num = 1
-        if 0 >= int(num):
-            error = "Ungueltige Anzahl Einschreibungen %s (mindestens 1)" % num
-        elif int(num) > job.freie_plaetze():
-            error = "Zu hohe Anzahl Anmeldungen oder der Einsatz ist bereits ausgebucht"
-        elif int(prev_initial_number) != int(initial_number):
-            print "prev:", prev_initial_number 
-            print "now: ", initial_number 
-            error = ("Es scheint, dass du dich zweimal nacheinander eingetragen hast. "
-                     "Wir haben nur einen Eintrag vorgenommen. "
-                     "Wenn du dich tatsächlich zweimal eintragen willst, klicke bitte jetzt erneut.")
+        # check which form was posted
+        comment = request.POST.get("comment")
+        if comment is None:
+            # That is a sign-up for this job
+            num = request.POST.get("jobs")
+            initial_number = Boehnli.objects.filter(job=job, loco=loco).count()
+            prev_initial_number = request.POST.get("initial_number")
+            with_car = request.POST.get("with_car", False)
+            my_bohnen = job.boehnli_set.all().filter(loco=loco)
+            if not check_int(num):
+                # assume the user wanted to subscribe anyway
+                num = 1
+            if 0 >= int(num):
+                error = "Ungueltige Anzahl Einschreibungen %s (mindestens 1)" % num
+            elif int(num) > job.freie_plaetze():
+                error = "Zu hohe Anzahl Anmeldungen oder der Einsatz ist bereits ausgebucht"
+            elif int(prev_initial_number) != int(initial_number):
+                error = ("Es scheint, dass du dich zweimal nacheinander eingetragen hast. "
+                         "Wir haben nur einen Eintrag vorgenommen. "
+                         "Wenn du dich tatsächlich zweimal eintragen willst, klicke bitte jetzt erneut.")
+            else:
+                # adding new participants
+                send_mail = True
+                add = int(num)
+                for i in range(add):
+                    bohne = Boehnli.objects.create(loco=loco, job=job, with_car=with_car)
         else:
-            # adding new participants
-            send_mail = True
-            add = int(num)
-            for i in range(add):
-                bohne = Boehnli.objects.create(loco=loco, job=job, with_car=with_car)
+            # That is just a new comment for this job
+            comment = JobComment.objects.create(loco=loco, job=job, text=comment)
 
     participants = []
     for bohne in Boehnli.objects.filter(job_id=job.id):
@@ -157,11 +162,14 @@ def my_job(request, job_id):
     if send_mail:
         send_job_signup([loco.email], job, participants, request.META["HTTP_HOST"])
     
+    comments = job.comments.order_by("time").all()
+    
     # number of own registration before form-submit, to prevent unintended, 
     # multiple registrations with refresh or double-clicks
     initial_number = Boehnli.objects.filter(job=job, loco=loco).count()
     renderdict = getBohnenDict(request)
     renderdict.update({
+        'comments': comments,
         'participants': participants,
         'job': job,
         'initial_number': initial_number,
@@ -1030,7 +1038,7 @@ def my_statistics(request):
         'locos':          stat_locos, 
         'depots':         stat_depots, 
         'jobs':           stat_jobs,
-        'year':           u'2014' #todo
+        'year':           u'2015' #todo
     };
     
     renderdict = getBohnenDict(request)

@@ -9,7 +9,7 @@ Details:
 Job:        {{ job.typ.description|html_decode }}
 Zeit:       {{ job.time |date:"d.m.Y H:i" }}-{{ job.end_time|date:"H:i" }}
 Mit dabei:  {% for participant in participants %}
-            {{ participant.loco }}{% endfor %}
+            {{ participant.loco }} ({{ participant.loco.addr_location }}, {% if participant.loco.phone != '0' %}Tel: {{ participant.loco.phone }}, {% endif %}{% if participant.loco.mobile_phone %}Mobile: {{ participant.loco.mobile_phone }}, {% endif %}{{ participant.loco.email }}){% endfor %}
 Ort:        {{ job.typ.location }}
 
 Wir freuen uns, dich zu sehen und zählen auf dich!

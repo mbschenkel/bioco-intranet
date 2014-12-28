@@ -49,6 +49,15 @@
                     {% else %}
                         {{ participant.loco }}
                     {% endif %}
+                    <br/>
+                    ({{ participant.loco.addr_location }}, 
+                    {% if participant.loco.phone != '0' %}
+                        Tel: {{ participant.loco.phone }}, 
+                    {% endif %}
+                    {% if participant.loco.mobile_phone %}
+                        Mobile: {{ participant.loco.mobile_phone }}, 
+                    {% endif %}
+                    <a href="mailto:{{ participant.loco.email }}">{{ participant.loco.email }}</a>)
                     {% if participant.with_car %}
                         <img src="/static/img/auto_green.png" style="margin-top: -8px; margin-left: 5px;" width="24" title="Mit Auto" />
                     {% endif %}
@@ -81,7 +90,36 @@
                     <button type="submit" class="btn btn-success">Ich schreibe mich ein</button>
                 {% endif %}
             </form>
-            <div class="help-block">Anzahl Personen eintragen, die zum Einsatz kommen, z.B: 1, 2 oder 3.</div>
+            <div class="help-block">
+                Anzahl Personen eintragen, die zum Einsatz kommen, z.B: 1, 2 oder 3.
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="span3">Kommentare:</div>
+        <div class="span5">
+        {% for comment in comments %}
+            <p>
+                <b>{{ comment.loco }}</b> ({{ comment.time|date:"d.m.Y H:i" }}):
+                <br/>
+                {{ comment.text }}
+            </p>
+        {% empty %}
+            <p>Noch keine Kommentare</p>
+        {% endfor %}
+        <div>
+            <form action="" method="POST" class="form-inline">
+                {% csrf_token %}
+                <input type="text" class="span5" name="comment"/> 
+                <br/>
+                <button type="submit" class="btn btn-success">Kommentar abgeben</button>
+            </form>
+            <div class="help-block">
+                <p>Kommentare sind für alle sichtbar und dazu gedacht, die Einsätze zu koordinieren. 
+                Zum Beispiel kanst du hier eine Mitfahrgelegenheiten suchen oder anbieten, oder eine Abweichung vom Zeitplan angekündigen, etc.</p>
+                <p>Wenn Du eine Auskunft zum Einsatz benötigt, bitte stattdessen <a href="/my/kontakt">das Kontaktformular verwenden</a>.</p>
+            </div>
         </div>
     </div>
 {% endblock %}

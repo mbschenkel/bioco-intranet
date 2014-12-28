@@ -19,7 +19,17 @@
             <th style="text-align: left; padding-right: 5px;font-size: 14px;">Mit dabei:</th>
             <td style="font-size: 14px;"><ul>
                 {% for participant in participants %}
-                    <li>{{ participant.loco }}</li>
+                <li>
+                    {{ participant.loco }}<br/>
+                    ({{ participant.loco.addr_location }}, 
+                    {% if participant.loco.phone != '0' %}
+                        Tel: {{ participant.loco.phone }}, 
+                    {% endif %}
+                    {% if participant.loco.mobile_phone %}
+                        Mobile: {{ participant.loco.mobile_phone }}, 
+                    {% endif %}
+                    <a href="mailto:{{ participant.loco.email }}">{{ participant.loco.email }}</a>)
+                </li>
                 {% endfor %}
             </ul></td>
         </tr>

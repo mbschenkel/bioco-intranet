@@ -497,7 +497,13 @@ class LocoAdmin(reversion.VersionAdmin):
 
 class JobTypAdmin(reversion.VersionAdmin):
     list_display = ["name", "displayed_name", "bereich", "location", "duration", "car_needed" ]
-
+    search_fields = ["name", "displayed_name", "bereich", "location"]
+    
+class JobCommentAdmin(reversion.VersionAdmin):
+    list_display = ["job", "loco", "time", "text" ]
+    list_filter = ["loco"]
+    search_fields = ["job", "loco", "text"]
+    
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(ExtraAboType)
@@ -513,4 +519,5 @@ admin.site.register(Anteilschein, AnteilscheinAdmin)
 # from Job, where integrity constraints are checked
 admin.site.register(Boehnli, BoehnliAdmin)
 admin.site.register(JobTyp, JobTypAdmin)
+admin.site.register(JobComment, JobCommentAdmin)
 admin.site.register(Job, JobAdmin)

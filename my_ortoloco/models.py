@@ -311,7 +311,6 @@ class JobTyp(models.Model):
         verbose_name = 'Jobart'
         verbose_name_plural = 'Jobarten'
 
-
 class Job(models.Model):
     typ = models.ForeignKey(JobTyp, on_delete=models.PROTECT)
     typ.help_text = "Bei einmaligen Einsätzen bitte einen neuen Typ erstellen (auf das Plus klicken) und dort im Titel das Datum angeben"
@@ -419,6 +418,17 @@ class Job(models.Model):
         verbose_name_plural = 'Jobs'
 
 
+class JobComment(models.Model):
+    job = models.ForeignKey(Job, related_name="comments")
+    loco = models.ForeignKey(Loco, related_name="comments")
+    time = models.DateTimeField("Erstellungs-Zeitpunkt", auto_now_add=True)
+    text = models.TextField("Kommentar")
+  
+    class Meta:
+        verbose_name = 'Job-Kommentar'
+        verbose_name_plural = 'Job-Kommentare'  
+
+    
 class Boehnli(models.Model):
     """
     Single boehnli (work unit).
