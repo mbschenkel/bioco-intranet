@@ -112,7 +112,7 @@ def my_job(request, job_id):
     Details for a job
     """
     loco = request.user.loco
-    job = get_object_or_404(Job.objects.select_related(), id=int(job_id))
+    job = get_object_or_404(Job, id=int(job_id))
 
     def check_int(s):
         if not s:
@@ -535,6 +535,7 @@ def my_add_loco(request, abo_id):
                                      locoform.cleaned_data['email'])
             pw = password_generator()
             loco = Loco.objects.create(first_name=locoform.cleaned_data['first_name'], last_name=locoform.cleaned_data['last_name'], email=locoform.cleaned_data['email'])
+            loco.sex = locoform.cleaned_data['sex']
             loco.first_name = locoform.cleaned_data['first_name']
             loco.last_name = locoform.cleaned_data['last_name']
             loco.email = locoform.cleaned_data['email']

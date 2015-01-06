@@ -34,7 +34,7 @@
             &nbsp;|&nbsp;
             Email: {% settings_value "BG_INFO_MAIL" %}
             &nbsp;|&nbsp;
-            Intranet: <a href="http://{{ serverurl }}">intranet.{% settings_value "SITE_URL" %}</a>
+            Intranet: <a href="{{ serverurl }}">intranet.{% settings_value "SITE_URL" %}</a>
             <br/>
             Bei Fragen zum Intranet bitte an <a href="mailto:{% settings_value "JOB_INFO_MAIL" %}">{% settings_value "JOB_INFO_MAIL" %}</a> wenden.
         </td>

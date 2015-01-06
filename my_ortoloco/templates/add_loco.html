@@ -8,7 +8,19 @@
         <br/>
 
         <form action="" method="post" class="form-horizontal">
-            {% csrf_token %}
+            {% csrf_token %}            
+            <div class="control-group {% if locoform.sex.errors %}error{% endif %}">
+                <label class="control-label" for="sex">Anrede</label>
+                <div class="controls">
+                    {% for radio in locoform.sex %}
+                        {{ radio }}
+                    {% endfor %}
+                    {% if locoform.sex.errors %}
+                        <div class="help-inline">Anrede ungültig</div>
+                    {% endif %}
+                </div>
+            </div>
+            
             <div class="control-group {% if locoform.last_name.errors %}error{% endif %}">
                 <label class="control-label" for="id_last_name">Name *</label>
 
