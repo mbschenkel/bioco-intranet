@@ -687,7 +687,22 @@ def my_confirm(request, hash):
 
     return redirect("/my/home")
 
-
+@login_required
+def my_contact_vcf(request, loco_id):
+    """
+    Download contact as VCF-card, version 3.0
+    """
+    loco = get_object_or_404(Loco, id=int(loco_id))
+    
+    renderdict = getBohnenDict(request)
+    renderdict.update({
+        'loco': loco
+    })
+    
+    response = render(request, "contact.vcf", renderdict, content_type='text/vcard')
+    response['Content-Disposition'] = 'attachment; filename="bioco_contact_'+loco.last_name+'.vcf"'
+    return response
+    
 @login_required
 def my_contact(request):
     """

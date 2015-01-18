@@ -1,0 +1,15 @@
+{% load from_settings %}{% block content %}{% autoescape off %}BEGIN:VCARD
+VERSION:3.0
+N:{{ loco.last_name }};{{ loco.first_name }}
+FN:{{ loco.first_name }} {{ loco.last_name }}
+ORG:bioco
+TEL;TYPE=HOME,VOICE:{{ loco.tel }}
+TEL;TYPE=MOBILE,VOICE:{{ loco.mobile_phone }}
+ADR;TYPE=HOME:;;{{ loco.addr_street }}, {{ loco.addr_zipcode }} {{ loco.addr_location }}
+EMAIL;PREF;INTERNET:{{ loco.email }}
+REV:{% now "Ymd" %}T{% now "His" %}
+END:VCARD{% endautoescape %}{% endblock %}{% comment %}
+
+Possible icon: http://www.flaticon.com/free-icon/contact-list_65599
+<div>Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
+{% endcomment %}
