@@ -6,6 +6,21 @@
         <div class="alert">Du hast kein Abo</div>
         <br/><br/>
     {% endif %}
+        
+    {% if not_confirmed %}
+        <div class="alert alert-danger">
+            <b>Freischaltung ausstehend:</b> 
+            <br/>
+            Du hast dich frisch bei biocò angemeldet.
+            Es sind deshalb noch nicht alle Funktionen auf dieser Seite für dich freigeschaltet.
+            Sobald wir die unterschriebene, schriftliche Beitrittserklärung erhalten haben, 
+            wirst du die Intranet-Seite aktiv verwenden können.
+            <br/><br/>
+            Wenn du denkst, dass diese Meldung fälschlicherweise erscheint, so 
+            <a href="/my/kontakt">kontaktiere uns</a>.
+        </div>
+        <br/><br/>
+    {% endif %}
     
     {% if info_text %}
         <div class="panel panel-success">

@@ -26,6 +26,7 @@ import hashlib
 from static_ortoloco.models import Politoloco
 from static_ortoloco.models import StaticContent
 
+from decorators import login_of_active_loco_required
 from decorators import primary_loco_of_abo
 
 
@@ -100,13 +101,14 @@ def my_home(request):
         'info_text': info_text,
         'jobs': jobs[:9],
         'teams': Taetigkeitsbereich.objects.filter(hidden=False),
+        'not_confirmed': not request.user.loco.confirmed,
         'no_abo': request.user.loco.abo is None
     })
 
     return render(request, "myhome.html", renderdict)
 
-
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_job(request, job_id):
     """
     Details for a job
@@ -179,7 +181,8 @@ def my_job(request, job_id):
     return render(request, "job.html", renderdict)
 
 
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_depot(request, depot_id):
     """
     Details for a Depot
@@ -193,7 +196,8 @@ def my_depot(request, depot_id):
     return render(request, "depot.html", renderdict)
 
 
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_participation(request):
     """
     Details for all areas a loco can participate
@@ -405,7 +409,8 @@ def my_extra_change(request, abo_id):
     return render(request, "my_extra_change.html", renderdict)
 
 
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_team(request, bereich_id):
     """
     Details for a team
@@ -422,8 +427,8 @@ def my_team(request, bereich_id):
     })
     return render(request, "team.html", renderdict)
 
-
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_einsaetze(request):
     """
     All jobs to be sorted etc.
@@ -439,7 +444,8 @@ def my_einsaetze(request):
     return render(request, "jobs.html", renderdict)
 
 
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_einsaetze_all(request):
     """
     All jobs to be sorted etc.
@@ -512,7 +518,8 @@ def my_signup(request):
     return render(request, "signup.html", renderdict)
 
 
-@login_required
+@login_of_active_loco_required
+#@login_required
 def my_add_loco(request, abo_id):
     scheineerror = False
     scheine = 1
@@ -612,7 +619,6 @@ def my_createabo(request):
     if request.method == "POST":
         scheine = int(request.POST.get("scheine"))
         selectedabo = int(request.POST.get("abo"))
-        print 'selectedabo', selectedabo
         
         scheine += loco_scheine
         scheine_required = Abo.abo_types[selectedabo].min_anteilsscheine
@@ -687,7 +693,9 @@ def my_confirm(request, hash):
 
     return redirect("/my/home")
 
-@login_required
+    
+@login_of_active_loco_required
+#@login_required
 def my_contact_vcf(request, loco_id):
     """
     Download contact as VCF-card, version 3.0
@@ -702,7 +710,8 @@ def my_contact_vcf(request, loco_id):
     response = render(request, "contact.vcf", renderdict, content_type='text/vcard')
     response['Content-Disposition'] = 'attachment; filename="bioco_contact_'+loco.last_name+'.vcf"'
     return response
-    
+ 
+ 
 @login_required
 def my_contact(request):
     """
@@ -831,7 +840,8 @@ def my_mails(request):
 
 
 #@staff_member_required
-@login_required
+#@login_required
+@login_of_active_loco_required
 def my_filters(request):
     renderdict = getBohnenDict(request)
     locos = Loco.objects.select_related('abo').select_related('abo__depot').all()
@@ -853,7 +863,8 @@ def logout_view(request):
 
 
 #@staff_member_required
-@login_required
+@login_of_active_loco_required
+#@login_required
 def short_depots_list(request):
     """
     Printable short overview list to be used when distributing
@@ -911,6 +922,7 @@ def short_depots_list(request):
     file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
     return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
 
+    
 @staff_member_required
 def alldepots_list(request, name):
     """

@@ -458,14 +458,14 @@ class LocoAdminForm(forms.ModelForm):
 
 class LocoAdmin(reversion.VersionAdmin):
     form = LocoAdminForm
-    list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count", "abo_size"]
+    list_display = ["email", "sex", "first_name", "last_name", "show_boehnli_count", "abo_size", "confirmed"]
     search_fields = ["first_name", "last_name", "email"]
     #raw_id_fields = ["abo"]
     exclude = ["abo"]
     readonly_fields = ["user"]
-    actions = ["impersonate_job"]
+    actions = ["impersonate_job", "mark_as_confirmed", "mark_as_unconfirmed"]
 
-    list_filter = ["addr_location", "sex", "abo__groesse"] 
+    list_filter = ["addr_location", "sex", "abo__groesse", "confirmed"]
     
     # Add boehnli-count to SQL query as a left-join
     def queryset(self, request):
@@ -489,11 +489,19 @@ class LocoAdmin(reversion.VersionAdmin):
     
     def impersonate_job(self, request, queryset):
         if queryset.count() != 1:
-            self.message_user(request, u"Genau 1 Loco auswählen!", level=messages.ERROR)
+            self.message_user(request, u"Genau 1 Mitglied auswählen!", level=messages.ERROR)
             return HttpResponseRedirect("")
         inst, = queryset.all()
         return HttpResponseRedirect("/impersonate/%s/" % inst.user.id)
-    impersonate_job.short_description = "Loco imitieren (impersonate)..."
+    impersonate_job.short_description = "Mitglied imitieren (impersonate)..."
+    
+    def mark_as_confirmed(self, request, queryset):
+        queryset.update(confirmed=True)
+    def mark_as_unconfirmed(self, request, queryset):
+        queryset.update(confirmed=False)
+    
+    mark_as_confirmed.short_description = "Mitglieder als bestätigt markieren (zulassen)"
+    mark_as_unconfirmed.short_description = "Mitglieder als nicht bestätigt markieren (sperren)"
 
 class JobTypAdmin(reversion.VersionAdmin):
     list_display = ["name", "displayed_name", "bereich", "location", "duration", "car_needed" ]
@@ -504,6 +512,16 @@ class JobCommentAdmin(reversion.VersionAdmin):
     list_filter = ["loco"]
     search_fields = ["job", "loco", "text"]
     
+    
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'is_staff', 'is_superuser', 'is_active') 
+    # 'email', 'first_name', 'last_name'
+    list_filter = ('is_staff', 'is_superuser', 'is_active')
+
+# override default user admin:    
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)    
+
 
 admin.site.register(Depot, DepotAdmin)
 admin.site.register(ExtraAboType)

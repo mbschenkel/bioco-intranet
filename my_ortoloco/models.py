@@ -197,8 +197,8 @@ class Loco(models.Model):
                             on_delete=models.SET_NULL)
     abo.help_text = "Um dieses Mitglied einem Abo zuzuweisen oder die Abozuordnung zu ändern, bitte wie die Abo-Seite gehen."
     
-    confirmed = models.BooleanField("bestätigt", default=True)
-    confirmed.help_text = "Neu-Anmeldungen über die Webseite sind zuerst nicht bestätigt. Dieses Feld muss danach manuell gesetzt werden."
+    confirmed = models.BooleanField("bestätigt", default=False)
+    confirmed.help_text = "Neu-Anmeldungen über die Webseite sind zuerst nicht bestätigt. Dieses Feld muss danach manuell gesetzt werden. Erst dann hat der Benutzer Zugriff auf alle Funkionen des Intranets."
     
     def get_salutation(self):
         if self.sex is 'M':
