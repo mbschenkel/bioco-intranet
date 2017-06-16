@@ -8,7 +8,8 @@ from django.core.mail import EmailMultiAlternatives
 import re
 
 #single point of change
-SENDER_EMAIL_ADDRESS = settings.SITE_MY_NAME + '<' + settings.EMAIL_HOST_USER + '> '
+#SENDER_EMAIL_ADDRESS = settings.SITE_MY_NAME + '<' + settings.EMAIL_HOST_USER + '> '
+SENDER_EMAIL_ADDRESS = settings.EMAIL_HOST_USER
 
 # sends mail only to specified email-addresses if dev mode
 def send_mail(subject, message, from_email, to_emails):
