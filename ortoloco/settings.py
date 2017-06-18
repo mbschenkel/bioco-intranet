@@ -65,8 +65,9 @@ else:
     EMAIL_PORT = 587
 EMAIL_HOST = 'mail.bioco.ch'
 EMAIL_HOST_USER = 'intranet@bioco.ch'
-EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'  
-    
+EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'
+EMAIL_DISABLE_MULTI_PART = False
+
 TEMPLATE_DEBUG = DEBUG
 
 # Overwrite these in settings_local.py to prevent having raw emails in GIT:

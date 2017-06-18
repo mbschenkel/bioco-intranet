@@ -35,6 +35,14 @@ def send_mail(subject, message, from_email, to_emails):
 
 
 def send_mail_multi(email_multi_message):
+    if settings.EMAIL_DISABLE_MULTI_PART:
+        # TODO MSch This is workaround for non working multipart messages - send them as text-only instead
+        subject = email_multi_message.subject
+        message = email_multi_message.body
+        from_email = email_multi_message.from_email
+        to_emails = email_multi_message.to
+        return send_mail(subject, message, from_email, to_emails)
+
     to_emails = email_multi_message.to
     okmails = []
     if settings.DEBUG is False:
