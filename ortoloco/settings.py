@@ -7,7 +7,13 @@ import sys
 print('---------- in settings.py ------------')
 # this is custom code to detect differentiate different servers and use 
 # as little stuff in settings_local.py as necessary
-if "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
+if os.environ.get("BIOCO_ON_HEROKO"):
+    #DEBUG:
+    print os.environ
+    TARGET = 'test'
+    DEBUG = True
+    GA_TRACKING_CODE = ''
+elif "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'production'
     DEBUG = False
     GA_TRACKING_CODE = 'UA-46125166-1'
@@ -334,8 +340,16 @@ MAP_CENTER_LAT  = u'47.476781'
 MAP_CENTER_LONG = u'8.2632728'
 MAP_CENTER_ZOOM = u'12'
 
-
-from settings_local import *
+if os.environ.get("BIOCO_ON_HEROKO"):
+    WHITELIST_EMAILS = os.environ.get("WHITELIST_EMAILS")
+    ADMINS = os.environ.get("ADMINS")
+    SECRET_KEY  = os.environ.get("SECRET_KEY")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+    DEBUG_EMAIL_ADDRESS  = os.environ.get("DEBUG_EMAIL_ADDRESS")
+else:
+    from settings_local import *
 
 # overwrite from settings_local if set there
 MANAGERS = ADMINS
+
