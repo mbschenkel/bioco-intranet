@@ -52,6 +52,7 @@ if 'local' == TARGET:
 elif os.environ.get("BIOCO_ON_HEROKO"):
     # on heroku using DATABASE_URL
     import dj_database_url
+    DATABASES = {'default': {}}
     DATABASES['default'] = dj_database_url.config()
     DATABASES['default']['CONN_MAX_AGE'] = 500
 else:
