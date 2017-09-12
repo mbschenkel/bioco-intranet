@@ -52,8 +52,8 @@ if 'local' == TARGET:
 elif os.environ.get("BIOCO_ON_HEROKO"):
     # on heroku using DATABASE_URL
     import dj_database_url
-    db_from_env = dj_database_url.config()
-    DATABASES['default'].update(db_from_env)
+    DATABASES['default'] = dj_database_url.config()
+    DATABASES['default']['CONN_MAX_AGE'] = 500
 else:
     # on openshift
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
