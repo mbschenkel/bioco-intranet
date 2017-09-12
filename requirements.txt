@@ -7,7 +7,7 @@ argparse==1.2.1
 #distribute==0.6.49
 dj-database-url==0.2.2
 dj-static==0.0.5
-dj-database-url==0.4.2
+#dj-database-url==0.4.2
 #mbs-  django-photologue==2.6.1
 django-tinymce==1.5.1
 django-toolbelt==0.0.1
