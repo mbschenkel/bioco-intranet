@@ -290,17 +290,28 @@ if os.environ.get("BIOCO_ON_HEROKO"):
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
-        'handlers': {
-            'ortoloco.ch_python.log': {
-                'level': 'ERROR',
-                'class': 'logging.FileHandler',
-                'filename': os.path.join(os.path.dirname(BASE_DIR), 'ortoloco.ch_python.log'),
+        'formatters': {
+            'verbose': {
+                'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                           'pathname=%(pathname)s lineno=%(lineno)s ' +
+                           'funcname=%(funcName)s %(message)s'),
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
             }
+        },
+        'handlers': {     
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose'
+            },
         },
         'loggers': {
             'django.request': {
-                'handlers': ['ortoloco.ch_python.log'],
-                'level': 'ERROR',
+                'handlers': ['console'],
+                'level': 'DEBUG',
                 'propagate': True,
             },
         }
