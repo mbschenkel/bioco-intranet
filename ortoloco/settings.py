@@ -49,6 +49,11 @@ if 'local' == TARGET:
             'PORT': '', 
         }
     }
+elif os.environ.get("BIOCO_ON_HEROKO"):
+    # on heroku using DATABASE_URL
+    import dj_database_url
+    db_from_env = dj_database_url.config()
+    DATABASES['default'].update(db_from_env)
 else:
     # on openshift
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
