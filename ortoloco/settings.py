@@ -37,18 +37,28 @@ if 'local' == TARGET:
 
     INTERNAL_IPS = glob_list(['127.0.0.1', '192.168.*.*'])
     DEBUG_TOOLBAR_PATCH_SETTINGS = True
-    # use an SQlite DB 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3', 
-            'NAME': 'bioco.db.sqlite',
-            # The following settings are not used with sqlite3:
-            'USER': '', 
-            'PASSWORD': '',
-            'HOST': '', 
-            'PORT': '', 
+    if 1:
+        # use an SQlite DB
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'bioco.db.sqlite',
+                # The following settings are not used with sqlite3:
+                'USER': '',
+                'PASSWORD': '',
+                'HOST': '',
+                'PORT': '',
+            }
         }
-    }
+    else:
+        print "Local, connecting to remote heroku db"
+        #connect directly to heroku for debugging
+        import dj_database_url
+        DATABASES = {'default': {}}
+        DATABASES['default'] = dj_database_url.parse('... put db url here ...')
+        DATABASES['default']['CONN_MAX_AGE'] = 500
+        print DATABASES['default']
+
 elif os.environ.get("BIOCO_ON_HEROKO"):
     # on heroku using DATABASE_URL
     import dj_database_url
@@ -147,9 +157,17 @@ if 'local' == TARGET:
     # ./static contains checked in static content
     STATICFILES_DIRS = ("static/",)
     # collectstatic will want to move it to a *different folder*, here:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected/')    
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected/')
+elif os.environ.get("BIOCO_ON_HEROKO"):
+    STATICFILES_DIRS = (
+        (os.path.join(BASE_DIR, 'static')),
+    )
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')
+
+    print "STATICFILES_DIRS ", STATICFILES_DIRS
+    print "STATIC_ROOT ", STATIC_ROOT
 else:
-    # this has worked in production:
+    # this has worked in production on openshift:
     
     # Absolute path to the directory static files should be collected to.
     # Don't put anything in this directory yourself; store your static files
@@ -262,7 +280,7 @@ DJANGO_APPS = (
 DEBUG_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',	
-    'debug_toolbar',
+    #'debug_toolbar',
 )
 OUR_OWN_APPS = (
 	'my_ortoloco',
