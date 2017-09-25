@@ -135,7 +135,7 @@ USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 if os.environ.get("BIOCO_ON_HEROKO"):
-    USE_TZ = True
+    USE_TZ = False #True
 else:
     USE_TZ = False
 
