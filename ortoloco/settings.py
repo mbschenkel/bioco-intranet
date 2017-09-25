@@ -134,7 +134,10 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = False
+if os.environ.get("BIOCO_ON_HEROKO"):
+    USE_TZ = True
+else:
+    USE_TZ = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
