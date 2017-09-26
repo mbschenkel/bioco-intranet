@@ -71,14 +71,14 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql', 
-            'NAME': os.environ.get("OPENSHIFT_GEAR_NAME"), 
-            'USER': os.environ.get("OPENSHIFT_MYSQL_DB_USERNAME"), 
+            'NAME': os.environ.get("OPENSHIFT_GEAR_NAME"),
+            'USER': os.environ.get("OPENSHIFT_MYSQL_DB_USERNAME"),
             'PASSWORD': os.environ.get("OPENSHIFT_MYSQL_DB_PASSWORD"),
-            'HOST': os.environ.get("OPENSHIFT_MYSQL_DB_HOST"), 
-            'PORT': os.environ.get("OPENSHIFT_MYSQL_DB_PORT"), 
+            'HOST': os.environ.get("OPENSHIFT_MYSQL_DB_HOST"),
+            'PORT': os.environ.get("OPENSHIFT_MYSQL_DB_PORT"),
         }
     }
-    
+
 #TODO TLS times out on bioco.ch, investigate why and change to True
 EMAIL_USE_TLS = False
 if EMAIL_USE_TLS:
@@ -109,6 +109,8 @@ AUTHENTICATION_BACKENDS = (
 ALLOWED_HOSTS = [
     'intranet.bioco.ch',
     'intranet-test.bioco.ch',
+    'intranet-old.bioco.ch',
+    'heroku.bioco.ch',
     'ortho-bioco.rhcloud.com',
     'test-bioco.rhcloud.com'
 ]
