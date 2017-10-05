@@ -10,9 +10,18 @@ print('---------- in settings.py ------------')
 if os.environ.get("BIOCO_ON_HEROKO"):
     #DEBUG:
     print os.environ
-    TARGET = 'test'
-    DEBUG = True
-    GA_TRACKING_CODE = ''
+    if "FORCE_DEBUG" in os.environ:
+        DEBUG = os.environ.get("FORCE_DEBUG")
+    else:
+        DEBUG = False
+
+    if DEBUG:
+        TARGET = 'test'
+        GA_TRACKING_CODE = ''
+    else:
+        TARGET = 'production'
+        GA_TRACKING_CODE = 'UA-46125166-1'
+
 elif "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'production'
     DEBUG = False
@@ -111,6 +120,7 @@ ALLOWED_HOSTS = [
     'intranet-test.bioco.ch',
     'intranet-old.bioco.ch',
     'heroku.bioco.ch',
+    'heroku-test.bioco.ch',
     'ortho-bioco.rhcloud.com',
     'test-bioco.rhcloud.com'
 ]
