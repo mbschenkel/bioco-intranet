@@ -10,9 +10,9 @@ print('---------- in settings.py ------------')
 if os.environ.get("BIOCO_ON_HEROKO"):
     #DEBUG:
     print os.environ
-    if "FORCE_DEBUG" in os.environ:
-        DEBUG = os.environ.get("FORCE_DEBUG")
-    else:
+    try:
+        DEBUG = bool(int(os.environ.get("FORCE_DEBUG")))
+    except:
         DEBUG = False
 
     if DEBUG:
