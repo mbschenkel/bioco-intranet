@@ -19,7 +19,7 @@ class AuthenticateWithEmail(object):
     def authenticate(self, username=None, password=None):
         from models import Loco
         try:
-            user = Loco.objects.get(email__iexact=username).user
+            user = Loco.objects.get(email__iexact=username.strip()).user
             if user.check_password(password):
                 return user
         except Loco.DoesNotExist:
