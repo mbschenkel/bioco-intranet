@@ -15,7 +15,7 @@
             {% for size, type in abo_types.items %}
                 <td style="" width=""><b>{{ type.name_short }}</b></td>
             {% endfor %}
-            <td><b>Total Einheiten</b></td>
+            <td><b><!-- temporarily hidden - Total Einheiten--></b></td>
         </tr>
         {% for weekday, depots in table.items %}
             {% for depot_id, depot in depots.items %}
@@ -35,7 +35,7 @@
                         <td>{{ number }}</td>
                     {% endif %}
                 {% endfor %}
-                <td><b>{{ depot.total|floatformat }}</b></td>
+                <td><b><!-- temporarily hidden - {{ depot.total|floatformat }} --></b></td>
                 </tr>
             {% endfor %}
         {% endfor %}
