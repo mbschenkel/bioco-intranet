@@ -852,33 +852,43 @@ def logout_view(request):
     return HttpResponseRedirect("/my/home")
 
 
-#@staff_member_required
 @login_required
 def short_depots_list(request):
     """
     Printable short overview list to be used when distributing
     """
-    
-    depots = Depot.objects.all().order_by("name")  #order_by("weekday", "code")
+    import copy
+
+    depots = Depot.objects.all().order_by("name")
     numbers = Abo.objects.filter(active=True).values('groesse', 'depot').annotate(number=Count('id')).values('groesse', 'depot', 'depot__weekday', 'number')
     abo_types = Abo.abo_types.copy()
     del abo_types[Abo.SIZE_NONE]
 
-    # todo : think fat model here...
+    size_template = dict()
+    for s in abo_types:
+        size_template[s] = 0
+    size_template[0] = 0
+
+    subtotal_template = dict()
+    subtotal_template['id'] = None
+    subtotal_template['sizes'] = copy.deepcopy(size_template)
+    subtotal_template['total'] = 0
+    subtotal_template['name'] = 'Total'
+    subtotal_template['weekday'] = ''
+
     table = dict()
-    #weekdays = dict()
     for depot in depots:
-        depot_info = dict(id=depot.id, name=depot.name, weekday=depot.get_weekday_display(), sizes=dict(), total=0)
-        depot_info['sizes'][0] = 0
-        for abo_type in abo_types:
-            #print 'type', abo_type
-            depot_info['sizes'][abo_type] = 0
         if depot.weekday not in table:
             table[depot.weekday] = dict()
+            table[depot.weekday]['subtotal'] = copy.deepcopy(subtotal_template)
+            table[depot.weekday]['subtotal']['weekday'] = depot.get_weekday_display()
+
+    for depot in depots:
+        depot_info = dict(id=depot.id, name=depot.name, weekday=depot.get_weekday_display(), sizes=dict(), total=0)
+        depot_info['sizes'] = copy.deepcopy(size_template)
         table[depot.weekday][depot.id] = depot_info
-            
+
     for number in numbers:
-        print "num", number
         if not number['number']:
             #skip empty ones
             continue
@@ -886,14 +896,14 @@ def short_depots_list(request):
         depot_id = number['depot']
         groesse = number['groesse']
         number_inc = number['number']
+        total_inc = float(number_inc) * groesse / Abo.SIZE_SMALL
         table[weekday][depot_id]['sizes'][groesse] += number_inc
-        table[weekday][depot_id]['total'] += float(number_inc) * groesse / Abo.SIZE_SMALL
-    
-    print "table", table
-    
-    servername = request.META["SERVER_NAME"] + ':' + request.META["SERVER_PORT"]
-    
-    # TODO evtl. once we have a last changed date, use max(last-changed) instead of now
+        table[weekday][depot_id]['total'] += total_inc
+        print(table[weekday]['subtotal']['sizes'])
+        table[weekday]['subtotal']['sizes'][groesse] += number_inc
+        table[weekday]['subtotal']['total'] += total_inc
+
+    # TODO if we ever have a last changed date, use max(last-changed) instead of now
     print_time = datetime.datetime.now()
     renderdict = getBohnenDict(request)
     renderdict.update({
@@ -901,15 +911,10 @@ def short_depots_list(request):
         "table": table,
         "depots": depots,
         "datum": print_time,
-        "servername": servername,
     })
 
-    #HTML Render:
     return render(request, "exports/all_depots_short.html", renderdict)
-    
-    #PDF Render:
-    file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
-    return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
+
 
 @staff_member_required
 def alldepots_list(request, name):

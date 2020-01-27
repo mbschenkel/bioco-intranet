@@ -26,13 +26,23 @@
                 {% endifchanged %}
                 {% cycle 'background-color: #f2e8ec' ' ' as rowcolors silent %}
                 <tr style="{{ rowcolors }}"><td>
-                    <a href="/my/depot/{{ depot.id }}">
+                    {% if depot.id %}
+                        <a href="/my/depot/{{ depot.id }}">
+                            <b>{{ depot.name }}</b>
+                        </a>
+                    {% else %}
                         <b>{{ depot.name }}</b>
-                    </a>
+                    {% endif %}
                 </td>
                 {% for size, number in depot.sizes.items %}
                     {% if size %}
-                        <td>{{ number }}</td>
+                        <td>
+                            {% if depot.id %}
+                                {{ number }}
+                            {% else %}
+                                <b>{{ number }}</b>
+                            {% endif %}
+                        </td>
                     {% endif %}
                 {% endfor %}
                 <td><b><!-- temporarily hidden - {{ depot.total|floatformat }} --></b></td>
