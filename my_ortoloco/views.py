@@ -858,6 +858,7 @@ def short_depots_list(request):
     Printable short overview list to be used when distributing
     """
     import copy
+    import collections
 
     depots = Depot.objects.all().order_by("name")
     numbers = Abo.objects.filter(active=True).values('groesse', 'depot').annotate(number=Count('id')).values('groesse', 'depot', 'depot__weekday', 'number')
@@ -879,7 +880,7 @@ def short_depots_list(request):
     table = dict()
     for depot in depots:
         if depot.weekday not in table:
-            table[depot.weekday] = dict()
+            table[depot.weekday] = collections.OrderedDict()
             table[depot.weekday]['subtotal'] = copy.deepcopy(subtotal_template)
             table[depot.weekday]['subtotal']['weekday'] = depot.get_weekday_display()
 
@@ -899,10 +900,9 @@ def short_depots_list(request):
         total_inc = float(number_inc) * groesse / Abo.SIZE_SMALL
         table[weekday][depot_id]['sizes'][groesse] += number_inc
         table[weekday][depot_id]['total'] += total_inc
-        print(table[weekday]['subtotal']['sizes'])
         table[weekday]['subtotal']['sizes'][groesse] += number_inc
         table[weekday]['subtotal']['total'] += total_inc
-
+    
     # TODO if we ever have a last changed date, use max(last-changed) instead of now
     print_time = datetime.datetime.now()
     renderdict = getBohnenDict(request)
