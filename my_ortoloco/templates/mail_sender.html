@@ -54,9 +54,13 @@
 
                 <div class="controls text-label">
                     Wähle mind. eine der folgenden Gruppen:
+                    <label class="checkbox" for="myself">
+                        <input type="checkbox" id="myself" name="myself">
+                        Kopie an mich
+                    </label>
                     <label class="checkbox" for="one_depot">
                         <input type="checkbox" id="one_depot" name="one_depot">
-                        Alle vom Depot 
+                        Alle vom Depot
                         <select name="the_depot">
                             {% for depot in all_depots %}
                                 <option value="{{ depot.pk }}">{{ depot.name }}</option>

@@ -795,6 +795,8 @@ def my_mails(request):
     sent = 0
     if request.method == 'POST':
         emails = set()
+        if request.POST.get("myself") == "on":
+            emails.add(request.user.loco.email)
         if request.POST.get("one_depot") == "on":
             the_depot = request.POST.get("the_depot")
             for loco in Loco.objects.filter(abo__depot=the_depot):
@@ -814,6 +816,7 @@ def my_mails(request):
         if request.POST.get("all") == "on":
             for loco in Loco.objects.all():
                 emails.add(loco.email)
+        
         if len(emails) > 0:
             send_filtered_mail(request.POST.get("subject"), request.POST.get("message"), request.POST.get("textMessage"), emails, request.META["HTTP_HOST"])
             sent = len(emails)
