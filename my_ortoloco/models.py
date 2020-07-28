@@ -102,15 +102,15 @@ class Abo(models.Model):
                             cost = 0,
                             description=u"Du kannst auch ohne Gemüseabo "+settings.SITE_NAME+"-GenossenschafterIn sein. Bleibe auf dem Laufenden und mach mit, wenn du Lust hast"),
         SIZE_HALF:  AboTyp( size=SIZE_HALF,  name_short='Halb',  name_long='Halbes Abo',
-                            min_anteilsscheine=1, visible=False, required_bohnen = 12,
+                            min_anteilsscheine=1, visible=False, required_bohnen = 10,
                             cost = 550,
                             description=u"Halbe Abos können in Ausnahmefällen vergeben werden"),
         SIZE_SMALL: AboTyp( size=SIZE_SMALL, name_short='Klein', name_long='Kleines Abo', 
-                            min_anteilsscheine=2, visible=True, required_bohnen = 24,
+                            min_anteilsscheine=2, visible=True, required_bohnen = 20,
                             cost = 1100,
                             description=u"Das kleine Abo ist für 2-3 Personen geeignet und benötigt mindestens zwei Anteilscheine"),
         SIZE_BIG:   AboTyp( size=SIZE_BIG,   name_short='Gross', name_long='Grosses Abo', 
-                            min_anteilsscheine=4, visible=True, required_bohnen = 48,
+                            min_anteilsscheine=4, visible=True, required_bohnen = 40,
                             cost = 2200,
                             description=u"Das grosse Abo empfiehlt sich für WG's oder Familien (ca. 4-6 Personen) und benötigt vier Anteilscheine")
     }

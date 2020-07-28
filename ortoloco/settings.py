@@ -5,9 +5,24 @@ import os
 import sys
 
 print('---------- in settings.py ------------')
-# this is custom code to detect differentiate different servers and use 
+# this is custom code to detect different servers and use
 # as little stuff in settings_local.py as necessary
-if "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
+if os.environ.get("BIOCO_ON_HEROKO"):
+    # DEBUG:
+    print os.environ
+    try:
+        DEBUG = bool(int(os.environ.get("FORCE_DEBUG")))
+    except:
+        DEBUG = False
+
+    if DEBUG:
+        TARGET = 'test'
+        GA_TRACKING_CODE = ''
+    else:
+        TARGET = 'production'
+        GA_TRACKING_CODE = 'UA-46125166-1'
+
+elif "ortho" == os.environ.get("OPENSHIFT_GEAR_NAME"):
     TARGET = 'production'
     DEBUG = False
     GA_TRACKING_CODE = 'UA-46125166-1'
@@ -19,45 +34,68 @@ else:
     TARGET = 'local'
     DEBUG = True
     GA_TRACKING_CODE = ''
-    
+
 if 'local' == TARGET:
-    # accept all IPs from local network and show admin toolbar    
+    # accept all IPs from local network and show admin toolbar
     from fnmatch import fnmatch
+
+
     class glob_list(list):
         def __contains__(self, key):
             for elt in self:
                 if fnmatch(key, elt): return True
             return False
 
+
     INTERNAL_IPS = glob_list(['127.0.0.1', '192.168.*.*'])
     DEBUG_TOOLBAR_PATCH_SETTINGS = True
-    # use an SQlite DB 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3', 
-            'NAME': 'bioco.db.sqlite',
-            # The following settings are not used with sqlite3:
-            'USER': '', 
-            'PASSWORD': '',
-            'HOST': '', 
-            'PORT': '', 
+    if 1:
+        # use an SQlite DB
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': 'bioco.db.sqlite',
+                # The following settings are not used with sqlite3:
+                'USER': '',
+                'PASSWORD': '',
+                'HOST': '',
+                'PORT': '',
+            }
         }
-    }
+    else:
+        print "Local, connecting to remote heroku db"
+        # connect directly to heroku for debugging, get the URI from https://dashboard.heroku.com/apps/bioco/resources
+        # in the form 'postgres://user:pass:port/database'
+
+        import dj_database_url
+
+        DATABASES = {'default': {}}
+        DATABASES['default'] = dj_database_url.parse('... put db url here ...')
+        DATABASES['default']['CONN_MAX_AGE'] = 500
+        print DATABASES['default']
+
+elif os.environ.get("BIOCO_ON_HEROKO"):
+    # on heroku using DATABASE_URL
+    import dj_database_url
+
+    DATABASES = {'default': {}}
+    DATABASES['default'] = dj_database_url.config()
+    DATABASES['default']['CONN_MAX_AGE'] = 500
 else:
     # on openshift
     DEBUG_TOOLBAR_PATCH_SETTINGS = False
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.mysql', 
-            'NAME': os.environ.get("OPENSHIFT_GEAR_NAME"), 
-            'USER': os.environ.get("OPENSHIFT_MYSQL_DB_USERNAME"), 
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get("OPENSHIFT_GEAR_NAME"),
+            'USER': os.environ.get("OPENSHIFT_MYSQL_DB_USERNAME"),
             'PASSWORD': os.environ.get("OPENSHIFT_MYSQL_DB_PASSWORD"),
-            'HOST': os.environ.get("OPENSHIFT_MYSQL_DB_HOST"), 
-            'PORT': os.environ.get("OPENSHIFT_MYSQL_DB_PORT"), 
+            'HOST': os.environ.get("OPENSHIFT_MYSQL_DB_HOST"),
+            'PORT': os.environ.get("OPENSHIFT_MYSQL_DB_PORT"),
         }
     }
-    
-#TODO TLS times out on bioco.ch, investigate why and change to True
+
+# TODO TLS times out on bioco.ch, investigate why and change to True
 EMAIL_USE_TLS = False
 if EMAIL_USE_TLS:
     EMAIL_PORT = 465
@@ -65,14 +103,15 @@ else:
     EMAIL_PORT = 587
 EMAIL_HOST = 'mail.bioco.ch'
 EMAIL_HOST_USER = 'intranet@bioco.ch'
-EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'  
-    
+EMAIL_HOST_PASSWORD = 'to-be-set-in-settings_local'
+EMAIL_DISABLE_MULTI_PART = False
+
 TEMPLATE_DEBUG = DEBUG
 
 # Overwrite these in settings_local.py to prevent having raw emails in GIT:
 WHITELIST_EMAILS = []
 ADMINS = (
-# ('Your Name', 'your_email@example.com'),
+    # ('Your Name', 'your_email@example.com'),
 )
 
 # let the users login with their emails
@@ -86,6 +125,9 @@ AUTHENTICATION_BACKENDS = (
 ALLOWED_HOSTS = [
     'intranet.bioco.ch',
     'intranet-test.bioco.ch',
+    'intranet-old.bioco.ch',
+    'heroku.bioco.ch',
+    'heroku-test.bioco.ch',
     'ortho-bioco.rhcloud.com',
     'test-bioco.rhcloud.com'
 ]
@@ -111,7 +153,10 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = False
+if os.environ.get("BIOCO_ON_HEROKO"):
+    USE_TZ = False  # True
+else:
+    USE_TZ = False
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -124,8 +169,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/medias/')
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/medias/'
 
-
-
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
 STATIC_URL = '/static/'
@@ -134,10 +177,18 @@ if 'local' == TARGET:
     # ./static contains checked in static content
     STATICFILES_DIRS = ("static/",)
     # collectstatic will want to move it to a *different folder*, here:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected/')    
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected/')
+elif os.environ.get("BIOCO_ON_HEROKO"):
+    STATICFILES_DIRS = (
+        (os.path.join(BASE_DIR, 'static')),
+    )
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')
+
+    print "STATICFILES_DIRS ", STATICFILES_DIRS
+    print "STATIC_ROOT ", STATIC_ROOT
 else:
-    # this has worked in production:
-    
+    # this has worked in production on openshift:
+
     # Absolute path to the directory static files should be collected to.
     # Don't put anything in this directory yourself; store your static files
     # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -146,11 +197,11 @@ else:
 
     # Additional locations of static files
     STATICFILES_DIRS = (
-    #"static/",
-    #os.path.join(BASE_DIR, 'ortoloco/static/'),
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+        # "static/",
+        # os.path.join(BASE_DIR, 'ortoloco/static/'),
+        # Put strings here, like "/home/html/static" or "C:/www/django/static".
+        # Always use forward slashes, even on Windows.
+        # Don't forget to use absolute paths, not relative paths.
     )
 
 # List of finder classes that know how to find static files in
@@ -158,11 +209,11 @@ else:
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #mbs+
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # mbs+
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-#tinyMCE
+# tinyMCE
 TINYMCE_JS_URL = '/static/js/tinymce/tinymce.min.js'
 
 TINYMCE_DEFAULT_CONFIG = {
@@ -196,8 +247,8 @@ SECRET_KEY = ''
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-	#mbs (maybe not required)?
-    #'django.template.loaders.eggs.Loader',
+    # mbs (maybe not required)?
+    # 'django.template.loaders.eggs.Loader',
 )
 
 IMPERSONATE_REDIRECT_URL = "/my/profil"
@@ -217,17 +268,17 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'ortoloco.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-# this seems to be used only for testing with runserver 
+# this seems to be used only for testing with runserver
 WSGI_APPLICATION = 'ortoloco.wsgi.application'
 
-#mbs disabled photologue for now:
-#from photologue import PHOTOLOGUE_TEMPLATE_DIR
+# mbs disabled photologue for now:
+# from photologue import PHOTOLOGUE_TEMPLATE_DIR
 
 TEMPLATE_DIRS = (
     'ortoloco/templates',
-	os.path.join(BASE_DIR, 'ortoloco/templates'),
-    #mbs disabled photologue for now:
-    #PHOTOLOGUE_TEMPLATE_DIR
+    os.path.join(BASE_DIR, 'ortoloco/templates'),
+    # mbs disabled photologue for now:
+    # PHOTOLOGUE_TEMPLATE_DIR
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -248,75 +299,109 @@ DJANGO_APPS = (
 )
 DEBUG_APPS = (
     # Uncomment the next line to enable admin documentation:
-    'django.contrib.admindocs',	
-    'debug_toolbar',
+    'django.contrib.admindocs',
+    # 'debug_toolbar',
 )
 OUR_OWN_APPS = (
-	'my_ortoloco',
-	'static_ortoloco',
-    # mbs - Currently disabled 
-	#'photologue',
-	'south',
-	'tinymce',
-	'impersonate'
+    'my_ortoloco',
+    'static_ortoloco',
+    # mbs - Currently disabled
+    # 'photologue',
+    'south',
+    'tinymce',
+    'impersonate'
 )
 if 'local' == TARGET:
     INSTALLED_APPS = DJANGO_APPS + DEBUG_APPS + OUR_OWN_APPS
 else:
     INSTALLED_APPS = DJANGO_APPS + OUR_OWN_APPS
 # For the first syncdb, use only
-#INSTALLED_APPS = DJANGO_APPS
+# INSTALLED_APPS = DJANGO_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'ortoloco.ch_python.log': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), '../logs/ortoloco.ch_python.log'),
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['ortoloco.ch_python.log'],
-            'level': 'ERROR',
-            'propagate': True,
+
+if os.environ.get("BIOCO_ON_HEROKO"):
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                           'pathname=%(pathname)s lineno=%(lineno)s ' +
+                           'funcname=%(funcName)s %(message)s'),
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
+            }
         },
+        'handlers': {
+            'console': {
+                'level': 'DEBUG',
+                'class': 'logging.StreamHandler',
+                'formatter': 'verbose'
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['console'],
+                'level': 'DEBUG',
+                'propagate': True,
+            },
+        }
     }
-}
+else:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'ortoloco.ch_python.log': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(os.path.dirname(BASE_DIR), '../logs/ortoloco.ch_python.log'),
+            }
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['ortoloco.ch_python.log'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        }
+    }
 
 GALLERY_SAMPLE_SIZE = 4
- 
+
 # add persistent data dir where settings_local.py is located
 if 'local' == TARGET:
     # add path as needed:
     pass
-else:    
-    #on openshift:
+else:
+    # on openshift:
     sys.path.append(os.environ.get("OPENSHIFT_DATA_DIR"))
 
 # This is a custom variable to replace ortoloco with bioco in templates and co.
 SITE_NAME = u'biocò'
-SITE_URL  = u'bioco.ch'
+SITE_URL = u'bioco.ch'
 SITE_DESCRIPTION = u'Gemüsegenossenschaft Region Baden-Brugg'
 SITE_MY_NAME = u'biocò Intranet'
-SITE_MY_URL  = u'intranet.bioco.ch'
-LINK_REL_STATUTEN = u'http://bioco.ch/wp-content/uploads/2013/11/13-11-15_Statuten_bioco.pdf'
-LINK_REL_REGLEMENT = u'http://bioco.ch/wp-content/uploads/2013/11/Gm%C3%BCes_Betriebsreglement_131114a.pdf'
+SITE_MY_URL = u'intranet.bioco.ch'
+# LINK_REL_STATUTEN = u'http://bioco.ch/wp-content/uploads/2013/11/13-11-15_Statuten_bioco.pdf'
+# LINK_REL_REGLEMENT = u'http://bioco.ch/wp-content/uploads/2013/11/Gm%C3%BCes_Betriebsreglement_131114a.pdf'
+LINK_REL_STATUTEN = u'http://bioco.ch/wp-content/uploads/2017/01/1701-Statuten.pdf'
+LINK_REL_REGLEMENT = u'http://bioco.ch/wp-content/uploads/2017/01/1701-Betriebsreglement.pdf'
 
 BG_INFO_MAIL = 'info@bioco.ch'
-DEPOT_INFO_MAIL = 'daniela@bioco.ch'
+DEPOT_INFO_MAIL = 'info@bioco.ch'
 JOB_INFO_MAIL = 'einsatz@bioco.ch'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-""" 
+"""
 Note: Currently settings_local.py should have the following content.
 
 WHITELIST_EMAILS = ["...@..."]
@@ -329,12 +414,24 @@ DEBUG_EMAIL_ADDRESS = '...'
 """
 
 # google maps center
-MAP_CENTER_LAT  = u'47.476781'
+MAP_CENTER_LAT = u'47.476781'
 MAP_CENTER_LONG = u'8.2632728'
 MAP_CENTER_ZOOM = u'12'
 
+MAP_FARM_LAT = '47.4741684'
+MAP_FARM_LONG = '8.2456318'
 
-from settings_local import *
+if os.environ.get("BIOCO_ON_HEROKO"):
+    WHITELIST_EMAILS = os.environ.get("WHITELIST_EMAILS")
+    ADMINS = os.environ.get("ADMINS")
+    SECRET_KEY = os.environ.get("SECRET_KEY")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+    DEBUG_EMAIL_ADDRESS = os.environ.get("DEBUG_EMAIL_ADDRESS")
+    GMAPS_API_KEY = os.environ.get("GMAPS_API_KEY")
+else:
+    from settings_local import *
 
 # overwrite from settings_local if set there
 MANAGERS = ADMINS
+

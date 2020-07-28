@@ -49,8 +49,12 @@ urlpatterns = patterns('',
     url('^my/abonnent/(?P<abo_id>.*?)/', 'my_ortoloco.views.my_add_loco'),
     url('^my/depot/(?P<depot_id>.*?)/', 'my_ortoloco.views.my_depot'),
     url('^my/mails$', 'my_ortoloco.views.my_mails'),
+
     url('^my/depotuebersicht$', 'my_ortoloco.views.short_depots_list'),
-    url('^my/depotlisten', 'my_ortoloco.views.my_depotlisten'),
+    url('^my/depotlisten.pdf$', 'my_ortoloco.views.my_depotlisten_pdf'),
+    url('^my/depotlisten.html$', 'my_ortoloco.views.my_depotlisten_html'),
+    url('^exports/depotlisten/(?P<name>.*)', 'my_ortoloco.views.alldepots_list'),
+
     url('^my/neuespasswort$', 'my_ortoloco.views.my_new_password'),
     url('^my/bestaetigung/(?P<hash>.*?)/', 'my_ortoloco.views.my_confirm'),
     url('^my/politoloco$', 'my_ortoloco.views.send_politoloco'),
@@ -73,7 +77,6 @@ urlpatterns = patterns('',
 
     #mbs - (r'^photologue/', include('photologue.urls')),
 
-    url('^exports/depotlisten/(?P<name>.*)', 'my_ortoloco.views.alldepots_list'),
     #url('^test_filters/$', 'my_ortoloco.views.test_filters'),
     #url('^test_filters_post/$', 'my_ortoloco.views.test_filters_post'),
 

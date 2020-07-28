@@ -19,7 +19,7 @@ class AuthenticateWithEmail(object):
     def authenticate(self, username=None, password=None):
         from models import Loco
         try:
-            user = Loco.objects.get(**{'email': username}).user
+            user = Loco.objects.get(email__iexact=username.strip()).user
             if user.check_password(password):
                 return user
         except Loco.DoesNotExist:
@@ -61,7 +61,9 @@ weekdays = dict(weekday_choices)
 
 def get_current_jobs():
     from models import Job
-    return Job.objects.filter(time__gte=datetime.datetime.now()).order_by("time").select_related("typ")
+    # Show all of today, even past ones
+    today = datetime.datetime.combine(datetime.datetime.now().date(), datetime.datetime.min.time())
+    return Job.objects.filter(time__gte=today).order_by("time").select_related("typ")
     
 
 class Swapstd(object):
