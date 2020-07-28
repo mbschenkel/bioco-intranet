@@ -5,7 +5,7 @@ import os
 import sys
 
 print('---------- in settings.py ------------')
-# this is custom code to detect differentiate different servers and use 
+# this is custom code to detect different servers and use
 # as little stuff in settings_local.py as necessary
 if os.environ.get("BIOCO_ON_HEROKO"):
     #DEBUG:
@@ -61,7 +61,9 @@ if 'local' == TARGET:
         }
     else:
         print "Local, connecting to remote heroku db"
-        #connect directly to heroku for debugging
+        # connect directly to heroku for debugging, get the URI from https://dashboard.heroku.com/apps/bioco/resources
+        # in the form 'postgres://user:pass:port/database'
+
         import dj_database_url
         DATABASES = {'default': {}}
         DATABASES['default'] = dj_database_url.parse('... put db url here ...')
@@ -298,13 +300,13 @@ DEBUG_APPS = (
     #'debug_toolbar',
 )
 OUR_OWN_APPS = (
-	'my_ortoloco',
-	'static_ortoloco',
+    'my_ortoloco',
+    'static_ortoloco',
     # mbs - Currently disabled 
-	#'photologue',
-	'south',
-	'tinymce',
-	'impersonate'
+    #'photologue',
+    'south',
+    'tinymce',
+    'impersonate'
 )
 if 'local' == TARGET:
     INSTALLED_APPS = DJANGO_APPS + DEBUG_APPS + OUR_OWN_APPS
@@ -413,13 +415,17 @@ MAP_CENTER_LAT  = u'47.476781'
 MAP_CENTER_LONG = u'8.2632728'
 MAP_CENTER_ZOOM = u'12'
 
+MAP_FARM_LAT = '47.4741684'
+MAP_FARM_LONG = '8.2456318'
+
 if os.environ.get("BIOCO_ON_HEROKO"):
     WHITELIST_EMAILS = os.environ.get("WHITELIST_EMAILS")
     ADMINS = os.environ.get("ADMINS")
     SECRET_KEY  = os.environ.get("SECRET_KEY")
     EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
     EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-    DEBUG_EMAIL_ADDRESS  = os.environ.get("DEBUG_EMAIL_ADDRESS")
+    DEBUG_EMAIL_ADDRESS = os.environ.get("DEBUG_EMAIL_ADDRESS")
+    GMAPS_API_KEY = os.environ.get("GMAPS_API_KEY")
 else:
     from settings_local import *
 

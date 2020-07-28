@@ -816,7 +816,7 @@ def my_mails(request):
         if request.POST.get("all") == "on":
             for loco in Loco.objects.all():
                 emails.add(loco.email)
-        
+
         if len(emails) > 0:
             send_filtered_mail(request.POST.get("subject"), request.POST.get("message"), request.POST.get("textMessage"), emails, request.META["HTTP_HOST"])
             sent = len(emails)
@@ -845,9 +845,12 @@ def my_filters(request):
 
 
 @staff_member_required
-def my_depotlisten(request):
-    return alldepots_list(request, "")
+def my_depotlisten_pdf(request):
+    return alldepots_list(request, name="", as_pdf=True)
 
+@staff_member_required
+def my_depotlisten_html(request):
+    return alldepots_list(request, name="", as_pdf=False)
 
 def logout_view(request):
     auth.logout(request)
@@ -918,9 +921,8 @@ def short_depots_list(request):
 
     return render(request, "exports/all_depots_short.html", renderdict)
 
-
 @staff_member_required
-def alldepots_list(request, name):
+def alldepots_list(request, name, as_pdf):
     """
     Printable list of all depots to check on get gemüse
     """
@@ -966,15 +968,21 @@ def alldepots_list(request, name):
         "depots": depots,
         "datum": print_time,
         "servername": servername,
+        "gmaps_api_key": settings.GMAPS_API_KEY,
+        "map_zoom_levels": {11, 14},
+        "map_farm_lat": settings.MAP_FARM_LAT,
+        "map_farm_long": settings.MAP_FARM_LONG,
+
     }
 
-    #HTML Render:
-    #return render(request, "exports/all_depots.html", renderdict)
-    
-    file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
-    return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
+    if as_pdf:
+        file_name = 'Depolisten_%s.pdf' % print_time.strftime("%Y%m%d_%H%M")
+        return render_to_pdf(request, "exports/all_depots.html", renderdict, file_name)
+    else:
+        # HTML Render:
+        return render(request, "exports/all_depots.html", renderdict)
 
-  
+
 @staff_member_required
 def my_statistics(request):
     # TODO: Take into account new job.multiplier here as well!
