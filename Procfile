@@ -1,1 +1,1 @@
-web: gunicorn ortoloco.wsgi --timeout 60
+web: gunicorn ortoloco.wsgi --timeout 300
