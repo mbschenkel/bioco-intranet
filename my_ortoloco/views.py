@@ -975,6 +975,9 @@ def alldepots_list(request, name, as_pdf):
         "datum": print_time,
         "servername": servername,
         "map_zoom_levels": {11, 14},
+        'gmaps_api_key': settings.GMAPS_API_KEY,
+        'map_farm_lat': settings.MAP_FARM_LAT,
+        'map_farm_long': settings.MAP_FARM_LONG,
 
     }
 
