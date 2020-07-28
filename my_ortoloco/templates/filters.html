@@ -12,7 +12,11 @@
             width: 1200px;
         }
     </style>
-    <script src="../../static/js/ZeroClipboard.min.js" type="text/javascript"></script>
+
+    {% if staff_user %}
+        <a onclick="copy_action()" href="#">Alle angezeigten E-Mail Adressen kopieren</a>
+    {% endif %}
+
     <div id="filter-locos">
         <table class="list" style="display: table;">
             <thead>
@@ -20,11 +24,7 @@
                 <th>Name</th>
                 <th>Taetigkeitsbereiche</th>
                 <th>Depot</th>
-                {% if staff_user %}
-                    <th>E-Mail <a data-clipboard-text="Copy Me!" id="copy-emails" href="#">alle kopieren</a></th>
-                {% else %}
-                    <th>E-Mail</th>
-                {% endif %}
+                <th>E-Mail</th>
                 <th>Telefon</th>
                 <th>Mobile</th>
             </tr>
@@ -56,24 +56,54 @@
             dable.UpdateDisplayedRows();        // Update the table
             dable.UpdateStyle();                // Reapply our styles
 
-            var client = new ZeroClipboard(document.getElementById("copy-emails"), {
-                moviePath: "/static/others/ZeroClipboard.swf"
-            });
+            // Source: https://stackoverflow.com/a/33928558/2861669
+            // Copies a string to the clipboard. Must be called from within an
+            // event handler such as click. May return false if it failed, but
+            // this is not always possible. Browser support for Chrome 43+,
+            // Firefox 42+, Safari 10+, Edge and Internet Explorer 10+.
+            // Internet Explorer: The clipboard feature may be disabled by
+            // an administrator. By default a prompt is shown the first
+            // time the clipboard is used (per session).
+            function copyToClipboard(text)
+            {
+                if (window.clipboardData && window.clipboardData.setData)
+                {
+                    // Internet Explorer-specific code path to prevent textarea being shown while dialog is visible.
+                    return clipboardData.setData("Text", text);
 
-            client.on("load", function (client) {
-                client.on("complete", function (client, args) {
-                    alert("Copied text to clipboard: " + args.text);
-                });
-            });
-            setInterval(function () {
+                }
+                else if (document.queryCommandSupported && document.queryCommandSupported("copy"))
+                {
+                    var textarea = document.createElement("textarea");
+                    textarea.textContent = text;
+                    textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in Microsoft Edge.
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+                    }
+                    catch (ex) {
+                        console.warn("Copy to clipboard failed.", ex);
+                        return false;
+                    }
+                    finally {
+                        document.body.removeChild(textarea);
+                    }
+                }
+            }
+
+            function copy_action()
+            {
                 var emails = [];
                 $("#filter-locos tr").each(function () {
                     var txt = $("td:eq(3)", this).text();
                     if (txt)
                         emails.push(txt);
                 });
-                client.setText(emails.join(", "));
-            }, 200);
+                copy_text = emails.join(", ");
+                console.log(copy_text);
+                copyToClipboard(copy_text);
+            }
         </script>
     {% endif %}
 {% endblock %}
