@@ -46,13 +46,13 @@ info@ortoloco.ch
 		</div>
 	</form>
 
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key={{ gmaps_api_key }}"></script>
 	<script>
 	var map;
 	function initialize() {
 	  var mapOptions = {
 	    zoom: 14,
-	    center: new google.maps.LatLng(47.4099048,8.3823588),
+	    center: new google.maps.LatLng({{ map_farm_lat }},{{ map_farm_long }}),
 	    mapTypeId: google.maps.MapTypeId.ROADMAP
 	  };
 	  map = new google.maps.Map(document.getElementById('map-canvas'),

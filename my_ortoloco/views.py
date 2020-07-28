@@ -82,6 +82,9 @@ def getBohnenDict(request):
         },
         'next_jobs': next_jobs,
         'staff_user': request.user.is_staff,
+        'gmaps_api_key': settings.GMAPS_API_KEY,
+        'map_farm_lat': settings.MAP_FARM_LAT,
+        'map_farm_long': settings.MAP_FARM_LONG,
         'politoloco': request.user.has_perm('static_ortoloco.can_send_newsletter')
     }
 
@@ -188,7 +191,7 @@ def my_depot(request, depot_id):
 
     renderdict = getBohnenDict(request)
     renderdict.update({
-        'depot': depot
+        'depot': depot,
     });
     return render(request, "depot.html", renderdict)
 
@@ -654,7 +657,10 @@ def my_createabo(request):
         'selected_depot': selected_depot,
         "selected_abo": selectedabo,
         "scheineerror": scheineerror,
-        "mit_locos": mit_locos
+        "mit_locos": mit_locos,
+        'gmaps_api_key': settings.GMAPS_API_KEY,
+        'map_farm_lat': settings.MAP_FARM_LAT,
+        'map_farm_long': settings.MAP_FARM_LONG,
     }
     return render(request, "createabo.html", renderdict)
 
@@ -968,10 +974,7 @@ def alldepots_list(request, name, as_pdf):
         "depots": depots,
         "datum": print_time,
         "servername": servername,
-        "gmaps_api_key": settings.GMAPS_API_KEY,
         "map_zoom_levels": {11, 14},
-        "map_farm_lat": settings.MAP_FARM_LAT,
-        "map_farm_long": settings.MAP_FARM_LONG,
 
     }
 
