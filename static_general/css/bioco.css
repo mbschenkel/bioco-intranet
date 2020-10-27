@@ -1,0 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Overlock:wght@400;700;900&display=swap');
+
+body {
+    background-color: #fffff7;
+}
+
+body, h1, h2, h3, h4, h5 {
+    font-family: "Overlock";
+}
+
+.juntagrico-logo:before {
+    content: "biocò Intranet";
+    color: #7f1d42;
+    font-weight: 900;
+    font-size: 38.5px;
+}
+
+.juntagrico-logo {
+    background: url(/static/img/bioco_logo_single.png) 0 0px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right top;
+    /*width: 300px;
+    height: 45px;
+    margin-bottom: 25px;*/
+    width: 100%;
+    height: 60px;
+}
+
+.next-jobs {
+    margin-top: 5px;
+}
+
+.next-jobs .time {
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.jobs .date {
+    width: 150px;
+}
+
+.jobs .status {
+    padding-left: 30px;
+}
+
+.jobs .full {
+    opacity: 0.2;
+}
+
+#jobs .list {
+    width: 100%;
+}
+
+#jobs_header, #filter-locos_header {
+    margin-bottom: 20px;
+}
+
+#filter-locos a {
+    color: white;
+    text-decoration: underline;
+}
+
+#jobs_footer, #filter-locos_footer {
+    margin-top: 20px;
+}
+
+#jobs_page_prev, #jobs_page_next, #filter-locos_page_prev, #filter-locos_page_next {
+    display: none !important;
+}
+
+#jobs th, #filter-locos th {
+    text-align: left;
+    background-color: #7f1d42; /* 4c9434; */
+    color: white;
+}
+
+
+#jobs tr.table-row-even {}
+
+#jobs tr.table-row-odd {
+    background-color: #f2e8ec;
+}
+
+#jobs .table-sort {
+    font-family: Arial;
+    font-size: 12;
+}
+
+.text-label {
+    margin-top: 5px;
+}
+
+.jobstatus {
+    margin-right: -0px;
+}
+
+.ruebli {
+    margin-right: -9px;
+}
+
+.ortoloco {
+    margin-top: 0;
+}
+
+.myortoloco {
+    margin-top: 40px;
+    margin-bottom: 40px;
+    background-image: url(/static/img/bioco_logo_single.png);
+    background-size: contain; /* 100px */
+    background-repeat: no-repeat;
+    background-position: right top;
+}
+
+.ortoloco h3 {
+    margin-top: -10px;
+}
+
+.createabo .control-label {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.createabo #depot {
+    margin-bottom: 3px;
+}
+
+#map-canvas {
+    width: 580px;
+    height: 400px;
+}
+
+#depot #map-canvas {
+    margin-left: 180px;
+    width: 400px;
+    height: 440px;
+}
+
+.politoloco {
+    height: 30px;
+    background: url('/static/img/erbse_x_politoloco.png') repeat-x;
+}
+
+.politoloco-label {
+    line-height: 40px;
+}
+
+.politoloco-label input[type=checkbox] {
+    margin-top: 15px;
+}
+
+#filter-locos {
+    width: 1000px;
+}
+
+#filter-locos table {
+    font-size: 10px;
+}
