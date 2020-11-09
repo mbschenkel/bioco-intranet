@@ -69,11 +69,11 @@ class Command(BaseCommand):
         user.last_login  = fields['last_login']
         user.password  = fields['password']
 
+        user.save()
+
         # intentionally not imported: user.user_permissions = []
         print(fields['groups'])
         user.groups.set(fields['groups'])
-
-        user.save()
 
     def import_abo(selfself, data):
         abo = Abo(pk=data['pk'])
