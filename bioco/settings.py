@@ -6,7 +6,13 @@ import os
 """
 DEBUG = os.environ.get("JUNTAGRICO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ['intranet.bioco.ch', 'intranet-new.bioco.ch', 'intranet-test.bioco.ch']
+ALLOWED_HOSTS = [
+    'intranet.bioco.ch',
+    'intranet-new.bioco.ch',
+    'intranet-test.bioco.ch',
+    'bioco-new.herokuapp.com',
+    'bioco.herokuapp.com',
+]
 if DEBUG:
     ALLOWED_HOSTS += ['localhost'] # TODO localhost for testing only
 
