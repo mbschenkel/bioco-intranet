@@ -76,7 +76,7 @@ class Command(BaseCommand):
         user.groups.set(fields['groups'])
 
     def import_abo(selfself, data):
-        abo = Abo(pk=data['pk'])
+        # abo = Abo(pk=data['pk'])
 
         # TODO this is now
         # -subscriptiontype
@@ -86,7 +86,7 @@ class Command(BaseCommand):
         # old:
         # {'model': 'my_ortoloco.abo', 'fields': {'active': True, 'paid': True, 'depot': 16, 'groesse': 2, 'extra_abos': [], 'primary_loco': 42, 'number': '3'}, 'pk': 3}
 
-        print(abo)
+        # print(abo)
 
     def import_member(self, data):
         if data['pk'] == 1: return  # intranet admin
