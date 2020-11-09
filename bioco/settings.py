@@ -6,7 +6,7 @@ import os
 """
 DEBUG = os.environ.get("JUNTAGRICO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ['intranet.bioco.ch']
+ALLOWED_HOSTS = ['intranet.bioco.ch', 'intranet-new.bioco.ch', 'intranet-test.bioco.ch']
 if DEBUG:
     ALLOWED_HOSTS += ['localhost'] # TODO localhost for testing only
 
@@ -76,6 +76,7 @@ MIDDLEWARE=[
 
 INSTALLED_APPS = (
     'juntagrico',
+    'bioco',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
