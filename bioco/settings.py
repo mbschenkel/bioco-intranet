@@ -78,6 +78,7 @@ MIDDLEWARE=[
     'django.middleware.security.SecurityMiddleware',
     #'subdomains.middleware.SubdomainURLRoutingMiddleware',
     'oauth2_provider.middleware.OAuth2TokenMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 INSTALLED_APPS = (
