@@ -1,0 +1,6 @@
+.idea
+bioco.db
+**/__pycache__/**
+static/**
+venv/**
+
